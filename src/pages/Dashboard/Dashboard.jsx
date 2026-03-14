@@ -11,7 +11,7 @@ import {
   Modal,
 } from "react-bootstrap";
 import { FaCopy, FaPalette, FaLink, FaEye } from "react-icons/fa";
-import { FaInstagram, FaGithub, FaXTwitter } from "react-icons/fa6"; // Importamos la X de Twitter
+import { FaInstagram, FaGithub, FaXTwitter } from "react-icons/fa6";
 import Swal from "sweetalert2";
 
 import api from "../../services/axiosConfig";
@@ -39,7 +39,7 @@ const Dashboard = () => {
     theme: {
       backgroundColor: "#ffffff",
       backgroundImage: "",
-      buttonColor: "#000000", // Este es el color del "Marco Foto"
+      buttonColor: "#000000",
       buttonTextColor: "#ffffff",
       textColor: "#000000",
     },
@@ -67,7 +67,7 @@ const Dashboard = () => {
         theme: { ...res.data.theme },
       });
     } catch (err) {
-      console.error("Error al cargar datos", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -91,29 +91,21 @@ const Dashboard = () => {
         showConfirmButton: false,
       });
     } catch (err) {
-      Swal.fire({ icon: "error", title: "Error al agregar" });
+      Swal.fire({ icon: "error", title: "Error" });
     }
   };
 
   const handleDeleteLink = async (id) => {
     const result = await Swal.fire({
-      title: "¿Eliminar enlace?",
+      title: "¿Eliminar?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
       confirmButtonText: "Sí, borrar",
     });
-
     if (result.isConfirmed) {
       try {
         const res = await api.delete(`/links/${id}`);
         setLinks(res.data.links || res.data);
-        Swal.fire({
-          icon: "success",
-          title: "¡Borrado!",
-          timer: 1000,
-          showConfirmButton: false,
-        });
       } catch (err) {
         Swal.fire("Error", "No se pudo eliminar", "error");
       }
@@ -125,8 +117,8 @@ const Dashboard = () => {
       await api.put("/auth/settings", settings);
       Swal.fire({
         icon: "success",
-        title: "¡Configuración guardada!",
-        timer: 2000,
+        title: "¡Guardado!",
+        timer: 1500,
         showConfirmButton: false,
       });
     } catch (err) {
@@ -134,73 +126,30 @@ const Dashboard = () => {
     }
   };
 
-  // --- FUNCIÓN DE SUBIDA CON VALIDACIÓN ---
   const handleImageUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // Validación de tipo
-    const validTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      return Swal.fire(
-        "Formato no válido",
-        "Solo imágenes JPG, PNG o WEBP",
-        "error",
-      );
-    }
-
-    // Validación de tamaño (2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      return Swal.fire(
-        "Archivo muy pesado",
-        "La imagen debe pesar menos de 2MB",
-        "warning",
-      );
-    }
+    if (file.size > 2 * 1024 * 1024)
+      return Swal.fire("Error", "Imagen muy pesada (máx 2MB)", "warning");
 
     const formData = new FormData();
     formData.append("image", file);
     formData.append("type", type);
 
     try {
-      Swal.fire({
-        title: "Subiendo...",
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-      });
-
+      Swal.fire({ title: "Subiendo...", didOpen: () => Swal.showLoading() });
       const res = await api.post("/auth/upload-avatar", formData);
       const newSettings = { ...settings };
-
       if (type === "avatar") newSettings.profile.avatarUrl = res.data.url;
       else newSettings.theme.backgroundImage = res.data.url;
-
       setSettings(newSettings);
-      await api.put("/auth/settings", newSettings); // Auto-save en la DB
-
-      Swal.fire({
-        icon: "success",
-        title: "¡Imagen lista!",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+      await api.put("/auth/settings", newSettings);
+      Swal.close();
     } catch (err) {
-      Swal.fire("Error", "No se pudo subir la imagen", "error");
+      Swal.fire("Error", "No se pudo subir", "error");
     }
   };
 
-  const copyToClipboard = () => {
-    const url = `${window.location.origin}/${settings.profile.username || ""}`;
-    navigator.clipboard.writeText(url);
-    Swal.fire({
-      icon: "info",
-      title: "Link copiado",
-      timer: 1500,
-      showConfirmButton: false,
-    });
-  };
-
-  // --- PREVISUALIZACIÓN DEL CELULAR ---
   const PhonePreview = () => (
     <div className={styles.phoneMockup}>
       <div
@@ -210,63 +159,38 @@ const Dashboard = () => {
           backgroundImage: settings.theme.backgroundImage
             ? `url(${settings.theme.backgroundImage})`
             : "none",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
           color: settings.theme.textColor,
         }}
       >
         <div className={styles.previewContent}>
-          {/* Avatar con Marco de Color */}
-          {settings.profile.avatarUrl ? (
-            <img
-              src={settings.profile.avatarUrl}
-              alt="Avatar"
-              className={styles.previewAvatar}
-              style={{ borderColor: settings.theme.buttonColor }}
-            />
-          ) : (
-            <div
-              className={styles.previewAvatarPlaceholder}
-              style={{ borderColor: settings.theme.buttonColor }}
-            />
-          )}
-
-          <h5 className="fw-bold mt-3">
-            @{settings.profile.username || "usuario"}
-          </h5>
-          <p
-            className="small text-center px-3"
-            style={{ color: settings.theme.textColor }}
-          >
-            {settings.profile.bio}
-          </p>
-
+          <img
+            src={
+              settings.profile.avatarUrl || "https://via.placeholder.com/150"
+            }
+            alt="Avatar"
+            className={styles.previewAvatar}
+            style={{ borderColor: settings.theme.buttonColor }}
+          />
+          <h5 className="fw-bold mt-3">@{settings.profile.username}</h5>
+          <p className="small text-center px-3 mb-4">{settings.profile.bio}</p>
           <div className={styles.previewLinks}>
             {links.map((link) => (
               <div
                 key={link._id}
                 className={styles.previewLinkItem}
                 style={{
-                  backgroundColor: link.buttonColor || "#000000",
-                  color: link.buttonTextColor || "#ffffff",
+                  backgroundColor: link.buttonColor,
+                  color: link.buttonTextColor,
                 }}
               >
                 {link.title}
               </div>
             ))}
           </div>
-
-          {/* Iconos Sociales */}
           <div className={styles.socialIconsPreview}>
-            {settings.socials.instagram && (
-              <FaInstagram className={styles.socialIcon} />
-            )}
-            {settings.socials.github && (
-              <FaGithub className={styles.socialIcon} />
-            )}
-            {settings.socials.twitter && (
-              <FaXTwitter className={styles.socialIcon} />
-            )}
+            {settings.socials.instagram && <FaInstagram />}
+            {settings.socials.github && <FaGithub />}
+            {settings.socials.twitter && <FaXTwitter />}
           </div>
         </div>
       </div>
@@ -276,8 +200,8 @@ const Dashboard = () => {
   if (loading)
     return (
       <Container className="text-center mt-5">
-        <Spinner animation="border" variant="primary" />
-        <p>Sincronizando LynxBio...</p>
+        <Spinner animation="border" />
+        <p>Cargando LynxBio...</p>
       </Container>
     );
 
@@ -290,14 +214,18 @@ const Dashboard = () => {
               <h2 className="fw-bold">Panel de Control</h2>
               <Button
                 variant="outline-dark"
-                onClick={copyToClipboard}
-                className="rounded-pill px-4 shadow-sm"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `${window.location.origin}/${settings.profile.username}`,
+                  );
+                  Swal.fire("¡Copiado!", "", "success");
+                }}
+                className="rounded-pill"
               >
                 <FaCopy className="me-2" /> Mi Link
               </Button>
             </div>
-
-            <Tabs defaultActiveKey="links" className="mb-4 custom-tabs">
+            <Tabs defaultActiveKey="links" className="mb-4">
               <Tab
                 eventKey="links"
                 title={
@@ -321,7 +249,6 @@ const Dashboard = () => {
                   ))}
                 </ListGroup>
               </Tab>
-
               <Tab
                 eventKey="appearance"
                 title={
@@ -340,34 +267,25 @@ const Dashboard = () => {
             </Tabs>
           </div>
         </Col>
-
         <Col lg={5} xl={4} className={styles.previewColumn}>
           <div className={styles.phoneSticky}>
-            <h5 className="text-muted text-center mb-3">
-              Previsualización en vivo
-            </h5>
             <PhonePreview />
           </div>
         </Col>
       </Row>
-
       <Button
         className={styles.mobilePreviewBtn}
         onClick={() => setShowMobilePreview(true)}
       >
         <FaEye className="me-2" /> Vista previa
       </Button>
-
       <Modal
         show={showMobilePreview}
         onHide={() => setShowMobilePreview(false)}
         centered
         className={styles.mobileModal}
       >
-        <Modal.Header closeButton className="border-0">
-          <Modal.Title>Tu LynxBio</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="d-flex justify-content-center bg-light rounded-bottom">
+        <Modal.Body className="d-flex justify-content-center bg-light rounded">
           <PhonePreview />
         </Modal.Body>
       </Modal>

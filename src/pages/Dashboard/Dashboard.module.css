@@ -134,6 +134,26 @@
   border-right: 1px solid #e0e0e0;
 }
 
+/* Dashboard.module.css */
+.bioTextArea {
+  resize: vertical; /* Solo permite estirar hacia abajo, no hacia los lados */
+  min-height: 100px;
+  max-height: 200px; /* 👈 Acá está el límite para que no sea infinito */
+  border-radius: 12px !important;
+}
+
+.charCounter {
+  font-size: 0.8rem;
+  text-align: right;
+  margin-top: 5px;
+  color: #6c757d;
+}
+
+.charCounterError {
+  color: #dc3545; /* Rojo si se pasa */
+  font-weight: bold;
+}
+
 /* --- CELULAR --- */
 .previewColumn {
   display: none; /* Escondido por defecto (móvil) */
