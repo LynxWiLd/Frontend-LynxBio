@@ -171,14 +171,13 @@
 }
 
 .previewAvatar {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #fff;
-  /* Aseguramos que no flote a los costados */
-  margin: 0 auto;
-  display: block;
+  /* El color lo manejamos por inline-style en el JSX, pero el ancho va acá */
+  border: 4px solid;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .previewAvatarPlaceholder {

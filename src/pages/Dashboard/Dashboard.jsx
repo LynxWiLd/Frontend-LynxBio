@@ -1,5 +1,15 @@
 import { useState, useEffect, useContext } from "react";
-import { Container, Button, Tabs, Tab, Row, Col, ListGroup, Spinner, Modal } from "react-bootstrap";
+import {
+  Container,
+  Button,
+  Tabs,
+  Tab,
+  Row,
+  Col,
+  ListGroup,
+  Spinner,
+  Modal,
+} from "react-bootstrap";
 import { FaCopy, FaPalette, FaLink, FaEye } from "react-icons/fa"; // Agregamos FaEye
 import Swal from "sweetalert2";
 
@@ -14,7 +24,7 @@ const Dashboard = () => {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMobilePreview, setShowMobilePreview] = useState(false); // Estado para el modal de celu
-  
+
   const [newLink, setNewLink] = useState({
     title: "",
     url: "",
@@ -68,8 +78,18 @@ const Dashboard = () => {
     try {
       const res = await api.post("/links", newLink);
       setLinks(res.data);
-      setNewLink({ title: "", url: "", buttonColor: "#000000", buttonTextColor: "#ffffff" });
-      Swal.fire({ icon: "success", title: "¡Link agregado!", timer: 1500, showConfirmButton: false });
+      setNewLink({
+        title: "",
+        url: "",
+        buttonColor: "#000000",
+        buttonTextColor: "#ffffff",
+      });
+      Swal.fire({
+        icon: "success",
+        title: "¡Link agregado!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
       Swal.fire({ icon: "error", title: "Error al agregar" });
     }
@@ -88,7 +108,12 @@ const Dashboard = () => {
       try {
         const res = await api.delete(`/links/${id}`);
         setLinks(res.data.links || res.data);
-        Swal.fire({ icon: "success", title: "¡Borrado!", timer: 1000, showConfirmButton: false });
+        Swal.fire({
+          icon: "success",
+          title: "¡Borrado!",
+          timer: 1000,
+          showConfirmButton: false,
+        });
       } catch (err) {
         Swal.fire("Error", "No se pudo eliminar", "error");
       }
@@ -98,7 +123,12 @@ const Dashboard = () => {
   const handleSaveSettings = async () => {
     try {
       await api.put("/auth/settings", settings);
-      Swal.fire({ icon: "success", title: "¡Configuración guardada!", timer: 2000, showConfirmButton: false });
+      Swal.fire({
+        icon: "success",
+        title: "¡Configuración guardada!",
+        timer: 2000,
+        showConfirmButton: false,
+      });
     } catch (err) {
       Swal.fire({ icon: "error", title: "Error al guardar" });
     }
@@ -113,14 +143,23 @@ const Dashboard = () => {
     formData.append("type", type);
 
     try {
-      Swal.fire({ title: "Subiendo...", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      Swal.fire({
+        title: "Subiendo...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
       const res = await api.post("/auth/upload-avatar", formData);
       const newSettings = { ...settings };
       if (type === "avatar") newSettings.profile.avatarUrl = res.data.url;
       else newSettings.theme.backgroundImage = res.data.url;
       setSettings(newSettings);
       await api.put("/auth/settings", newSettings);
-      Swal.fire({ icon: "success", title: "¡Imagen lista y guardada!", timer: 1500, showConfirmButton: false });
+      Swal.fire({
+        icon: "success",
+        title: "¡Imagen lista y guardada!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
       Swal.fire("Error", "No se pudo subir la imagen", "error");
     }
@@ -129,33 +168,64 @@ const Dashboard = () => {
   const copyToClipboard = () => {
     const url = `${window.location.origin}/${settings.profile.username || ""}`;
     navigator.clipboard.writeText(url);
-    Swal.fire({ icon: "info", title: "Link copiado", timer: 1500, showConfirmButton: false });
+    Swal.fire({
+      icon: "info",
+      title: "Link copiado",
+      timer: 1500,
+      showConfirmButton: false,
+    });
   };
 
   // Componente interno para no repetir el código del celular
   const PhonePreview = () => (
     <div className={styles.phoneMockup}>
-      <div className={styles.phoneScreen} style={{ 
-        backgroundColor: settings.theme.backgroundColor,
-        backgroundImage: settings.theme.backgroundImage ? `url(${settings.theme.backgroundImage})` : 'none',
-        backgroundSize: 'cover',
-        color: settings.theme.textColor 
-      }}>
+      <div
+        className={styles.phoneScreen}
+        style={{
+          backgroundColor: settings.theme.backgroundColor,
+          backgroundImage: settings.theme.backgroundImage
+            ? `url(${settings.theme.backgroundImage})`
+            : "none",
+          backgroundSize: "cover",
+          color: settings.theme.textColor,
+        }}
+      >
         <div className={styles.previewContent}>
+          {/* --- MARCO FOTO: Ahora sí usa el color del selector --- */}
           {settings.profile.avatarUrl ? (
-            <img src={settings.profile.avatarUrl} alt="Avatar" className={styles.previewAvatar} />
+            <img
+              src={settings.profile.avatarUrl}
+              alt="Avatar"
+              className={styles.previewAvatar}
+              style={{ borderColor: settings.theme.buttonColor }} // Usamos buttonColor como color de marco
+            />
           ) : (
-            <div className={styles.previewAvatarPlaceholder} />
+            <div
+              className={styles.previewAvatarPlaceholder}
+              style={{ borderColor: settings.theme.buttonColor }}
+            />
           )}
-          <h5 className="fw-bold mt-3">@{settings.profile.username || "usuario"}</h5>
-          <p className="small text-center px-3">{settings.profile.bio}</p>
-          
+
+          <h5 className="fw-bold mt-3">
+            @{settings.profile.username || "usuario"}
+          </h5>
+          <p
+            className="small text-center px-3"
+            style={{ color: settings.theme.textColor }}
+          >
+            {settings.profile.bio}
+          </p>
+
           <div className={styles.previewLinks}>
             {links.map((link) => (
-              <div 
-                key={link._id} 
+              <div
+                key={link._id}
                 className={styles.previewLinkItem}
-                style={{ backgroundColor: settings.theme.buttonColor, color: settings.theme.buttonTextColor }}
+                style={{
+                  /* --- BOTONES: Respetan su propio color de la DB --- */
+                  backgroundColor: link.buttonColor || "#000000",
+                  color: link.buttonTextColor || "#ffffff",
+                }}
               >
                 {link.title}
               </div>
@@ -166,9 +236,13 @@ const Dashboard = () => {
     </div>
   );
 
-  if (loading) return (
-    <Container className="text-center mt-5"><Spinner animation="border" variant="primary" /><p>Sincronizando LynxBio...</p></Container>
-  );
+  if (loading)
+    return (
+      <Container className="text-center mt-5">
+        <Spinner animation="border" variant="primary" />
+        <p>Sincronizando LynxBio...</p>
+      </Container>
+    );
 
   return (
     <Container fluid className={styles.dashboardWrapper}>
@@ -178,22 +252,48 @@ const Dashboard = () => {
           <div className="py-4 px-md-4">
             <div className={styles.headerSection}>
               <h2 className="fw-bold">Panel de Control</h2>
-              <Button variant="outline-dark" onClick={copyToClipboard} className="rounded-pill px-4 shadow-sm">
+              <Button
+                variant="outline-dark"
+                onClick={copyToClipboard}
+                className="rounded-pill px-4 shadow-sm"
+              >
                 <FaCopy className="me-2" /> Mi Link
               </Button>
             </div>
 
             <Tabs defaultActiveKey="links" className="mb-4 custom-tabs">
-              <Tab eventKey="links" title={<span><FaLink className="me-2" /> Enlaces</span>}>
-                <AddLinkCard newLink={newLink} setNewLink={setNewLink} handleAddLink={handleAddLink} />
+              <Tab
+                eventKey="links"
+                title={
+                  <span>
+                    <FaLink className="me-2" /> Enlaces
+                  </span>
+                }
+              >
+                <AddLinkCard
+                  newLink={newLink}
+                  setNewLink={setNewLink}
+                  handleAddLink={handleAddLink}
+                />
                 <ListGroup variant="flush" className="mt-4">
                   {links.map((link) => (
-                    <LinkItem key={link._id} link={link} handleDeleteLink={handleDeleteLink} />
+                    <LinkItem
+                      key={link._id}
+                      link={link}
+                      handleDeleteLink={handleDeleteLink}
+                    />
                   ))}
                 </ListGroup>
               </Tab>
 
-              <Tab eventKey="appearance" title={<span><FaPalette className="me-2" /> Apariencia</span>}>
+              <Tab
+                eventKey="appearance"
+                title={
+                  <span>
+                    <FaPalette className="me-2" /> Apariencia
+                  </span>
+                }
+              >
                 <AppearanceForm
                   settings={settings}
                   setSettings={setSettings}
@@ -208,32 +308,34 @@ const Dashboard = () => {
         {/* COLUMNA DERECHA: PREVIEW (CELULAR) - Solo visible en Escritorio */}
         <Col lg={5} xl={4} className={styles.previewColumn}>
           <div className={styles.phoneSticky}>
-             <h5 className="text-muted text-center mb-3">Previsualización en vivo</h5>
-             <PhonePreview />
+            <h5 className="text-muted text-center mb-3">
+              Previsualización en vivo
+            </h5>
+            <PhonePreview />
           </div>
         </Col>
       </Row>
 
       {/* BOTÓN FLOTANTE PARA MÓVIL */}
-      <Button 
-        className={styles.mobilePreviewBtn} 
+      <Button
+        className={styles.mobilePreviewBtn}
         onClick={() => setShowMobilePreview(true)}
       >
         <FaEye className="me-2" /> Vista previa
       </Button>
 
       {/* MODAL DE PREVIEW PARA MÓVIL */}
-      <Modal 
-        show={showMobilePreview} 
+      <Modal
+        show={showMobilePreview}
         onHide={() => setShowMobilePreview(false)}
         centered
         className={styles.mobileModal}
       >
         <Modal.Header closeButton className="border-0">
-           <Modal.Title>Tu LynxBio</Modal.Title>
+          <Modal.Title>Tu LynxBio</Modal.Title>
         </Modal.Header>
         <Modal.Body className="d-flex justify-content-center bg-light rounded-bottom">
-           <PhonePreview />
+          <PhonePreview />
         </Modal.Body>
       </Modal>
     </Container>
