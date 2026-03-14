@@ -1,25 +1,45 @@
-/* src/styles/Responsive.css */
+/* Responsive.css - El cerebro de las pantallas */
 
-/* Variables de Breakpoints */
-:root {
-  --mobile: 576px;
-  --tablet: 768px;
-  --desktop: 992px;
+/* 1. MÓVIL (Hasta 768px) */
+@media (max-width: 767.98px) {
+  /* En el Dashboard, escondemos la columna de preview fija */
+  [class*="previewColumn"] {
+    display: none !important;
+  }
+
+  /* El editor ocupa todo el ancho */
+  [class*="configColumn"] {
+    width: 100% !important;
+    border: none !important;
+    padding: 10px !important;
+  }
+
+  /* Ajustamos los títulos para que no se corten */
+  h1 {
+    font-size: 2rem !important;
+  }
+
+  /* El botón flotante de "Vista Previa" aparece aquí */
+  [class*="mobilePreviewBtn"] {
+    display: flex !important;
+  }
 }
 
-/* Dashboard en Desktop */
-@media (min-width: 992px) {
-  .previewColumn { display: block; } /* Mostramos el celular */
-  .mobilePreviewToggle { display: none; } /* Escondemos el botón de móvil */
-}
-
-/* Dashboard en Mobile/Tablet */
-@media (max-width: 991px) {
-  .previewColumn { display: none; } /* Escondemos la columna lateral */
-  .mobilePreviewToggle { display: flex; } /* Mostramos un botón flotante facha */
+/* 2. TABLET (768px a 991px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  [class*="previewColumn"] {
+    display: none !important;
+  }
   
-  .configColumn {
-    width: 100%; /* El editor ocupa todo */
-    padding: 20px;
+  [class*="configColumn"] {
+    width: 100% !important;
+  }
+}
+
+/* 3. DESKTOP (992px en adelante) */
+@media (min-width: 992px) {
+  /* Escondemos el botón de móvil porque ya vemos el celular al costado */
+  [class*="mobilePreviewBtn"] {
+    display: none !important;
   }
 }
