@@ -83,12 +83,12 @@ const PublicPage = () => {
               key={link._id}
               href={link.url}
               target="_blank"
-              className={styles.linkButton} // Tu clase de CSS Module
+              className={styles.linkButton} // Usamos tu clase de CSS Module
               style={{
-                // 👇 ACÁ ESTÁ LA CLAVE: Usamos los colores específicos de cada link
+                // 👇 APLICACIÓN INDIVIDUAL
                 backgroundColor: link.buttonColor || "#000",
                 color: link.buttonTextColor || "#fff",
-                // Mantenemos el degradado que definimos en el CSS
+                // El degradado sutil para que no sea plano
                 backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1))`,
               }}
             >

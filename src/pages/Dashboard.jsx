@@ -34,7 +34,7 @@ const Dashboard = () => {
   const [newLink, setNewLink] = useState({
     title: "",
     url: "",
-    buttonColor: "#000000", // color por defecto
+    buttonColor: "#000000",
     buttonTextColor: "#ffffff",
   });
 
@@ -91,10 +91,16 @@ const Dashboard = () => {
     try {
       const res = await api.post("/links", newLink);
       setLinks(res.data);
-      setNewLink({ title: "", url: "" });
+      // Reiniciamos con los colores por defecto
+      setNewLink({
+        title: "",
+        url: "",
+        buttonColor: "#000000",
+        buttonTextColor: "#ffffff",
+      });
       Swal.fire({
         icon: "success",
-        title: "¡Link agregado!",
+        title: "¡Link tematizado agregado!",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -242,10 +248,10 @@ const Dashboard = () => {
             <Col md={8}>
               <Card className="mb-4 shadow-sm border-0 bg-light p-3">
                 <Form onSubmit={handleAddLink}>
-                  <Row className="g-2">
-                    <Col md={5}>
+                  <Row className="g-2 mb-3">
+                    <Col md={6}>
                       <Form.Control
-                        placeholder="Título del botón"
+                        placeholder="Título (ej: WhatsApp)"
                         value={newLink.title}
                         onChange={(e) =>
                           setNewLink({ ...newLink, title: e.target.value })
@@ -253,9 +259,9 @@ const Dashboard = () => {
                         required
                       />
                     </Col>
-                    <Col md={5}>
+                    <Col md={6}>
                       <Form.Control
-                        placeholder="URL (ej: https://...)"
+                        placeholder="URL (https://...)"
                         value={newLink.url}
                         onChange={(e) =>
                           setNewLink({ ...newLink, url: e.target.value })
@@ -263,9 +269,45 @@ const Dashboard = () => {
                         required
                       />
                     </Col>
-                    <Col md={2}>
-                      <Button variant="primary" type="submit" className="w-100">
-                        <FaPlus />
+                  </Row>
+                  <Row className="g-2 align-items-center">
+                    <Col xs={4}>
+                      <Form.Label className="small fw-bold mb-0">
+                        Color Botón
+                      </Form.Label>
+                      <Form.Control
+                        type="color"
+                        value={newLink.buttonColor}
+                        onChange={(e) =>
+                          setNewLink({
+                            ...newLink,
+                            buttonColor: e.target.value,
+                          })
+                        }
+                      />
+                    </Col>
+                    <Col xs={4}>
+                      <Form.Label className="small fw-bold mb-0">
+                        Color Texto
+                      </Form.Label>
+                      <Form.Control
+                        type="color"
+                        value={newLink.buttonTextColor}
+                        onChange={(e) =>
+                          setNewLink({
+                            ...newLink,
+                            buttonTextColor: e.target.value,
+                          })
+                        }
+                      />
+                    </Col>
+                    <Col xs={4}>
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="w-100 mt-3 fw-bold"
+                      >
+                        <FaPlus className="me-2" /> AGREGAR
                       </Button>
                     </Col>
                   </Row>
