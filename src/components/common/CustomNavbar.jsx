@@ -3,8 +3,8 @@ import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../context/AuthContext";
 import { FaUserCircle, FaSignOutAlt, FaRocket } from "react-icons/fa";
-import LoginModal from "../../auth/LoginModal";
-import RegisterModal from "../../auth/RegisterModal";
+import LoginModal from "../auth/LoginModal";
+import RegisterModal from "../auth/RegisterModal";
 import styles from "./Navbar.module.css"; // Importamos estilos
 
 const CustomNavbar = () => {
