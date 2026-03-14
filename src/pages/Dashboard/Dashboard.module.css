@@ -250,20 +250,48 @@
 }
 
 /* --- BOOTSTRAP OVERRIDES --- */
+/* Dashboard.module.css */
+
+/* --- TABS (Las pestañas de arriba) --- */
+:global(.nav-tabs) {
+  border-bottom: 2px solid var(--border-color) !important;
+}
+
 :global(.nav-tabs .nav-link) {
-  color: var(--text-muted);
-  border: none;
+  color: var(--text-muted) !important;
+  border: none !important;
+  font-weight: 600;
 }
 
 :global(.nav-tabs .nav-link.active) {
-  background-color: var(--bg-config) !important;
-  color: var(--text-main) !important;
+  background-color: transparent !important;
+  color: #0d6efd !important; /* El azul de LynxBio */
   border-bottom: 2px solid #0d6efd !important;
 }
 
-:global(.modal-content) {
-  border-radius: 40px;
-  border: none;
-  background-color: var(--bg-config) !important;
-  color: var(--text-main);
+/* --- LISTA DE ENLACES (LinkItem) --- */
+:global(.list-group-item) {
+  background-color: var(--bg-item) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  margin-bottom: 10px;
+  border-radius: 12px !important; /* Para que sigan la onda redondeada */
+  transition: transform 0.2s ease;
+}
+
+:global(.list-group-item:hover) {
+  transform: translateX(5px);
+  border-color: #0d6efd !important;
+}
+
+/* --- INPUTS --- */
+:global(.form-control) {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+:global(.form-control::placeholder) {
+  color: var(--text-muted) !important;
+  opacity: 0.6;
 }

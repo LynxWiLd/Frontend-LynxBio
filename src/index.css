@@ -1,27 +1,26 @@
-
 /* index.css */
 :root {
-  /* TEMA CLARO */
   --bg-main: #f8f9fa;
-  --bg-config: #ffffff;
+  --bg-card: #ffffff;
+  --bg-item: #ffffff; /* Fondo de los links en la lista */
   --text-main: #1a1a1a;
-  --border-color: #e0e0e0;
-  --glass-bg: rgba(255, 255, 255, 0.7); /* Vidrio claro */
-  --glass-border: rgba(255, 255, 255, 0.3);
+  --border-color: #dee2e6;
+  --input-bg: #ffffff;
 }
 
-[data-theme='dark'] {
-  /* TEMA OSCURO */
-  --bg-main: #0f172a;     /* Azul noche */
-  --bg-config: #1e293b;   /* Gris pizarra */
+[data-theme="dark"] {
+  --bg-main: #0b1120; /* Azul noche muy profundo */
+  --bg-card: #1e293b; /* Gris pizarra para tarjetas */
+  --bg-item: #161e2c; /* Un tono intermedio para los ítems de la lista */
   --text-main: #f1f5f9;
   --border-color: #334155;
-  --glass-bg: rgba(255, 255, 255, 0.05); /* Vidrio oscuro sutil */
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --input-bg: #0f172a; /* Fondo oscuro para los inputs */
 }
 
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }

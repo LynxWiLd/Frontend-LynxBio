@@ -37,16 +37,16 @@
 .brandText {
   font-weight: 700;
   font-size: 1.8rem;
-  font-family: 'Poppins', sans-serif;
-  
+  font-family: "Poppins", sans-serif;
+
   /* El "Stencil" del degradado */
   background: linear-gradient(45deg, #004e92, #00ff87);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  
+
   /* Fallback para navegadores viejos */
-  color: #004e92; 
+  color: #004e92;
 }
 
 .navButton {
@@ -55,14 +55,23 @@
 }
 
 /* Bootstrap Overrides */
+/* Navbar.module.css */
+
 .userDropdown :global(.dropdown-toggle) {
-  border-radius: 50px !important;
-  padding: 0.5rem 1.2rem !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 .dropdownMenu {
-  border-radius: 15px !important;
-  border: none !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.dropdownMenu :global(.dropdown-item) {
+  color: var(--text-main) !important;
+}
+
+.dropdownMenu :global(.dropdown-item:hover) {
+  background-color: var(--bg-main) !important;
 }
