@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { FaInstagram, FaGithub } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6"; // La X de Twitter
+import { FaXTwitter } from "react-icons/fa6";
 import styles from "../../pages/Dashboard/Dashboard.module.css";
 
 const AppearanceForm = ({
@@ -24,37 +24,25 @@ const AppearanceForm = ({
     },
   });
 
-  // Observamos la bio para el contador de caracteres en tiempo real
-  const bioWatch = watch("bio");
+  const bioWatch = watch("bio", settings.profile.bio);
 
-  // Esta función se ejecuta al darle al botón "Guardar"
-  const onSubmit = (data) => {
-    handleSaveSettings(); // Disparamos la función que ya tenés en el Dashboard
+  const onSubmit = () => {
+    handleSaveSettings();
   };
 
-  // Función para actualizar el preview mientras el usuario escribe
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-
-    // Si es un campo de redes sociales
-    if (["instagram", "github", "twitter"].includes(name)) {
-      setSettings({
-        ...settings,
-        socials: { ...settings.socials, [name]: value },
-      });
-    } else if (name === "bio") {
-      setSettings({
-        ...settings,
-        profile: { ...settings.profile, bio: value },
-      });
-    }
+  // Función unificada para que el celu de la derecha se entere de los cambios
+  const syncPreview = (name, value, category) => {
+    setSettings((prev) => ({
+      ...prev,
+      [category]: { ...prev[category], [name]: value },
+    }));
   };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)} className={styles.glassCard}>
       <h4 className="fw-bold mb-4 text-center">Personalizá tu Perfil</h4>
 
-      {/* --- SECCIÓN AVATAR --- */}
+      {/* --- AVATAR --- */}
       <div className="text-center mb-4">
         <Form.Label className="fw-bold d-block">Imagen de Perfil</Form.Label>
         <img
@@ -65,35 +53,30 @@ const AppearanceForm = ({
         <Form.Control
           type="file"
           size="sm"
+          className="mt-2"
           onChange={(e) => handleImageUpload(e, "avatar")}
           accept="image/*"
         />
       </div>
 
-      {/* --- BIO CON LÍMITES --- */}
+      {/* --- BIO CON LÍMITES Y SYNC --- */}
       <Form.Group className="mb-3">
         <Form.Label className="fw-bold">Bio (Breve descripción)</Form.Label>
         <Form.Control
           as="textarea"
           className={styles.bioTextArea}
           placeholder="Contanos algo de vos..."
-          maxLength={150} // 👈 Esto corta el chorro a nivel teclado
+          isInvalid={!!errors.bio}
           {...register("bio", {
             maxLength: { value: 150, message: "Máximo 150 caracteres" },
+            onChange: (e) => syncPreview("bio", e.target.value, "profile"), // 👈 Sync correcto
           })}
-          onChange={(e) => {
-            // Esto mantiene el preview sincronizado
-            setSettings({
-              ...settings,
-              profile: { ...settings.profile, bio: e.target.value },
-            });
-          }}
         />
         <Form.Control.Feedback type="invalid">
           {errors.bio?.message}
         </Form.Control.Feedback>
         <div
-          className={`${styles.charCounter} ${bioWatch?.length > 150 ? "text-danger fw-bold" : ""}`}
+          className={`${styles.charCounter} ${bioWatch?.length >= 150 ? styles.charCounterError : ""}`}
         >
           {bioWatch?.length || 0} / 150
         </div>
@@ -103,96 +86,46 @@ const AppearanceForm = ({
       <hr />
       <h5 className="fw-bold mb-3">Redes Sociales</h5>
       <Row>
-        <Col md={4} className="mb-2">
-          <Form.Group>
-            <Form.Label>
-              <FaInstagram /> Instagram
-            </Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="usuario"
-              {...register("instagram")}
-              name="instagram"
-              onChange={handleInputChange}
-            />
-          </Form.Group>
-        </Col>
-        <Col md={4} className="mb-2">
-          <Form.Group>
-            <Form.Label>
-              <FaXTwitter /> X (Twitter)
-            </Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="usuario"
-              {...register("twitter")}
-              name="twitter"
-              onChange={handleInputChange}
-            />
-          </Form.Group>
-        </Col>
-        <Col md={4} className="mb-2">
-          <Form.Group>
-            <Form.Label>
-              <FaGithub /> GitHub
-            </Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="usuario"
-              {...register("github")}
-              name="github"
-              onChange={handleInputChange}
-            />
-          </Form.Group>
-        </Col>
+        {["instagram", "twitter", "github"].map((social) => (
+          <Col md={4} key={social} className="mb-2">
+            <Form.Group>
+              <Form.Label className="small fw-semibold">
+                {social === "instagram" && <FaInstagram />}
+                {social === "twitter" && <FaXTwitter />}
+                {social === "github" && <FaGithub />} {social}
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="usuario"
+                {...register(social, {
+                  onChange: (e) =>
+                    syncPreview(social, e.target.value, "socials"),
+                })}
+              />
+            </Form.Group>
+          </Col>
+        ))}
       </Row>
 
-      {/* --- COLORES (ARTES VISUALES) --- */}
+      {/* --- COLORES --- */}
       <hr />
       <h5 className="fw-bold mb-3">Paleta de Colores</h5>
       <Row className="text-center">
-        <Col xs={4}>
-          <Form.Label className="small fw-bold">Fondo</Form.Label>
-          <Form.Control
-            type="color"
-            className={styles.colorInputCustom}
-            value={settings.theme.backgroundColor}
-            onChange={(e) =>
-              setSettings({
-                ...settings,
-                theme: { ...settings.theme, backgroundColor: e.target.value },
-              })
-            }
-          />
-        </Col>
-        <Col xs={4}>
-          <Form.Label className="small fw-bold">Marco Foto</Form.Label>
-          <Form.Control
-            type="color"
-            className={styles.colorInputCustom}
-            value={settings.theme.buttonColor}
-            onChange={(e) =>
-              setSettings({
-                ...settings,
-                theme: { ...settings.theme, buttonColor: e.target.value },
-              })
-            }
-          />
-        </Col>
-        <Col xs={4}>
-          <Form.Label className="small fw-bold">Texto</Form.Label>
-          <Form.Control
-            type="color"
-            className={styles.colorInputCustom}
-            value={settings.theme.textColor}
-            onChange={(e) =>
-              setSettings({
-                ...settings,
-                theme: { ...settings.theme, textColor: e.target.value },
-              })
-            }
-          />
-        </Col>
+        {[
+          { label: "Fondo", key: "backgroundColor" },
+          { label: "Marco Foto", key: "buttonColor" },
+          { label: "Texto", key: "textColor" },
+        ].map((item) => (
+          <Col xs={4} key={item.key}>
+            <Form.Label className="small fw-bold">{item.label}</Form.Label>
+            <Form.Control
+              type="color"
+              className={styles.colorInputCustom}
+              value={settings.theme[item.key]}
+              onChange={(e) => syncPreview(item.key, e.target.value, "theme")}
+            />
+          </Col>
+        ))}
       </Row>
 
       <Button
