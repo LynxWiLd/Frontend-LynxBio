@@ -1,140 +1,125 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Button, Image, Spinner } from "react-bootstrap";
-import { FaInstagram, FaTwitter, FaGithub, FaGlobe } from "react-icons/fa";
+import { Container, Spinner } from "react-bootstrap";
+import { FaInstagram, FaGithub, FaXTwitter } from "react-icons/fa6";
 import api from "../../services/axiosConfig";
-import styles from "./PublicPage.module.css"; // 1. Importamos el CSS
+import styles from "./PublicPage.module.css"; // 👈 Crearemos este archivo ahora
 
 const PublicPage = () => {
   const { username } = useParams();
-  const [userData, setUserData] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchUser = async () => {
       try {
-        const res = await api.get(`/auth/profile/${username}`);
-        setUserData(res.data);
+        const res = await api.get(`/auth/user/${username}`);
+        setUser(res.data);
       } catch (err) {
-        console.error("Perfil no encontrado");
+        console.error("Usuario no encontrado");
       } finally {
         setLoading(false);
       }
     };
-    fetchProfile();
+    fetchUser();
   }, [username]);
 
   if (loading)
     return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ minHeight: "100vh" }}
-      >
+      <div className={styles.fullPageCenter}>
         <Spinner animation="border" variant="primary" />
       </div>
     );
 
-  if (!userData)
+  if (!user)
     return (
       <div className="text-center mt-5">
-        <h1>404 - No encontrado</h1>
+        <h1>404</h1>
+        <p>Usuario no encontrado</p>
       </div>
     );
 
-  const { profile = {}, theme = {}, links = [], socials = {} } = userData;
-
-  // Solo guardamos lo dinámico aquí
-  const dynamicWrapper = {
-    backgroundColor: theme?.backgroundColor || "#f8f9fa",
-    backgroundImage: theme?.backgroundImage
-      ? `url(${theme.backgroundImage})`
-      : "none",
-  };
-
   return (
-    <div className={styles.publicPageWrapper} style={dynamicWrapper}>
-      {/* Overlay: solo si hay imagen de fondo */}
-      {theme?.backgroundImage && (
-        <div
-          className={styles.overlay}
-          style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
+    <div
+      className={styles.publicWrapper}
+      style={{
+        backgroundColor: user.theme.backgroundColor,
+        backgroundImage: user.theme.backgroundImage
+          ? `url(${user.theme.backgroundImage})`
+          : "none",
+        color: user.theme.textColor,
+      }}
+    >
+      <Container className={styles.mainContainer}>
+        {/* Avatar */}
+        <img
+          src={user.profile.avatarUrl || "https://via.placeholder.com/150"}
+          alt={user.username}
+          className={styles.avatar}
+          style={{ borderColor: user.theme.buttonColor }}
         />
-      )}
 
-      <div
-        className={styles.glassCard}
-        style={{ color: theme?.textColor || "#000" }}
-      >
-        <Image
-          src={profile?.avatarUrl || "https://via.placeholder.com/150"}
-          roundedCircle
-          className={styles.avatar} // Usamos la clase del CSS
-          style={{
-            width: "120px",
-            height: "120px",
-            objectFit: "cover",
-            // 👇 ACÁ: El color global 'buttonColor' ahora solo afecta al borde de la foto
-            borderColor: theme?.buttonColor || "#ffffff",
-            borderStyle: "solid",
-            borderWidth: "4px",
-          }}
-        />
-        <h2 className="fw-bold mb-1">@{username}</h2>
-        <p className="mb-4 fw-medium" style={{ opacity: 0.9 }}>
-          {profile?.bio}
-        </p>
-        <div className="w-100 d-grid gap-3 mb-5">
-          {links.map((link) => (
-            <Button
+        {/* Info */}
+        <h1 className="fw-bold mt-3">@{user.username}</h1>
+        <p className={styles.bio}>{user.profile.bio}</p>
+
+        {/* Links */}
+        <div className={styles.linksContainer}>
+          {user.links.map((link) => (
+            <a
               key={link._id}
-              href={link.url}
+              href={
+                link.url.startsWith("http") ? link.url : `https://${link.url}`
+              }
               target="_blank"
-              className={styles.linkButton} // Usamos tu clase de CSS Module
+              rel="noopener noreferrer"
+              className={styles.linkButton}
               style={{
-                // 👇 APLICACIÓN INDIVIDUAL
                 backgroundColor: link.buttonColor || "#000",
                 color: link.buttonTextColor || "#fff",
-                // El degradado sutil para que no sea plano
-                backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1))`,
               }}
             >
               {link.title}
-            </Button>
+            </a>
           ))}
         </div>
+
+        {/* Redes Sociales */}
         <div className={styles.socialIcons}>
-          {socials?.instagram && (
+          {user.socials?.instagram && (
             <a
-              href={socials.instagram}
+              href={`https://instagram.com/${user.socials.instagram}`}
               target="_blank"
               rel="noreferrer"
-              style={{ color: theme?.textColor }}
             >
               <FaInstagram />
             </a>
           )}
-          {socials?.github && (
+          {user.socials?.github && (
             <a
-              href={socials.github}
+              href={`https://github.com/${user.socials.github}`}
               target="_blank"
               rel="noreferrer"
-              style={{ color: theme?.textColor }}
             >
               <FaGithub />
             </a>
           )}
-          {socials?.twitter && (
+          {user.socials?.twitter && (
             <a
-              href={socials.twitter}
+              href={`https://twitter.com/${user.socials.twitter}`}
               target="_blank"
               rel="noreferrer"
-              style={{ color: theme?.textColor }}
             >
-              <FaTwitter />
+              <FaXTwitter />
             </a>
           )}
         </div>
-      </div>
+
+        {/* Branding LynxBio */}
+        <footer className="mt-5 opacity-50 small">
+          Creado con <strong>LynxBio</strong>
+        </footer>
+      </Container>
     </div>
   );
 };
