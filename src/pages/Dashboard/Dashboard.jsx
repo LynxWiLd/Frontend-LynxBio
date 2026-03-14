@@ -160,6 +160,40 @@ const Dashboard = () => {
     }
   };
 
+  // --- FUNCIÓN: ELIMINAR IMÁGENES (Avatar o Fondo) ---
+  const handleRemoveImage = async (type) => {
+    const result = await Swal.fire({
+      title: `¿Quitar ${type === "avatar" ? "foto de perfil" : "fondo"}?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, quitar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const newSettings = { ...settings };
+        if (type === "avatar") {
+          newSettings.profile.avatarUrl = "";
+        } else {
+          newSettings.theme.backgroundImage = "";
+        }
+
+        setSettings(newSettings);
+        await api.put("/auth/settings", newSettings);
+
+        Swal.fire({
+          icon: "success",
+          title: "¡Eliminado!",
+          timer: 1000,
+          showConfirmButton: false,
+        });
+      } catch (err) {
+        Swal.fire("Error", "No se pudo eliminar", "error");
+      }
+    }
+  };
+
   const copyToClipboard = () => {
     const url = `${window.location.origin}/${settings.profile.username}`;
     navigator.clipboard.writeText(url);
@@ -289,6 +323,7 @@ const Dashboard = () => {
                 setSettings={setSettings}
                 handleSaveSettings={handleSaveSettings}
                 handleImageUpload={handleImageUpload}
+                handleRemoveImage={handleRemoveImage}
               />
             </Tab>
           </Tabs>

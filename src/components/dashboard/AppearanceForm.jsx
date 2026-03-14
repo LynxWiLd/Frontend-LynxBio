@@ -1,22 +1,18 @@
 import { useForm } from "react-hook-form";
-import { Form, Button, Row, Col } from "react-bootstrap";
-import { FaInstagram, FaGithub } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { Form, Button, Row, Col, InputGroup } from "react-bootstrap";
+import { FaInstagram, FaGithub, FaImage, FaTrash, FaCheckCircle, FaUserCircle } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6"; 
 import styles from "../../pages/Dashboard/Dashboard.module.css";
 
 const AppearanceForm = ({
   settings,
   setSettings,
   handleImageUpload,
+  handleRemoveImage, // 👈 Nueva prop
   handleSaveSettings,
 }) => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm({
-    mode: "onChange", // Valida mientras el usuario escribe
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+    mode: "onChange",
     defaultValues: {
       bio: settings.profile.bio,
       instagram: settings.socials.instagram,
@@ -25,25 +21,32 @@ const AppearanceForm = ({
     },
   });
 
-  // Watch observa los cambios para el contador y el preview
   const bioWatch = watch("bio", settings.profile.bio);
 
-  const onSubmit = () => {
-    handleSaveSettings();
-  };
-
   return (
-    <Form onSubmit={handleSubmit(onSubmit)} className={styles.glassCard}>
-      <h4 className="fw-bold mb-4 text-center">Personalizá tu Perfil</h4>
+    <Form onSubmit={handleSubmit(handleSaveSettings)} className={styles.glassCard}>
+      <h4 className="fw-bold mb-4 text-center">Personalización Técnica</h4>
 
-      {/* SECCIÓN AVATAR */}
+      {/* --- FOTO DE PERFIL --- */}
       <div className="text-center mb-4">
-        <Form.Label className="fw-bold d-block">Imagen de Perfil</Form.Label>
-        <img
-          src={settings.profile.avatarUrl || "https://via.placeholder.com/150"}
-          alt="Avatar Preview"
-          className={styles.avatarImage}
-        />
+        <Form.Label className="fw-bold d-block"><FaUserCircle className="me-2"/>Imagen de Perfil</Form.Label>
+        <div className="position-relative d-inline-block">
+            <img
+            src={settings.profile.avatarUrl || "https://via.placeholder.com/150"}
+            alt="Avatar"
+            className={styles.avatarImage}
+            />
+            {settings.profile.avatarUrl && (
+                <Button 
+                    variant="danger" 
+                    size="sm" 
+                    className="position-absolute top-0 end-0 rounded-circle shadow-sm"
+                    onClick={() => handleRemoveImage("avatar")}
+                >
+                    <FaTrash size={12}/>
+                </Button>
+            )}
+        </div>
         <Form.Control
           type="file"
           size="sm"
@@ -53,77 +56,43 @@ const AppearanceForm = ({
         />
       </div>
 
-      {/* BIO CON VALIDACIÓN Y SYNC */}
-      <Form.Group className="mb-3 position-relative">
-        <Form.Label className="fw-bold">Bio (Breve descripción)</Form.Label>
-        <Form.Control
-          as="textarea"
-          className={styles.bioTextArea}
-          placeholder="Contanos algo de vos..."
-          isInvalid={!!errors.bio}
-          {...register("bio", {
-            maxLength: {
-              value: 150,
-              message: "¡Te pasaste! Máximo 150 caracteres.",
-            },
-            // El truco está acá: el onChange va dentro de register
-            onChange: (e) => {
-              setSettings((prev) => ({
-                ...prev,
-                profile: { ...prev.profile, bio: e.target.value },
-              }));
-            },
-          })}
-        />
-        {/* Este es el mensaje de error que ahora sí va a aparecer */}
-        <Form.Control.Feedback type="invalid" className="fw-bold">
-          {errors.bio?.message}
-        </Form.Control.Feedback>
+      {/* --- FONDO PERSONALIZADO --- */}
+      <div className="mb-4">
+        <Form.Label className="fw-bold d-block"><FaImage className="me-2" /> Fondo de Pantalla</Form.Label>
+        <InputGroup>
+            <Form.Control
+                type="file"
+                size="sm"
+                onChange={(e) => handleImageUpload(e, "background")}
+                accept="image/*"
+            />
+            {settings.theme.backgroundImage && (
+                <Button variant="outline-danger" size="sm" onClick={() => handleRemoveImage("background")}>
+                    <FaTrash />
+                </Button>
+            )}
+        </InputGroup>
+      </div>
 
-        <div
-          className={`${styles.charCounter} ${bioWatch?.length > 150 ? styles.charCounterError : ""}`}
+      {/* --- PALETA DE COLORES --- */}
+      <hr />
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h5 className="fw-bold m-0 text-primary">Paleta de Colores</h5>
+        <Button 
+            variant="success" 
+            size="sm" 
+            className="rounded-pill px-3 fw-bold shadow-sm"
+            onClick={handleSaveSettings}
         >
-          {bioWatch?.length || 0} / 150
-        </div>
-      </Form.Group>
-
-      {/* REDES SOCIALES */}
-      <hr />
-      <h5 className="fw-bold mb-3">Redes Sociales</h5>
-      <Row>
-        {["instagram", "twitter", "github"].map((social) => (
-          <Col md={4} key={social} className="mb-3">
-            <Form.Group>
-              <Form.Label className="small fw-semibold text-capitalize">
-                {social === "instagram" && <FaInstagram className="me-1" />}
-                {social === "twitter" && <FaXTwitter className="me-1" />}
-                {social === "github" && <FaGithub className="me-1" />} {social}
-              </Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="usuario"
-                {...register(social, {
-                  onChange: (e) => {
-                    setSettings((prev) => ({
-                      ...prev,
-                      socials: { ...prev.socials, [social]: e.target.value },
-                    }));
-                  },
-                })}
-              />
-            </Form.Group>
-          </Col>
-        ))}
-      </Row>
-
-      {/* PALETA DE COLORES */}
-      <hr />
-      <h5 className="fw-bold mb-3">Paleta de Colores</h5>
-      <Row className="text-center">
+            <FaCheckCircle className="me-1"/> Aplicar Colores
+        </Button>
+      </div>
+      
+      <Row className="text-center mb-4">
         {[
           { label: "Fondo", key: "backgroundColor" },
-          { label: "Marco Foto", key: "buttonColor" },
-          { label: "Texto", key: "textColor" },
+          { label: "Borde Foto", key: "buttonColor" },
+          { label: "Texto", key: "textColor" }
         ].map((item) => (
           <Col xs={4} key={item.key}>
             <Form.Label className="small fw-bold">{item.label}</Form.Label>
@@ -142,12 +111,22 @@ const AppearanceForm = ({
         ))}
       </Row>
 
-      <Button
-        variant="primary"
-        type="submit"
-        className="w-100 mt-4 rounded-pill fw-bold py-2 shadow"
-      >
-        GUARDAR TODO
+      {/* --- BIO Y REDES (Resto igual) --- */}
+      <Form.Group className="mb-4">
+        <Form.Label className="fw-bold">Bio</Form.Label>
+        <Form.Control
+          as="textarea"
+          className={styles.bioTextArea}
+          {...register("bio", {
+            maxLength: 150,
+            onChange: (e) => setSettings(prev => ({...prev, profile: {...prev.profile, bio: e.target.value}}))
+          })}
+        />
+        <div className={styles.charCounter}>{bioWatch?.length || 0} / 150</div>
+      </Form.Group>
+
+      <Button variant="primary" type="submit" className="w-100 rounded-pill fw-bold py-2 shadow">
+        GUARDAR CAMBIOS GENERALES
       </Button>
     </Form>
   );
