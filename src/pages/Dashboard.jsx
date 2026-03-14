@@ -1,17 +1,7 @@
 import { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Card,
-  Tabs,
-  Tab,
-  ListGroup,
-  Spinner
-} from "react-bootstrap";
-import { Plus, Trash2, ExternalLink } from "lucide-react";
+import { Container, Row, Col, Form, Button, Card, Tabs, Tab, ListGroup, Spinner, InputGroup } from "react-bootstrap";
+import { FaPlus, FaTrashAlt, FaExternalLinkAlt, FaSave, FaCopy, FaPalette, FaLink } from "react-icons/fa";
+import Swal from 'sweetalert2';
 import api from "../api/axios";
 
 const Dashboard = () => {
@@ -20,11 +10,7 @@ const Dashboard = () => {
   const [newLink, setNewLink] = useState({ title: "", url: "" });
   const [settings, setSettings] = useState({
     profile: { bio: "", avatarUrl: "" },
-    theme: {
-      backgroundColor: "#ffffff",
-      buttonColor: "#000000",
-      buttonTextColor: "#ffffff",
-    },
+    theme: { backgroundColor: "#ffffff", buttonColor: "#000000", buttonTextColor: "#ffffff" },
   });
 
   useEffect(() => {
@@ -40,110 +26,99 @@ const Dashboard = () => {
         theme: res.data.theme || { backgroundColor: "#ffffff", buttonColor: "#000000", buttonTextColor: "#ffffff" },
       });
     } catch (err) {
-      console.error("Error al cargar los datos del Dashboard", err);
+      console.error("Error al cargar datos", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // --- Lógica de Enlaces ---
   const handleAddLink = async (e) => {
     e.preventDefault();
     try {
       const res = await api.post("/links", newLink);
-      setLinks(res.data); // El backend devuelve la lista actualizada
+      setLinks(res.data);
       setNewLink({ title: "", url: "" });
+      Swal.fire({ icon: 'success', title: '¡Link agregado!', timer: 1500, showConfirmButton: false });
     } catch (err) {
-      alert("Error al agregar el link");
+      Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo agregar el enlace' });
     }
   };
 
   const handleDeleteLink = async (id) => {
-    if (window.confirm("¿Eliminar este enlace?")) {
+    const result = await Swal.fire({
+      title: '¿Eliminar enlace?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'Sí, borrar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
       try {
         const res = await api.delete(`/links/${id}`);
         setLinks(res.data.links);
+        Swal.fire('¡Borrado!', '', 'success');
       } catch (err) {
-        alert("Error al eliminar");
+        Swal.fire('Error', 'No se pudo eliminar', 'error');
       }
     }
   };
 
-  // --- Lógica de Configuración ---
   const handleSaveSettings = async () => {
     try {
       await api.put("/auth/settings", settings);
-      alert("¡Configuración guardada!");
+      Swal.fire({ icon: 'success', title: 'Configuración guardada', timer: 1500, showConfirmButton: false });
     } catch (err) {
-      alert("Error al guardar la configuración");
+      Swal.fire({ icon: 'error', title: 'Error al guardar' });
     }
   };
 
-  if (loading) {
-    return (
-      <Container className="text-center mt-5">
-        <Spinner animation="border" variant="primary" />
-        <p className="mt-2">Cargando tu panel...</p>
-      </Container>
-    );
-  }
+  const copyToClipboard = () => {
+    const url = `${window.location.origin}/${settings.profile.username || ''}`; // Necesitarías guardar el username en el state si lo querés dinámico
+    navigator.clipboard.writeText(url);
+    Swal.fire({ icon: 'info', title: 'URL Copiada', text: 'Ya puedes pegarla en tu bio de Instagram', timer: 2000 });
+  };
+
+  if (loading) return (
+    <Container className="text-center mt-5">
+      <Spinner animation="border" variant="primary" />
+      <p>Cargando LynxBio...</p>
+    </Container>
+  );
 
   return (
-    <Container className="mt-4">
-      <Tabs defaultActiveKey="links" className="mb-4">
-        
-        {/* PESTAÑA 1: GESTIÓN DE LINKS */}
-        <Tab eventKey="links" title="Mis Enlaces">
+    <Container className="mt-4 pb-5">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2>Panel de Control</h2>
+        <Button variant="outline-dark" onClick={copyToClipboard}><FaCopy className="me-2"/> Mi Link</Button>
+      </div>
+
+      <Tabs defaultActiveKey="links" className="mb-4 custom-tabs">
+        <Tab eventKey="links" title={<span><FaLink className="me-2"/>Enlaces</span>}>
           <Row className="justify-content-center">
             <Col md={8}>
-              <Card className="mb-4 shadow-sm p-3">
-                <Card.Title>Agregar nuevo enlace</Card.Title>
+              <Card className="mb-4 shadow-sm border-0 bg-light p-3">
                 <Form onSubmit={handleAddLink}>
                   <Row className="g-2">
-                    <Col md={5}>
-                      <Form.Control
-                        placeholder="Título (ej: Mi Instagram)"
-                        value={newLink.title}
-                        onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
-                        required
-                      />
-                    </Col>
-                    <Col md={5}>
-                      <Form.Control
-                        placeholder="URL (https://...)"
-                        value={newLink.url}
-                        onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
-                        required
-                      />
-                    </Col>
-                    <Col md={2}>
-                      <Button variant="success" type="submit" className="w-100">
-                        <Plus size={20} />
-                      </Button>
-                    </Col>
+                    <Col md={5}><Form.Control placeholder="Título" value={newLink.title} onChange={(e) => setNewLink({...newLink, title: e.target.value})} required /></Col>
+                    <Col md={5}><Form.Control placeholder="URL (https://...)" value={newLink.url} onChange={(e) => setNewLink({...newLink, url: e.target.value})} required /></Col>
+                    <Col md={2}><Button variant="primary" type="submit" className="w-100"><FaPlus /></Button></Col>
                   </Row>
                 </Form>
               </Card>
 
               <ListGroup className="shadow-sm">
-                {links.length === 0 && (
-                  <ListGroup.Item className="text-center text-muted py-4">
-                    Aún no tienes enlaces. ¡Agrega el primero!
-                  </ListGroup.Item>
-                )}
                 {links.map((link) => (
-                  <ListGroup.Item key={link._id} className="d-flex justify-content-between align-items-center">
+                  <ListGroup.Item key={link._id} className="d-flex justify-content-between align-items-center p-3">
                     <div>
-                      <h6 className="mb-0">{link.title}</h6>
+                      <h6 className="mb-0 fw-bold">{link.title}</h6>
                       <small className="text-muted">{link.url}</small>
                     </div>
                     <div className="d-flex gap-2">
-                      <Button variant="outline-primary" size="sm" href={link.url} target="_blank">
-                        <ExternalLink size={16} />
-                      </Button>
-                      <Button variant="outline-danger" size="sm" onClick={() => handleDeleteLink(link._id)}>
-                        <Trash2 size={16} />
-                      </Button>
+                      <Button variant="light" size="sm" href={link.url} target="_blank"><FaExternalLinkAlt /></Button>
+                      <Button variant="outline-danger" size="sm" onClick={() => handleDeleteLink(link._id)}><FaTrashAlt /></Button>
                     </div>
                   </ListGroup.Item>
                 ))}
@@ -152,63 +127,25 @@ const Dashboard = () => {
           </Row>
         </Tab>
 
-        {/* PESTAÑA 2: APARIENCIA */}
-        <Tab eventKey="appearance" title="Apariencia">
+        <Tab eventKey="appearance" title={<span><FaPalette className="me-2"/>Apariencia</span>}>
           <Row className="justify-content-center">
             <Col md={6}>
-              <Card className="shadow-sm p-4">
-                <h4 className="mb-4">Personaliza tu página</h4>
+              <Card className="shadow-sm border-0 p-4">
                 <Form.Group className="mb-3">
-                  <Form.Label>Bio / Descripción</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={settings.profile.bio}
-                    onChange={(e) =>
-                      setSettings({
-                        ...settings,
-                        profile: { ...settings.profile, bio: e.target.value },
-                      })
-                    }
-                  />
+                  <Form.Label className="fw-bold">Bio</Form.Label>
+                  <Form.Control as="textarea" rows={3} value={settings.profile.bio} onChange={(e) => setSettings({...settings, profile: {...settings.profile, bio: e.target.value}})} />
                 </Form.Group>
-
                 <Row>
-                  <Col>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Fondo</Form.Label>
-                      <Form.Control
-                        type="color"
-                        value={settings.theme.backgroundColor}
-                        onChange={(e) =>
-                          setSettings({
-                            ...settings,
-                            theme: { ...settings.theme, backgroundColor: e.target.value },
-                          })
-                        }
-                      />
-                    </Form.Group>
+                  <Col md={6}>
+                    <Form.Label className="fw-bold">Fondo de página</Form.Label>
+                    <Form.Control type="color" className="w-100 mb-3" value={settings.theme.backgroundColor} onChange={(e) => setSettings({...settings, theme: {...settings.theme, backgroundColor: e.target.value}})} />
                   </Col>
-                  <Col>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Botones</Form.Label>
-                      <Form.Control
-                        type="color"
-                        value={settings.theme.buttonColor}
-                        onChange={(e) =>
-                          setSettings({
-                            ...settings,
-                            theme: { ...settings.theme, buttonColor: e.target.value },
-                          })
-                        }
-                      />
-                    </Form.Group>
+                  <Col md={6}>
+                    <Form.Label className="fw-bold">Color de botones</Form.Label>
+                    <Form.Control type="color" className="w-100 mb-3" value={settings.theme.buttonColor} onChange={(e) => setSettings({...settings, theme: {...settings.theme, buttonColor: e.target.value}})} />
                   </Col>
                 </Row>
-
-                <Button variant="primary" className="mt-3 w-100" onClick={handleSaveSettings}>
-                  Guardar Configuración
-                </Button>
+                <Button variant="primary" className="mt-3 w-100" onClick={handleSaveSettings}><FaSave className="me-2"/> Guardar Todo</Button>
               </Card>
             </Col>
           </Row>
