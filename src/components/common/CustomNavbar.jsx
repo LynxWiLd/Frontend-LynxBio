@@ -1,7 +1,7 @@
 import { Navbar, Nav, Container, Button, Dropdown } from "react-bootstrap";
 import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { FaUserCircle, FaSignOutAlt, FaRocket } from "react-icons/fa";
 import LoginModal from "../auth/LoginModal";
 import RegisterModal from "../auth/RegisterModal";
