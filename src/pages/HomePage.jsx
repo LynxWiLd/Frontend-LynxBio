@@ -1,15 +1,25 @@
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Sacamos Link porque ahora usamos Modales
 import { FaRocket, FaPalette, FaLink, FaUserCheck } from "react-icons/fa";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 const HomePage = () => {
-  const { handleOpenRegister } = useContext(AuthContext);
+  // 1. Traemos user y las funciones de los modales del contexto
+  const { user, handleOpenRegister, handleOpenLogin } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // 2. EFECTO DE REDIRECCIÓN: Si ya hay sesión, mandamos al dashboard al toque
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
+
   return (
     <div style={styles.pageWrapper}>
       <Container className="d-flex flex-column align-items-center py-5">
-        {/* HERO SECTION - El "X" de conexiones en el fondo */}
+        {/* HERO SECTION */}
         <div style={styles.heroSection}>
           <div style={styles.connectionBackground} />
           <div style={styles.connectionBackgroundOverlay} />
@@ -29,17 +39,19 @@ const HomePage = () => {
                 <Button
                   variant="primary"
                   size="lg"
-                  onClick={handleOpenRegister} // <-- ¡Conectado!
-                  className="px-5 py-3 fw-bold rounded-pill shadow"
+                  onClick={handleOpenRegister}
+                  className="px-5 py-3 fw-bold rounded-pill shadow border-0"
+                  style={styles.primaryBtn}
                 >
-                  Empezar Gratis
+                  <FaRocket className="me-2" /> Empezar Gratis
                 </Button>
+
+                {/* 3. CAMBIO: Ahora este botón dispara el Modal de Login */}
                 <Button
-                  as={Link}
-                  to="/login"
                   variant="outline-primary"
                   size="lg"
-                  className="px-5 py-3 fw-bold text-uppercase shadow-sm"
+                  onClick={handleOpenLogin}
+                  className="px-5 py-3 fw-bold rounded-pill shadow-sm"
                   style={styles.secondaryBtn}
                 >
                   Iniciar Sesión
@@ -49,7 +61,7 @@ const HomePage = () => {
           </Row>
         </div>
 
-        {/* FEATURES SECTION - "Todos tus enlaces..." */}
+        {/* FEATURES SECTION */}
         <Container className="py-5" style={styles.featuresSection}>
           <Row className="justify-content-center text-center mb-5">
             <Col md={8}>
@@ -59,7 +71,6 @@ const HomePage = () => {
             </Col>
           </Row>
 
-          {/* CÓMO FUNCIONA */}
           <Row className="justify-content-center text-center mb-4">
             <Col md={8}>
               <h3 className="h1 fw-bold mb-4" style={styles.howTitle}>
@@ -102,7 +113,7 @@ const HomePage = () => {
   );
 };
 
-// --- Estilos CSS en línea para recrear el diseño del maquetado ---
+// --- Estilos ---
 const styles = {
   pageWrapper: {
     backgroundColor: "#fff",
@@ -126,16 +137,13 @@ const styles = {
     lineHeight: "1.4",
   },
   primaryBtn: {
-    borderRadius: "15px",
-    letterSpacing: "1px",
     backgroundColor: "#0d6efd",
-    border: "none",
+    transition: "transform 0.2s ease",
   },
   secondaryBtn: {
-    borderRadius: "15px",
-    letterSpacing: "1px",
     borderColor: "#0d6efd",
     color: "#0d6efd",
+    backgroundColor: "transparent",
   },
   featuresSection: {
     position: "relative",
@@ -152,7 +160,6 @@ const styles = {
   stepCard: {
     borderRadius: "25px",
     backgroundColor: "#fff",
-    transition: "transform 0.3s ease, box-shadow 0.3s ease",
   },
   iconWrapper: {
     width: "100px",
@@ -161,10 +168,6 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
   },
-
-  // --- TRUCO CSS PARA RECREAR EL FONDO DE CONEXIONES ---
-  // He usado gradientes lineales superpuestos con opacidad para sugerir
-  // las líneas de conexión que forman una 'X' y el patrón de red del maquetado.
   connectionBackground: {
     position: "absolute",
     top: 0,
