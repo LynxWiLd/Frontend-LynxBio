@@ -1,49 +1,46 @@
 import { useState, useContext } from "react";
 import { Modal, Button, Form, Alert, Spinner } from "react-bootstrap";
+import { useForm } from "react-hook-form"; // 👈 El motor de validaciones
 import api from "../../services/axiosConfig";
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom"; // Importamos para redirigir
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const RegisterModal = () => {
   const { showRegister, handleCloseModals, login } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
-
-  const [error, setError] = useState(null);
+  
+  const [apiError, setApiError] = useState(null); // Para errores del backend
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // Configuramos React Hook Form
+  const {
+    register,
+    handleSubmit,
+    watch, // Para observar cambios en el username en tiempo real
+    formState: { errors },
+    reset
+  } = useForm({
+    defaultValues: { username: "", email: "", password: "" }
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
+  // Observamos el campo username para el texto de ayuda
+  const currentUsername = watch("username");
 
-    // Validación básica antes de pegarle a la API
-    if (formData.password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres.");
-      return;
-    }
-
+  const onSubmit = async (data) => {
+    setApiError(null);
     setIsSubmitting(true);
 
     try {
-      // 1. Intentamos el registro en el backend
-      await api.post("/auth/register", formData);
+      // 1. Registro
+      await api.post("/auth/register", data);
 
-      // 2. Intentamos el login automático para que entre directo
+      // 2. Login Automático
       try {
-        await login(formData.email, formData.password);
-
+        await login(data.email, data.password);
         handleCloseModals();
-        navigate("/dashboard"); // Lo mandamos al panel
+        reset();
+        navigate("/dashboard");
 
         Swal.fire({
           icon: "success",
@@ -53,19 +50,16 @@ const RegisterModal = () => {
           showConfirmButton: false,
         });
       } catch (loginErr) {
-        // Si el registro fue OK pero el login falló por algo raro
         handleCloseModals();
         Swal.fire({
           icon: "info",
           title: "Cuenta creada",
-          text: "Tu cuenta se creó con éxito, por favor iniciá sesión manualmente.",
+          text: "Cuenta creada con éxito, por favor iniciá sesión manualmente.",
         });
       }
     } catch (err) {
-      // Error de registro (ej: el usuario o email ya existen)
-      const msg =
-        err.response?.data?.msg || "Hubo un problema al crear tu cuenta.";
-      setError(msg);
+      const msg = err.response?.data?.msg || "Hubo un problema al crear tu cuenta.";
+      setApiError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -83,56 +77,79 @@ const RegisterModal = () => {
           Crea tu página de enlaces en un toque.
         </p>
 
-        {error && (
+        {apiError && (
           <Alert variant="danger" className="py-2 small text-center">
-            {error}
+            {apiError}
           </Alert>
         )}
 
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          
+          {/* USERNAME */}
           <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">Nombre de usuario</Form.Label>
             <Form.Control
               type="text"
-              name="username"
               placeholder="ej: facu.dev"
-              value={formData.username}
-              onChange={handleChange}
               className="py-2"
-              required
+              isInvalid={!!errors.username}
+              {...register("username", { 
+                required: "El nombre de usuario es obligatorio",
+                minLength: { value: 3, message: "Mínimo 3 caracteres" },
+                pattern: {
+                  value: /^[a-zA-Z0-9._-]+$/,
+                  message: "Solo letras, números, puntos y guiones"
+                }
+              })}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.username?.message}
+            </Form.Control.Feedback>
             <Form.Text className="text-muted small ps-1">
               Tu link será:{" "}
               <strong>
-                lynxbio.vercel.app/{formData.username || "usuario"}
+                lynxbio.vercel.app/{currentUsername || "usuario"}
               </strong>
             </Form.Text>
           </Form.Group>
 
+          {/* EMAIL */}
           <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">Email</Form.Label>
             <Form.Control
               type="email"
-              name="email"
               placeholder="tu@email.com"
-              value={formData.email}
-              onChange={handleChange}
               className="py-2"
-              required
+              isInvalid={!!errors.email}
+              {...register("email", { 
+                required: "El email es obligatorio",
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: "Formato de email inválido"
+                }
+              })}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.email?.message}
+            </Form.Control.Feedback>
           </Form.Group>
 
+          {/* PASSWORD */}
           <Form.Group className="mb-4">
             <Form.Label className="fw-semibold">Contraseña</Form.Label>
             <Form.Control
               type="password"
-              name="password"
               placeholder="Mínimo 6 caracteres"
-              value={formData.password}
-              onChange={handleChange}
               className="py-2"
-              required
+              isInvalid={!!errors.password}
+              {...register("password", { 
+                required: "La contraseña es obligatoria",
+                minLength: { value: 6, message: "Mínimo 6 caracteres" }
+              })}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.password?.message}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Button

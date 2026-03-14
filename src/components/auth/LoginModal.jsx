@@ -1,5 +1,6 @@
-import { useState, useContext } from "react";
-import { Modal, Button, Form, Spinner } from "react-bootstrap"; // Agregamos Spinner
+import { useContext, useState } from "react";
+import { Modal, Button, Form, Spinner } from "react-bootstrap";
+import { useForm } from "react-hook-form"; // 👈 La estrella del show
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -7,22 +8,24 @@ import Swal from "sweetalert2";
 const LoginModal = () => {
   const { showLogin, handleCloseModals, handleOpenRegister, login } = useContext(AuthContext);
   const navigate = useNavigate();
-  
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [isSubmitting, setIsSubmitting] = useState(false); // <--- Estado para el botón
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // Configuramos el hook
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true); // Bloqueamos el botón
-    
+  // Esta función solo se ejecuta si las validaciones pasan
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
-      await login(formData.email, formData.password);
+      await login(data.email, data.password);
       
       handleCloseModals();
+      reset(); // Limpia el formulario
       navigate("/dashboard");
       
       Swal.fire({
@@ -32,9 +35,8 @@ const LoginModal = () => {
         timer: 2000,
         showConfirmButton: false,
       });
-
     } catch (err) {
-      const msg = err.response?.data?.msg || "Credenciales incorrectas. Revisá tu email o contraseña.";
+      const msg = err.response?.data?.msg || "Credenciales incorrectas.";
       Swal.fire({ 
         icon: "error", 
         title: "Ups...", 
@@ -42,7 +44,7 @@ const LoginModal = () => {
         confirmButtonColor: "#007bff"
       });
     } finally {
-      setIsSubmitting(false); // Desbloqueamos el botón (haya salido bien o mal)
+      setIsSubmitting(false);
     }
   };
 
@@ -54,36 +56,53 @@ const LoginModal = () => {
       <Modal.Body className="px-4 pb-4">
         <p className="text-center text-muted mb-4">¡Qué bueno verte de nuevo en LynxBio!</p>
         
-        <Form onSubmit={handleSubmit}>
+        {/* El handleSubmit de la librería envuelve a nuestro onSubmit */}
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          
+          {/* EMAIL */}
           <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">Email</Form.Label>
             <Form.Control
               type="email"
-              name="email"
               placeholder="nombre@ejemplo.com"
-              onChange={handleChange}
               className="py-2"
-              required
+              isInvalid={!!errors.email} // Se pone rojo si hay error
+              {...register("email", { 
+                required: "El email es obligatorio",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Email no válido"
+                }
+              })}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.email?.message}
+            </Form.Control.Feedback>
           </Form.Group>
 
+          {/* PASSWORD */}
           <Form.Group className="mb-4">
             <Form.Label className="fw-semibold">Contraseña</Form.Label>
             <Form.Control
               type="password"
-              name="password"
               placeholder="Tu contraseña secreta"
-              onChange={handleChange}
               className="py-2"
-              required
+              isInvalid={!!errors.password}
+              {...register("password", { 
+                required: "La contraseña es obligatoria",
+                minLength: { value: 6, message: "Mínimo 6 caracteres" }
+              })}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.password?.message}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Button 
             variant="primary" 
             className="w-100 py-2 mb-3 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center" 
             type="submit"
-            disabled={isSubmitting} // Deshabilitar mientras carga
+            disabled={isSubmitting}
           >
             {isSubmitting ? (
               <>
