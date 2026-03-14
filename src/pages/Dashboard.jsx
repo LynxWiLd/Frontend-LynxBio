@@ -23,6 +23,7 @@ import {
   FaInstagram,
   FaGithub,
   FaTwitter,
+  FaImage,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import api from "../api/axios";
@@ -31,15 +32,17 @@ const Dashboard = () => {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newLink, setNewLink] = useState({ title: "", url: "" });
-  
-  // Estado unificado para toda la configuración
+
+  // Estado unificado: Agregamos backgroundImage y textColor
   const [settings, setSettings] = useState({
     profile: { bio: "", avatarUrl: "", username: "" },
     socials: { instagram: "", github: "", twitter: "" },
     theme: {
       backgroundColor: "#ffffff",
+      backgroundImage: "", // <-- Nuevo
       buttonColor: "#000000",
       buttonTextColor: "#ffffff",
+      textColor: "#000000", // <-- Nuevo
     },
   });
 
@@ -51,8 +54,7 @@ const Dashboard = () => {
     try {
       const res = await api.get("/auth/me");
       setLinks(res.data.links || []);
-      
-      // Cargamos los datos asegurándonos de que no queden como undefined
+
       setSettings({
         profile: {
           bio: res.data.profile?.bio || "",
@@ -64,10 +66,12 @@ const Dashboard = () => {
           github: res.data.socials?.github || "",
           twitter: res.data.socials?.twitter || "",
         },
-        theme: res.data.theme || {
-          backgroundColor: "#ffffff",
-          buttonColor: "#000000",
-          buttonTextColor: "#ffffff",
+        theme: {
+          backgroundColor: res.data.theme?.backgroundColor || "#ffffff",
+          backgroundImage: res.data.theme?.backgroundImage || "",
+          buttonColor: res.data.theme?.buttonColor || "#000000",
+          buttonTextColor: res.data.theme?.buttonTextColor || "#ffffff",
+          textColor: res.data.theme?.textColor || "#000000",
         },
       });
     } catch (err) {
@@ -77,7 +81,6 @@ const Dashboard = () => {
     }
   };
 
-  // --- Gestión de Enlaces (Botones grandes) ---
   const handleAddLink = async (e) => {
     e.preventDefault();
     try {
@@ -111,21 +114,19 @@ const Dashboard = () => {
     }
   };
 
-  // --- GUARDAR CONFIGURACIÓN (Bio, Redes y Colores) ---
   const handleSaveSettings = async () => {
     try {
-      // Enviamos el objeto settings completo
       await api.put("/auth/settings", settings);
-      Swal.fire({ icon: "success", title: "¡Todo guardado!", text: "Los cambios ya están en tu página pública", timer: 2000, showConfirmButton: false });
+      Swal.fire({ icon: "success", title: "¡Todo guardado!", timer: 2000, showConfirmButton: false });
     } catch (err) {
-      Swal.fire({ icon: "error", title: "Error al guardar", text: "Revisá tu conexión o intentá más tarde" });
+      Swal.fire({ icon: "error", title: "Error al guardar" });
     }
   };
 
+  // Subida de Avatar
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const formData = new FormData();
     formData.append("image", file);
 
@@ -134,26 +135,56 @@ const Dashboard = () => {
       const res = await api.post("/auth/upload-avatar", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setSettings(prev => ({ ...prev, profile: { ...prev.profile, avatarUrl: res.data.url } }));
+      setSettings((prev) => ({ ...prev, profile: { ...prev.profile, avatarUrl: res.data.url } }));
       Swal.fire({ icon: "success", title: "¡Foto actualizada!", timer: 1500, showConfirmButton: false });
     } catch (err) {
       Swal.fire("Error", "No se pudo subir la imagen", "error");
     }
   };
 
+  // --- NUEVA FUNCIÓN: Subida de imagen de FONDO ---
+  const handleBgUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      Swal.fire({ title: "Subiendo fondo...", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      const res = await api.post("/auth/upload-avatar", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setSettings((prev) => ({
+        ...prev,
+        theme: { ...prev.theme, backgroundImage: res.data.url },
+      }));
+      Swal.fire({ icon: "success", title: "¡Fondo actualizado!", timer: 1500, showConfirmButton: false });
+    } catch (err) {
+      Swal.fire("Error", "No se pudo subir el fondo", "error");
+    }
+  };
+
   const copyToClipboard = () => {
     const url = `${window.location.origin}/${settings.profile.username || ""}`;
     navigator.clipboard.writeText(url);
-    Swal.fire({ icon: "info", title: "URL Copiada", text: "Ya puedes pegarla en tu bio", timer: 2000 });
+    Swal.fire({ icon: "info", title: "URL Copiada", timer: 2000 });
   };
 
-  if (loading) return <Container className="text-center mt-5"><Spinner animation="border" variant="primary" /><p>Cargando LynxBio...</p></Container>;
+  if (loading)
+    return (
+      <Container className="text-center mt-5">
+        <Spinner animation="border" variant="primary" />
+        <p>Cargando LynxBio...</p>
+      </Container>
+    );
 
   return (
     <Container className="mt-4 pb-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Panel de Control</h2>
-        <Button variant="outline-dark" onClick={copyToClipboard}><FaCopy className="me-2" /> Mi Link</Button>
+        <Button variant="outline-dark" onClick={copyToClipboard}>
+          <FaCopy className="me-2" /> Mi Link
+        </Button>
       </div>
 
       <Tabs defaultActiveKey="links" className="mb-4">
@@ -190,6 +221,7 @@ const Dashboard = () => {
               <Card className="shadow-sm border-0 p-4">
                 {/* Foto de Perfil */}
                 <div className="text-center mb-4">
+                  <Form.Label className="fw-bold d-block">Imagen de Perfil</Form.Label>
                   <img src={settings.profile.avatarUrl || "https://via.placeholder.com/150"} alt="Avatar" className="rounded-circle mb-3 shadow" style={{ width: "100px", height: "100px", objectFit: "cover" }} />
                   <Form.Control type="file" size="sm" onChange={handleImageUpload} accept="image/*" />
                 </div>
@@ -200,48 +232,49 @@ const Dashboard = () => {
                   <Form.Control as="textarea" rows={2} value={settings.profile.bio} onChange={(e) => setSettings({ ...settings, profile: { ...settings.profile, bio: e.target.value } })} />
                 </Form.Group>
 
+                {/* NUEVO: Imagen de Fondo */}
+                <Form.Group className="mb-4">
+                  <Form.Label className="fw-bold"><FaImage className="me-2" />Fondo Personalizado (Imagen)</Form.Label>
+                  <Form.Control type="file" size="sm" onChange={handleBgUpload} accept="image/*" />
+                  {settings.theme.backgroundImage && (
+                    <div className="mt-2 small text-success">✔ Imagen de fondo lista.</div>
+                  )}
+                </Form.Group>
+
                 {/* Redes Sociales */}
                 <div className="mb-4">
-                  <Form.Label className="fw-bold">Redes Sociales (URLs Reales)</Form.Label>
+                  <Form.Label className="fw-bold">Redes Sociales</Form.Label>
                   <InputGroup className="mb-2">
                     <InputGroup.Text><FaInstagram /></InputGroup.Text>
-                    <Form.Control 
-                      placeholder="https://instagram.com/tu-usuario" 
-                      value={settings.socials.instagram} 
-                      onChange={(e) => setSettings({ ...settings, socials: { ...settings.socials, instagram: e.target.value } })} 
-                    />
+                    <Form.Control placeholder="Instagram URL" value={settings.socials.instagram} onChange={(e) => setSettings({ ...settings, socials: { ...settings.socials, instagram: e.target.value } })} />
                   </InputGroup>
                   <InputGroup className="mb-2">
                     <InputGroup.Text><FaGithub /></InputGroup.Text>
-                    <Form.Control 
-                      placeholder="https://github.com/tu-usuario" 
-                      value={settings.socials.github} 
-                      onChange={(e) => setSettings({ ...settings, socials: { ...settings.socials, github: e.target.value } })} 
-                    />
+                    <Form.Control placeholder="GitHub URL" value={settings.socials.github} onChange={(e) => setSettings({ ...settings, socials: { ...settings.socials, github: e.target.value } })} />
                   </InputGroup>
                   <InputGroup className="mb-2">
                     <InputGroup.Text><FaTwitter /></InputGroup.Text>
-                    <Form.Control 
-                      placeholder="https://twitter.com/tu-usuario" 
-                      value={settings.socials.twitter} 
-                      onChange={(e) => setSettings({ ...settings, socials: { ...settings.socials, twitter: e.target.value } })} 
-                    />
+                    <Form.Control placeholder="Twitter URL" value={settings.socials.twitter} onChange={(e) => setSettings({ ...settings, socials: { ...settings.socials, twitter: e.target.value } })} />
                   </InputGroup>
                 </div>
 
-                {/* Colores */}
+                {/* Selector de Colores */}
                 <Row className="mb-4 text-center">
-                  <Col>
-                    <Form.Label className="fw-bold d-block">Fondo</Form.Label>
+                  <Col xs={4}>
+                    <Form.Label className="fw-bold d-block small">Fondo</Form.Label>
                     <Form.Control type="color" className="mx-auto" value={settings.theme.backgroundColor} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, backgroundColor: e.target.value } })} />
                   </Col>
-                  <Col>
-                    <Form.Label className="fw-bold d-block">Botones</Form.Label>
+                  <Col xs={4}>
+                    <Form.Label className="fw-bold d-block small">Botones</Form.Label>
                     <Form.Control type="color" className="mx-auto" value={settings.theme.buttonColor} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, buttonColor: e.target.value } })} />
+                  </Col>
+                  <Col xs={4}>
+                    <Form.Label className="fw-bold d-block small">Texto</Form.Label>
+                    <Form.Control type="color" className="mx-auto" value={settings.theme.textColor} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, textColor: e.target.value } })} />
                   </Col>
                 </Row>
 
-                <Button variant="primary" className="w-100 fw-bold py-2" onClick={handleSaveSettings}>
+                <Button variant="primary" className="w-100 fw-bold py-2 shadow" onClick={handleSaveSettings}>
                   <FaSave className="me-2" /> GUARDAR TODO
                 </Button>
               </Card>
