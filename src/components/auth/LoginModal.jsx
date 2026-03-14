@@ -1,15 +1,15 @@
 import { useState, useContext } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Spinner } from "react-bootstrap"; // Agregamos Spinner
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom"; // 1. Importamos el hook de navegación
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const LoginModal = () => {
   const { showLogin, handleCloseModals, handleOpenRegister, login } = useContext(AuthContext);
-  
-  const navigate = useNavigate(); // 2. Inicializamos el navegador
+  const navigate = useNavigate();
   
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false); // <--- Estado para el botón
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,42 +17,52 @@ const LoginModal = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true); // Bloqueamos el botón
+    
     try {
-      // Intentamos el login a través del contexto
       await login(formData.email, formData.password);
       
-      // --- SI EL LOGIN ES EXITOSO: ---
-      handleCloseModals(); // 3. Cerramos la ventana modal
-      
-      navigate("/dashboard"); // 4. Redirigimos al Panel de Control
+      handleCloseModals();
+      navigate("/dashboard");
       
       Swal.fire({
         icon: "success",
-        title: "¡Bienvenido!",
-        timer: 1500,
+        title: "¡De vuelta al ruedo!",
+        text: "Iniciaste sesión correctamente.",
+        timer: 2000,
         showConfirmButton: false,
       });
 
     } catch (err) {
-      const msg = err.response?.data?.msg || "Credenciales incorrectas";
-      Swal.fire({ icon: "error", title: "Error", text: msg });
+      const msg = err.response?.data?.msg || "Credenciales incorrectas. Revisá tu email o contraseña.";
+      Swal.fire({ 
+        icon: "error", 
+        title: "Ups...", 
+        text: msg,
+        confirmButtonColor: "#007bff"
+      });
+    } finally {
+      setIsSubmitting(false); // Desbloqueamos el botón (haya salido bien o mal)
     }
   };
 
   return (
     <Modal show={showLogin} onHide={handleCloseModals} centered>
       <Modal.Header closeButton className="border-0 pb-0">
-        <Modal.Title className="fw-bold w-100 text-center">Iniciá Sesión</Modal.Title>
+        <Modal.Title className="fw-bold w-100 text-center fs-2">Iniciá Sesión</Modal.Title>
       </Modal.Header>
       <Modal.Body className="px-4 pb-4">
+        <p className="text-center text-muted mb-4">¡Qué bueno verte de nuevo en LynxBio!</p>
+        
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">Email</Form.Label>
             <Form.Control
               type="email"
               name="email"
-              placeholder="tu@email.com"
+              placeholder="nombre@ejemplo.com"
               onChange={handleChange}
+              className="py-2"
               required
             />
           </Form.Group>
@@ -62,20 +72,37 @@ const LoginModal = () => {
             <Form.Control
               type="password"
               name="password"
-              placeholder="Tu contraseña"
+              placeholder="Tu contraseña secreta"
               onChange={handleChange}
+              className="py-2"
               required
             />
           </Form.Group>
 
-          <Button variant="primary" className="w-100 py-2 mb-3 rounded-pill fw-bold shadow-sm" type="submit">
-            Entrar a LynxBio
+          <Button 
+            variant="primary" 
+            className="w-100 py-2 mb-3 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center" 
+            type="submit"
+            disabled={isSubmitting} // Deshabilitar mientras carga
+          >
+            {isSubmitting ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" />
+                Entrando...
+              </>
+            ) : (
+              "Entrar a LynxBio"
+            )}
           </Button>
 
           <p className="text-center mb-0 text-muted">
             ¿No tenés cuenta?{" "}
-            <Button variant="link" className="p-0 fw-bold text-decoration-none" onClick={handleOpenRegister}>
-              Registrate
+            <Button 
+              variant="link" 
+              className="p-0 fw-bold text-decoration-none" 
+              onClick={handleOpenRegister}
+            >
+              Registrate gratis
             </Button>
           </p>
         </Form>

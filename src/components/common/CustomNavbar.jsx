@@ -39,7 +39,13 @@ const CustomNavbar = () => {
             to="/"
             className={`fw-bold fs-3 text-primary d-flex align-items-center ${styles.brandLogo}`}
           >
-            <FaRocket className="me-2" /> lynxbio
+            {/* REEMPLAZO: Cambiamos FaRocket por la imagen del logo */}
+            <img
+              src="./Logo.svg"
+              alt="LynxBio Logo"
+              className={styles.navbarLogo}
+            />
+            <span className="ms-2">lynxbio</span>
           </Navbar.Brand>
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />

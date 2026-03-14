@@ -1,19 +1,22 @@
 import { useState, useContext } from "react";
-import { Modal, Button, Form, Alert } from "react-bootstrap";
+import { Modal, Button, Form, Alert, Spinner } from "react-bootstrap";
 import api from "../../services/axiosConfig";
 import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom"; // Importamos para redirigir
 import Swal from "sweetalert2";
 
 const RegisterModal = () => {
-  // 1. Consumimos todo del Contexto (ya no usamos props)
   const { showRegister, handleCloseModals, login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
+
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,53 +25,66 @@ const RegisterModal = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    // Validación básica antes de pegarle a la API
+    if (formData.password.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
-      // 1. Intentamos el registro
-      const res = await api.post("/auth/register", formData);
+      // 1. Intentamos el registro en el backend
+      await api.post("/auth/register", formData);
 
-      // Si llegamos acá, el status fue 201 (Éxito)
-      console.log("Registro exitoso:", res.data);
-
-      // 2. Intentamos el login automático
+      // 2. Intentamos el login automático para que entre directo
       try {
-        // Usamos los datos que ya tenemos para no pegarle al servidor de nuevo si no es necesario
-        // O llamamos al login con las credenciales que acaba de escribir el usuario
         await login(formData.email, formData.password);
 
         handleCloseModals();
+        navigate("/dashboard"); // Lo mandamos al panel
+
         Swal.fire({
           icon: "success",
-          title: "¡Cuenta creada!",
-          text: "Bienvenido a LynxBio",
-          timer: 2000,
+          title: "¡Bienvenido a la manada!",
+          text: "Tu cuenta de LynxBio está lista.",
+          timer: 2500,
           showConfirmButton: false,
         });
       } catch (loginErr) {
-        // Si el registro funcionó pero el login falló (por delay de la DB o error en la función)
-        // Redirigimos igual al Login para que no crea que no se registró
+        // Si el registro fue OK pero el login falló por algo raro
         handleCloseModals();
         Swal.fire({
-          icon: "warning",
-          title: "Cuenta creada con éxito",
-          text: "Por favor, iniciá sesión manualmente.",
+          icon: "info",
+          title: "Cuenta creada",
+          text: "Tu cuenta se creó con éxito, por favor iniciá sesión manualmente.",
         });
       }
     } catch (err) {
-      // Este error SÍ es de registro (ej: email duplicado)
-      setError(err.response?.data?.msg || "Error al crear la cuenta");
+      // Error de registro (ej: el usuario o email ya existen)
+      const msg =
+        err.response?.data?.msg || "Hubo un problema al crear tu cuenta.";
+      setError(msg);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Modal show={showRegister} onHide={handleCloseModals} centered>
       <Modal.Header closeButton className="border-0 pb-0">
-        <Modal.Title className="fw-bold w-100 text-center">
-          Crea tu cuenta en LynxBio
+        <Modal.Title className="fw-bold w-100 text-center fs-2">
+          Unite a LynxBio
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="px-4 pb-4">
+        <p className="text-center text-muted mb-4">
+          Crea tu página de enlaces en un toque.
+        </p>
+
         {error && (
-          <Alert variant="danger" className="py-2 small">
+          <Alert variant="danger" className="py-2 small text-center">
             {error}
           </Alert>
         )}
@@ -79,15 +95,17 @@ const RegisterModal = () => {
             <Form.Control
               type="text"
               name="username"
-              placeholder="ej: facu-dev"
+              placeholder="ej: facu.dev"
               value={formData.username}
               onChange={handleChange}
-              className="rounded-3"
+              className="py-2"
               required
             />
-            <Form.Text className="text-muted small">
-              Este será tu link: lynxbio.vercel.app/
-              {formData.username || "usuario"}
+            <Form.Text className="text-muted small ps-1">
+              Tu link será:{" "}
+              <strong>
+                lynxbio.vercel.app/{formData.username || "usuario"}
+              </strong>
             </Form.Text>
           </Form.Group>
 
@@ -99,7 +117,7 @@ const RegisterModal = () => {
               placeholder="tu@email.com"
               value={formData.email}
               onChange={handleChange}
-              className="rounded-3"
+              className="py-2"
               required
             />
           </Form.Group>
@@ -112,7 +130,7 @@ const RegisterModal = () => {
               placeholder="Mínimo 6 caracteres"
               value={formData.password}
               onChange={handleChange}
-              className="rounded-3"
+              className="py-2"
               required
             />
           </Form.Group>
@@ -120,9 +138,17 @@ const RegisterModal = () => {
           <Button
             variant="primary"
             type="submit"
-            className="w-100 py-2 rounded-pill fw-bold shadow-sm"
+            className="w-100 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center"
+            disabled={isSubmitting}
           >
-            Registrarme gratis
+            {isSubmitting ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" />
+                Creando cuenta...
+              </>
+            ) : (
+              "Registrarme gratis"
+            )}
           </Button>
         </Form>
       </Modal.Body>

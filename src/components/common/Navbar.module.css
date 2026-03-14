@@ -13,12 +13,28 @@
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
-.brandLogo {
+.navbarLogo {
+  height: 40px; /* Ajustá el tamaño a tu gusto */
+  width: auto;
   transition: transform 0.3s ease;
 }
 
-.brandLogo:hover {
-  transform: scale(1.05);
+.brandLogo {
+  text-decoration: none;
+  background: linear-gradient(45deg, #004e92, #00ff87);
+
+  /* Primero la versión para navegadores basados en Webkit (Chrome, Safari, Edge) */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  /* 👇 AGREGÁ ESTA LÍNEA (La versión estándar) */
+  background-clip: text;
+
+  transition: transform 0.3s ease;
+}
+
+.brandLogo:hover .navbarLogo {
+  transform: scale(1.1) rotate(-5deg);
 }
 
 .navButton {
@@ -29,11 +45,11 @@
 .userDropdown :global(.dropdown-toggle) {
   border-radius: 50px !important;
   padding: 0.5rem 1.2rem !important;
-  border: 1px solid rgba(0,0,0,0.1) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
 .dropdownMenu {
   border-radius: 15px !important;
   border: none !important;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
 }
