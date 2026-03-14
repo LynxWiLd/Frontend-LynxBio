@@ -24,11 +24,8 @@
   background: linear-gradient(45deg, #004e92, #00ff87);
 
   /* Primero la versión para navegadores basados en Webkit (Chrome, Safari, Edge) */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 
-  /* 👇 AGREGÁ ESTA LÍNEA (La versión estándar) */
-  background-clip: text;
+  -webkit-text-fill-color: transparent;
 
   transition: transform 0.3s ease;
 }
