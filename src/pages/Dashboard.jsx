@@ -13,6 +13,7 @@ import api from "../api/axios";
 
 const Dashboard = () => {
   const [links, setLinks] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState({
     profile: { bio: "", avatarUrl: "" },
     theme: {
