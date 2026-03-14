@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Form, Button, Row, Col } from "react-bootstrap";
+import { ICON_OPTIONS } from "../../constants/iconMap";
 import styles from "../../pages/Dashboard/Dashboard.module.css";
 
 const AddLinkCard = ({ handleAddLink }) => {
@@ -8,11 +9,17 @@ const AddLinkCard = ({ handleAddLink }) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      icon: "web", // Valor por defecto
+      buttonColor: "#000000",
+      buttonTextColor: "#ffffff",
+    },
+  });
 
   const onSubmit = (data) => {
-    handleAddLink(data); // Le pasamos los datos limpios al Dashboard
-    reset(); // Limpiamos el formulario después de agregar
+    handleAddLink(data);
+    reset();
   };
 
   return (
@@ -20,6 +27,7 @@ const AddLinkCard = ({ handleAddLink }) => {
       <h5 className="fw-bold mb-3">Agregar Nuevo Enlace</h5>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Row>
+          {/* Título */}
           <Col md={6} className="mb-2">
             <Form.Group>
               <Form.Label className="small fw-bold">
@@ -39,6 +47,8 @@ const AddLinkCard = ({ handleAddLink }) => {
               </Form.Control.Feedback>
             </Form.Group>
           </Col>
+
+          {/* URL */}
           <Col md={6} className="mb-2">
             <Form.Group>
               <Form.Label className="small fw-bold">URL (Link)</Form.Label>
@@ -62,6 +72,25 @@ const AddLinkCard = ({ handleAddLink }) => {
           </Col>
         </Row>
 
+        <Row>
+          {/* NUEVO: Selector de Iconos */}
+          <Col md={12} className="mb-3">
+            <Form.Group>
+              <Form.Label className="small fw-bold">Elegí un Icono</Form.Label>
+              <Form.Select
+                {...register("icon")}
+                style={{ borderRadius: "12px", minHeight: "45px" }}
+              >
+                {ICON_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
+
         <Row className="mt-2">
           <Col xs={6}>
             <Form.Label className="small fw-bold d-block">
@@ -70,7 +99,6 @@ const AddLinkCard = ({ handleAddLink }) => {
             <Form.Control
               type="color"
               className={styles.colorInputCustom}
-              defaultValue="#000000"
               {...register("buttonColor")}
             />
           </Col>
@@ -81,7 +109,6 @@ const AddLinkCard = ({ handleAddLink }) => {
             <Form.Control
               type="color"
               className={styles.colorInputCustom}
-              defaultValue="#ffffff"
               {...register("buttonTextColor")}
             />
           </Col>
@@ -90,7 +117,7 @@ const AddLinkCard = ({ handleAddLink }) => {
         <Button
           variant="primary"
           type="submit"
-          className="w-100 mt-3 rounded-pill fw-bold"
+          className="w-100 mt-4 rounded-pill fw-bold py-2 shadow"
         >
           + Agregar Enlace
         </Button>
