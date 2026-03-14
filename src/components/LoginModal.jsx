@@ -1,10 +1,47 @@
+import { useState, useContext } from "react"; // 1. Agregamos useState
 import { Modal, Button, Form } from "react-bootstrap";
-import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import Swal from "sweetalert2";
 
 const LoginModal = () => {
-  const { showLogin, handleCloseModals, handleOpenRegister } =
+  // Extraemos las funciones del contexto
+  const { showLogin, handleCloseModals, handleOpenRegister, login } =
     useContext(AuthContext);
+
+  // 2. Creamos el estado local para el formulario
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  // 3. Definimos la función handleChange que faltaba
+  const ArabhandleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Llamamos a la función login del contexto (aseguráte de que exista)
+      await login(formData.email, formData.password);
+      handleCloseModals();
+      Swal.fire({
+        icon: "success",
+        title: "¡Bienvenido!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Credenciales incorrectas",
+      });
+    }
+  };
 
   return (
     <Modal show={showLogin} onHide={handleCloseModals} centered>
@@ -14,38 +51,46 @@ const LoginModal = () => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="px-4 pb-4">
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Email</Form.Label>
+            <Form.Label className="fw-semibold">Email</Form.Label>
             <Form.Control
               type="email"
-              name="email"
+              name="email" // IMPORTANTE: debe coincidir con el campo en formData
               placeholder="tu@email.com"
-              onChange={handleChange}
+              value={formData.email}
+              onChange={ArabhandleChange} // <-- Ahora sí existe
               required
             />
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Contraseña</Form.Label>
+            <Form.Label className="fw-semibold">Contraseña</Form.Label>
             <Form.Control
               type="password"
               name="password"
               placeholder="Mínimo 6 caracteres"
-              onChange={handleChange}
+              value={formData.password}
+              onChange={ArabhandleChange} // <-- Ahora sí existe
               required
             />
           </Form.Group>
+
           <Button
             variant="primary"
-            className="w-100 py-2 mb-3 rounded-pill"
+            className="w-100 py-2 mb-3 rounded-pill fw-bold"
             type="submit"
           >
             Entrar
           </Button>
-          <p className="text-center mb-0">
+
+          <p className="text-center mb-0 text-muted">
             ¿No tenés cuenta?{" "}
-            <Button variant="link" className="p-0" onClick={handleOpenRegister}>
+            <Button
+              variant="link"
+              className="p-0 fw-bold text-decoration-none"
+              onClick={handleOpenRegister}
+            >
               Registrate
             </Button>
           </p>
