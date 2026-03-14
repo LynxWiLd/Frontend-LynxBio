@@ -1,7 +1,7 @@
 .pageWrapper {
   background-color: #fff;
   min-height: 100vh;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   overflow-x: hidden;
 }
 
@@ -11,6 +11,12 @@
   padding: 100px 0 150px 0;
   background-color: #f8f9fa;
   overflow: hidden;
+}
+
+/* Capa que contiene el texto y botones */
+.heroContent {
+  position: relative;
+  z-index: 10; /* Asegura que esté por encima de los fondos */
 }
 
 .title {
@@ -24,21 +30,27 @@
   line-height: 1.4;
 }
 
-/* Fondo de Conexiones (La 'X') */
+/* Fondo de Conexiones */
 .connectionBackground {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
+  background-image:
     linear-gradient(45deg, transparent 45%, #0d6efd 50%, transparent 55%),
     linear-gradient(135deg, transparent 45%, #0d6efd 50%, transparent 55%),
     linear-gradient(to right, #0d6efd 1px, transparent 1px),
     linear-gradient(to bottom, #0d6efd 1px, transparent 1px);
-  background-size: 150px 150px, 150px 150px, 75px 75px, 75px 75px;
+  background-size:
+    150px 150px,
+    150px 150px,
+    75px 75px,
+    75px 75px;
   background-position: 0 0;
   opacity: 0.05;
+  z-index: 1;
+  pointer-events: none; /* Los clics pasan a través */
 }
 
 .connectionBackgroundOverlay {
@@ -48,12 +60,16 @@
   width: 100%;
   height: 100%;
   background: radial-gradient(circle at 50% 50%, transparent 50%, #f8f9fa 100%);
+  z-index: 2;
+  pointer-events: none; /* Los clics pasan a través */
 }
 
 /* Botones */
 .primaryBtn {
   background-color: #0d6efd;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .primaryBtn:hover {
@@ -76,13 +92,15 @@
 /* Cards de Features */
 .featuresSection {
   position: relative;
-  z-index: 1;
+  z-index: 5;
 }
 
 .stepCard {
   border-radius: 25px !important;
   background-color: #fff;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .stepCard:hover {

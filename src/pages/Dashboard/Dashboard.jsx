@@ -1,13 +1,11 @@
-import { useState, useEffect } from "react";
-import { Container, Button, Tabs, Tab, Row, Col, ListGroup, Spinner } from "react-bootstrap";
-import { FaCopy, FaPalette, FaLink } from "react-icons/fa";
+import { useState, useEffect, useContext } from "react";
+import { Container, Button, Tabs, Tab, Row, Col, ListGroup, Spinner, Modal } from "react-bootstrap";
+import { FaCopy, FaPalette, FaLink, FaEye } from "react-icons/fa"; // Agregamos FaEye
 import Swal from "sweetalert2";
 
-// Importación de Servicios y Estilos
 import api from "../../services/axiosConfig";
 import styles from "./Dashboard.module.css";
 
-// Importación de Sub-componentes
 import AddLinkCard from "../../components/dashboard/AddLinkCard";
 import LinkItem from "../../components/dashboard/LinkItem";
 import AppearanceForm from "../../components/dashboard/AppearanceForm";
@@ -15,6 +13,8 @@ import AppearanceForm from "../../components/dashboard/AppearanceForm";
 const Dashboard = () => {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showMobilePreview, setShowMobilePreview] = useState(false); // Estado para el modal de celu
+  
   const [newLink, setNewLink] = useState({
     title: "",
     url: "",
@@ -62,6 +62,7 @@ const Dashboard = () => {
     }
   };
 
+  // ... (Tus funciones handleAddLink, handleDeleteLink, handleSaveSettings, handleImageUpload se mantienen igual) ...
   const handleAddLink = async (e) => {
     e.preventDefault();
     try {
@@ -103,43 +104,23 @@ const Dashboard = () => {
     }
   };
 
-  // --- FUNCIÓN MEJORADA: SUBIDA + AUTO-SAVE ---
   const handleImageUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const formData = new FormData();
     formData.append("image", file);
-    formData.append("type", type); // 'avatar' o 'bg' para que el backend sepa qué borrar
+    formData.append("type", type);
 
     try {
-      Swal.fire({
-        title: "Subiendo...",
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-      });
-
-      // 1. Subimos la imagen
+      Swal.fire({ title: "Subiendo...", allowOutsideClick: false, didOpen: () => Swal.showLoading() });
       const res = await api.post("/auth/upload-avatar", formData);
-
-      // 2. Actualizamos el estado local
       const newSettings = { ...settings };
-      if (type === "avatar") {
-        newSettings.profile.avatarUrl = res.data.url;
-      } else {
-        newSettings.theme.backgroundImage = res.data.url;
-      }
+      if (type === "avatar") newSettings.profile.avatarUrl = res.data.url;
+      else newSettings.theme.backgroundImage = res.data.url;
       setSettings(newSettings);
-
-      // 3. 🔥 AUTO-SAVE: Persistimos el cambio en la DB inmediatamente
       await api.put("/auth/settings", newSettings);
-
-      Swal.fire({
-        icon: "success",
-        title: "¡Imagen lista y guardada!",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+      Swal.fire({ icon: "success", title: "¡Imagen lista y guardada!", timer: 1500, showConfirmButton: false });
     } catch (err) {
       Swal.fire("Error", "No se pudo subir la imagen", "error");
     }
@@ -151,55 +132,110 @@ const Dashboard = () => {
     Swal.fire({ icon: "info", title: "Link copiado", timer: 1500, showConfirmButton: false });
   };
 
-  if (loading)
-    return (
-      <Container className="text-center mt-5">
-        <Spinner animation="border" variant="primary" />
-        <p className="mt-3">Sincronizando LynxBio...</p>
-      </Container>
-    );
+  // Componente interno para no repetir el código del celular
+  const PhonePreview = () => (
+    <div className={styles.phoneMockup}>
+      <div className={styles.phoneScreen} style={{ 
+        backgroundColor: settings.theme.backgroundColor,
+        backgroundImage: settings.theme.backgroundImage ? `url(${settings.theme.backgroundImage})` : 'none',
+        backgroundSize: 'cover',
+        color: settings.theme.textColor 
+      }}>
+        <div className={styles.previewContent}>
+          {settings.profile.avatarUrl ? (
+            <img src={settings.profile.avatarUrl} alt="Avatar" className={styles.previewAvatar} />
+          ) : (
+            <div className={styles.previewAvatarPlaceholder} />
+          )}
+          <h5 className="fw-bold mt-3">@{settings.profile.username || "usuario"}</h5>
+          <p className="small text-center px-3">{settings.profile.bio}</p>
+          
+          <div className={styles.previewLinks}>
+            {links.map((link) => (
+              <div 
+                key={link._id} 
+                className={styles.previewLinkItem}
+                style={{ backgroundColor: settings.theme.buttonColor, color: settings.theme.buttonTextColor }}
+              >
+                {link.title}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (loading) return (
+    <Container className="text-center mt-5"><Spinner animation="border" variant="primary" /><p>Sincronizando LynxBio...</p></Container>
+  );
 
   return (
-    <Container className={styles.dashboardContainer}>
-      <div className={styles.headerSection}>
-        <h2>Panel de Control</h2>
-        <Button variant="outline-dark" onClick={copyToClipboard} className="rounded-pill px-4 shadow-sm">
-          <FaCopy className="me-2" /> Mi Link
-        </Button>
-      </div>
+    <Container fluid className={styles.dashboardWrapper}>
+      <Row className="h-100">
+        {/* COLUMNA IZQUIERDA: CONFIGURACIÓN */}
+        <Col lg={7} xl={8} className={styles.configColumn}>
+          <div className="py-4 px-md-4">
+            <div className={styles.headerSection}>
+              <h2 className="fw-bold">Panel de Control</h2>
+              <Button variant="outline-dark" onClick={copyToClipboard} className="rounded-pill px-4 shadow-sm">
+                <FaCopy className="me-2" /> Mi Link
+              </Button>
+            </div>
 
-      <Tabs defaultActiveKey="links" className="mb-4 custom-tabs">
-        <Tab eventKey="links" title={<span><FaLink className="me-2" /> Enlaces</span>}>
-          <Row className="justify-content-center">
-            <Col md={8}>
-              <AddLinkCard newLink={newLink} setNewLink={setNewLink} handleAddLink={handleAddLink} />
-              <ListGroup variant="flush" className="mt-4">
-                {links.map((link) => (
-                  <LinkItem key={link._id} link={link} handleDeleteLink={handleDeleteLink} />
-                ))}
-              </ListGroup>
-              {links.length === 0 && (
-                <div className="text-center mt-5 opacity-50">
-                  <p>Aún no tienes enlaces. ¡Agrega el primero arriba!</p>
-                </div>
-              )}
-            </Col>
-          </Row>
-        </Tab>
+            <Tabs defaultActiveKey="links" className="mb-4 custom-tabs">
+              <Tab eventKey="links" title={<span><FaLink className="me-2" /> Enlaces</span>}>
+                <AddLinkCard newLink={newLink} setNewLink={setNewLink} handleAddLink={handleAddLink} />
+                <ListGroup variant="flush" className="mt-4">
+                  {links.map((link) => (
+                    <LinkItem key={link._id} link={link} handleDeleteLink={handleDeleteLink} />
+                  ))}
+                </ListGroup>
+              </Tab>
 
-        <Tab eventKey="appearance" title={<span><FaPalette className="me-2" /> Apariencia</span>}>
-          <Row className="justify-content-center">
-            <Col md={6}>
-              <AppearanceForm
-                settings={settings}
-                setSettings={setSettings}
-                handleImageUpload={handleImageUpload}
-                handleSaveSettings={handleSaveSettings}
-              />
-            </Col>
-          </Row>
-        </Tab>
-      </Tabs>
+              <Tab eventKey="appearance" title={<span><FaPalette className="me-2" /> Apariencia</span>}>
+                <AppearanceForm
+                  settings={settings}
+                  setSettings={setSettings}
+                  handleImageUpload={handleImageUpload}
+                  handleSaveSettings={handleSaveSettings}
+                />
+              </Tab>
+            </Tabs>
+          </div>
+        </Col>
+
+        {/* COLUMNA DERECHA: PREVIEW (CELULAR) - Solo visible en Escritorio */}
+        <Col lg={5} xl={4} className={styles.previewColumn}>
+          <div className={styles.phoneSticky}>
+             <h5 className="text-muted text-center mb-3">Previsualización en vivo</h5>
+             <PhonePreview />
+          </div>
+        </Col>
+      </Row>
+
+      {/* BOTÓN FLOTANTE PARA MÓVIL */}
+      <Button 
+        className={styles.mobilePreviewBtn} 
+        onClick={() => setShowMobilePreview(true)}
+      >
+        <FaEye className="me-2" /> Vista previa
+      </Button>
+
+      {/* MODAL DE PREVIEW PARA MÓVIL */}
+      <Modal 
+        show={showMobilePreview} 
+        onHide={() => setShowMobilePreview(false)}
+        centered
+        className={styles.mobileModal}
+      >
+        <Modal.Header closeButton className="border-0">
+           <Modal.Title>Tu LynxBio</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="d-flex justify-content-center bg-light rounded-bottom">
+           <PhonePreview />
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 };

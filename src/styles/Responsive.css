@@ -1,0 +1,25 @@
+/* src/styles/Responsive.css */
+
+/* Variables de Breakpoints */
+:root {
+  --mobile: 576px;
+  --tablet: 768px;
+  --desktop: 992px;
+}
+
+/* Dashboard en Desktop */
+@media (min-width: 992px) {
+  .previewColumn { display: block; } /* Mostramos el celular */
+  .mobilePreviewToggle { display: none; } /* Escondemos el botón de móvil */
+}
+
+/* Dashboard en Mobile/Tablet */
+@media (max-width: 991px) {
+  .previewColumn { display: none; } /* Escondemos la columna lateral */
+  .mobilePreviewToggle { display: flex; } /* Mostramos un botón flotante facha */
+  
+  .configColumn {
+    width: 100%; /* El editor ocupa todo */
+    padding: 20px;
+  }
+}

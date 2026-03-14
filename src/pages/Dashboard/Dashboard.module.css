@@ -97,3 +97,124 @@
   filter: brightness(1.1);
   transform: scale(1.02);
 }
+
+.dashboardWrapper {
+  min-height: 100vh;
+  padding-top: 80px;
+  background-color: #f8f9fa;
+}
+
+.headerSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.configColumn {
+  background-color: #fff;
+  min-height: 100vh;
+  border-right: 1px solid #e0e0e0;
+}
+
+/* --- CELULAR --- */
+.previewColumn {
+  display: none; /* Escondido por defecto (móvil) */
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2rem;
+  background-color: #f0f2f5;
+}
+
+@media (min-width: 992px) {
+  .previewColumn {
+    display: flex; /* Se muestra en desktop */
+  }
+}
+
+.phoneSticky {
+  position: sticky;
+  top: 100px;
+}
+
+.phoneMockup {
+  width: 300px;
+  height: 600px;
+  background: #1a1a1a;
+  border-radius: 40px;
+  padding: 10px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 6px solid #2a2a2a;
+}
+
+.phoneScreen {
+  width: 100%;
+  height: 100%;
+  border-radius: 30px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.previewContent {
+  padding: 30px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.previewAvatar {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.previewAvatarPlaceholder {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #0d6efd, #00ff87);
+}
+
+.previewLinks {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.previewLinkItem {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* --- BOTÓN FLOTANTE MÓVIL --- */
+.mobilePreviewBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  border-radius: 50px;
+  padding: 12px 25px;
+  font-weight: bold;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .mobilePreviewBtn {
+    display: none; /* Desaparece en desktop */
+  }
+}
+
+.mobileModal :global(.modal-content) {
+  border-radius: 30px;
+  border: none;
+}
