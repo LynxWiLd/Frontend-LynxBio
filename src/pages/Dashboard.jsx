@@ -9,14 +9,17 @@ import {
   Tabs,
   Tab,
 } from "react-bootstrap";
-import { Trash2, ExternalLink, Plus } from "lucide-react";
 import api from "../api/axios";
 
 const Dashboard = () => {
   const [links, setLinks] = useState([]);
   const [settings, setSettings] = useState({
-    profile: { bio: '', avatarUrl: '' },
-    theme: { backgroundColor: '#ffffff', buttonColor: '#000000', buttonTextColor: '#ffffff' }
+    profile: { bio: "", avatarUrl: "" },
+    theme: {
+      backgroundColor: "#ffffff",
+      buttonColor: "#000000",
+      buttonTextColor: "#ffffff",
+    },
   });
 
   useEffect(() => {
@@ -25,19 +28,29 @@ const Dashboard = () => {
 
   const fetchUserData = async () => {
     try {
-      const res = await api.get('/links'); // O un nuevo endpoint que traiga todo el user
-      // Para simplificar, supongamos que el login ya nos dio estos datos o hacemos un GET /auth/me
-      const userRes = await api.get('/auth/profile/me'); // Necesitarías crear este endpoint
-      setLinks(userRes.data.links);
-      setSettings({ profile: userRes.data.profile, theme: userRes.data.theme });
-    } catch (err) { console.error(err); }
+      // 1. Usamos /auth/me que es el que definimos para el usuario logueado
+      const res = await api.get("/auth/me");
+
+      // 2. Cargamos los datos que vienen del backend
+      setLinks(res.data.links);
+      setSettings({
+        profile: res.data.profile,
+        theme: res.data.theme,
+      });
+    } catch (err) {
+      console.error("Error al cargar los datos del Dashboard", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSaveSettings = async () => {
     try {
-      await api.put('/auth/settings', settings);
-      alert('¡Configuración guardada!');
-    } catch (err) { alert('Error al guardar'); }
+      await api.put("/auth/settings", settings);
+      alert("¡Configuración guardada!");
+    } catch (err) {
+      alert("Error al guardar");
+    }
   };
 
   return (
@@ -52,16 +65,18 @@ const Dashboard = () => {
             <Col md={6}>
               <Card className="shadow-sm p-4">
                 <h4 className="mb-4">Personaliza tu página</h4>
-                
+
                 <Form.Group className="mb-3">
                   <Form.Label>Bio / Descripción</Form.Label>
-                  <Form.Control 
-                    as="textarea" 
+                  <Form.Control
+                    as="textarea"
                     value={settings.profile.bio}
-                    onChange={(e) => setSettings({
-                      ...settings, 
-                      profile: { ...settings.profile, bio: e.target.value }
-                    })}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        profile: { ...settings.profile, bio: e.target.value },
+                      })
+                    }
                   />
                 </Form.Group>
 
@@ -69,32 +84,46 @@ const Dashboard = () => {
                   <Col>
                     <Form.Group className="mb-3">
                       <Form.Label>Fondo</Form.Label>
-                      <Form.Control 
-                        type="color" 
+                      <Form.Control
+                        type="color"
                         value={settings.theme.backgroundColor}
-                        onChange={(e) => setSettings({
-                          ...settings, 
-                          theme: { ...settings.theme, backgroundColor: e.target.value }
-                        })}
+                        onChange={(e) =>
+                          setSettings({
+                            ...settings,
+                            theme: {
+                              ...settings.theme,
+                              backgroundColor: e.target.value,
+                            },
+                          })
+                        }
                       />
                     </Form.Group>
                   </Col>
                   <Col>
                     <Form.Group className="mb-3">
                       <Form.Label>Botones</Form.Label>
-                      <Form.Control 
-                        type="color" 
+                      <Form.Control
+                        type="color"
                         value={settings.theme.buttonColor}
-                        onChange={(e) => setSettings({
-                          ...settings, 
-                          theme: { ...settings.theme, buttonColor: e.target.value }
-                        })}
+                        onChange={(e) =>
+                          setSettings({
+                            ...settings,
+                            theme: {
+                              ...settings.theme,
+                              buttonColor: e.target.value,
+                            },
+                          })
+                        }
                       />
                     </Form.Group>
                   </Col>
                 </Row>
 
-                <Button variant="primary" className="mt-3" onClick={handleSaveSettings}>
+                <Button
+                  variant="primary"
+                  className="mt-3"
+                  onClick={handleSaveSettings}
+                >
                   Guardar Cambios
                 </Button>
               </Card>
