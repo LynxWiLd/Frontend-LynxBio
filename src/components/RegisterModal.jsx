@@ -23,22 +23,38 @@ const RegisterModal = () => {
     e.preventDefault();
     setError(null);
     try {
-      // Registro en el Backend
+      // 1. Intentamos el registro
       const res = await api.post("/auth/register", formData);
 
-      // Si sale bien, usamos la función login del contexto para setear el token y user
-      await login(formData.email, formData.password);
+      // Si llegamos acá, el status fue 201 (Éxito)
+      console.log("Registro exitoso:", res.data);
 
-      handleCloseModals();
+      // 2. Intentamos el login automático
+      try {
+        // Usamos los datos que ya tenemos para no pegarle al servidor de nuevo si no es necesario
+        // O llamamos al login con las credenciales que acaba de escribir el usuario
+        await login(formData.email, formData.password);
 
-      Swal.fire({
-        icon: "success",
-        title: "¡Cuenta creada!",
-        text: "Ya podés empezar a personalizar tu LynxBio",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+        handleCloseModals();
+        Swal.fire({
+          icon: "success",
+          title: "¡Cuenta creada!",
+          text: "Bienvenido a LynxBio",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } catch (loginErr) {
+        // Si el registro funcionó pero el login falló (por delay de la DB o error en la función)
+        // Redirigimos igual al Login para que no crea que no se registró
+        handleCloseModals();
+        Swal.fire({
+          icon: "warning",
+          title: "Cuenta creada con éxito",
+          text: "Por favor, iniciá sesión manualmente.",
+        });
+      }
     } catch (err) {
+      // Este error SÍ es de registro (ej: email duplicado)
       setError(err.response?.data?.msg || "Error al crear la cuenta");
     }
   };
