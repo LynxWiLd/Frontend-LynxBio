@@ -32,18 +32,13 @@ const CustomNavbar = () => {
         className={`${styles.navbarCustom} ${scrolled ? styles.navbarScrolled : ""} py-3`}
       >
         <Container>
-          <Navbar.Brand
-            as={Link}
-            to="/"
-            className={`fw-bold fs-3 text-primary d-flex align-items-center ${styles.brandLogo}`}
-          >
-            {/* REEMPLAZO: Cambiamos FaRocket por la imagen del logo */}
+          <Navbar.Brand as={Link} to="/" className={styles.brandContainer}>
             <img
-              src="./Logo.svg"
+              src="/Logo.svg"
               alt="LynxBio Logo"
               className={styles.navbarLogo}
             />
-            <span className="ms-2">lynxbio</span>
+            <span className={styles.brandText}>Lynxbio</span>
           </Navbar.Brand>
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />

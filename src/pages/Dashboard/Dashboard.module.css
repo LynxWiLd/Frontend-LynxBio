@@ -153,22 +153,32 @@
   border-radius: 30px;
   overflow-y: auto;
   position: relative;
+  /* IMPORTANTE: Centrado total del contenido */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-position: center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
 }
 
 .previewContent {
-  padding: 30px 15px;
+  width: 100%; /* Para que los hijos se centren respecto al ancho total */
+  padding: 40px 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .previewAvatar {
-  width: 75px;
-  height: 75px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #fff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 4px solid #fff;
+  /* Aseguramos que no flote a los costados */
+  margin: 0 auto;
+  display: block;
 }
 
 .previewAvatarPlaceholder {
