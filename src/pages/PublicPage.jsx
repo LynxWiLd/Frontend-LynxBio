@@ -41,16 +41,14 @@ const PublicPage = () => {
 
   // --- 1. Estilos del Contenedor Principal (SÓLO EL FONDO FIJO) ---
   const mainContainerStyle = {
-    // Si no hay imagen, usamos el color de fondo elegido
     backgroundColor: theme?.backgroundColor || "#f8f9fa", 
     backgroundImage: theme?.backgroundImage ? `url(${theme.backgroundImage})` : "none",
     backgroundSize: "cover",
     backgroundPosition: "center",
-    backgroundAttachment: "fixed", // Imagen de fondo fija al hacer scroll
+    backgroundAttachment: "fixed", 
     minHeight: "100vh",
     width: "100%",
     position: "relative",
-    // Agregamos padding para que en móvil no pegue a los bordes
     padding: "40px 15px", 
   };
 
@@ -65,28 +63,26 @@ const PublicPage = () => {
     zIndex: 0,
   };
 
-  // --- 3. ESTILOS DE LA TARJETA "LIQUID GLASS" (Aquí está la magia) ---
+  // --- 3. ESTILOS DE LA TARJETA "LIQUID GLASS" (Corregido) ---
   const glassCardStyle = {
     position: "relative",
     zIndex: 1,
-    maxWidth: "500px", // Ancho máximo de la tarjeta
-    margin: "0 auto", // Centrado horizontal
+    maxWidth: "500px", 
+    margin: "0 auto", 
     color: theme?.textColor || "#000000",
     
-    // --- Efecto Glassmorphism ---
-    // Fondo semi-transparente (usamos blanco muy suave)
-    background: "rgba(255, 255, 255, 0.1)", 
-    // Desenfoque del fondo (frosted glass)
-    backdropFilter: "blur(12px)", 
-    // Prefijo para Safari
-    WebkitBackdropFilter: "blur(12px)", 
+    // --- Efecto Glassmorphism Ajustado ---
+    // Aclaramos el fondo de la tarjeta sobre el negro (gris muy claro)
+    background: "rgba(255, 255, 255, 0.15)", 
+    // 👇 REDUCIMOS EL DESENFOQUE: de 12px a 6px
+    backdropFilter: "blur(6px)", 
+    WebkitBackdropFilter: "blur(6px)", 
     
-    // --- Bordes y Sombras ---
-    border: "1px solid rgba(255, 255, 255, 0.2)", // Borde suave
-    borderRadius: "25px", // Bordes muy redondeados
-    boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)", // Sombra sutil para dar profundidad
+    // --- Bordes y Sombras para nitidez ---
+    border: "1px solid rgba(255, 255, 255, 0.2)", 
+    borderRadius: "25px", 
+    boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)", 
     
-    // --- Espaciado Interno ---
     padding: "40px 25px", 
   };
 
@@ -94,7 +90,6 @@ const PublicPage = () => {
     <div style={mainContainerStyle}>
       <div style={overlayStyle} />
 
-      {/* Contenedor de Bootstrap con los estilos de vidrio aplicados */}
       <Container className="d-flex flex-column align-items-center" style={glassCardStyle}>
         {/* Foto de Perfil */}
         <Image
@@ -105,7 +100,7 @@ const PublicPage = () => {
             width: "110px", 
             height: "110px",
             objectFit: "cover",
-            borderColor: theme?.buttonColor || "#fff", // Borde de la foto del color de los botones
+            borderColor: theme?.buttonColor || "#fff", 
           }}
         />
 
@@ -117,7 +112,7 @@ const PublicPage = () => {
           {profile?.bio || "¡Bienvenido a mi página!"}
         </p>
 
-        {/* Botones de Enlaces (Siguen siendo sólidos) */}
+        {/* Botones de Enlaces (Nuevos Estilos) */}
         <div className="w-100 d-grid gap-3 mb-5">
           {links.length > 0 ? (
             links.map((link) => (
@@ -127,10 +122,14 @@ const PublicPage = () => {
                 target="_blank"
                 className="py-3 shadow-sm border-0 fw-bold transition-all"
                 style={{
-                  backgroundColor: theme?.buttonColor || "#000",
+                  // 👇 REEMPLAZAMOS EL COLOR SÓLIDO POR UN DEGRADADO SUAVE
+                  // Usamos el color del tema, pero con un degradado lineal suave sobre él y una sombra interna.
+                  background: `linear-gradient(to bottom, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.1)), ${theme?.buttonColor || '#000'}`,
                   color: theme?.buttonTextColor || "#fff",
-                  borderRadius: "15px", // Bordes redondeados facha
+                  borderRadius: "15px", 
                   fontSize: "1.1rem",
+                  // 👇 AGREGAMOS PROFUNDIDAD: Sombra externa e interna (relieve)
+                  boxShadow: "0 4px 15px 0 rgba(0,0,0,0.2), inset 0 2px 5px rgba(255,255,255,0.1), inset 0 -2px 5px rgba(0,0,0,0.1)",
                 }}
               >
                 {link.title}
