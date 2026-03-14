@@ -1,7 +1,18 @@
-.dashboardContainer {
-  padding-top: 100px;
-  padding-bottom: 3rem;
+/* ==========================================
+   1. ESTRUCTURA GLOBAL Y WRAPPERS
+   ========================================== */
+.dashboardWrapper {
+  min-height: 100vh;
+  padding-top: 80px; /* Espacio para el Navbar */
+  background-color: #f8f9fa;
   font-family: "Poppins", sans-serif;
+}
+
+.configColumn {
+  background-color: #fff;
+  min-height: 100vh;
+  border-right: 1px solid #e0e0e0;
+  padding-bottom: 5rem;
 }
 
 .headerSection {
@@ -9,20 +20,25 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  padding: 1.5rem 0;
 }
 
 .headerSection h2 {
   font-weight: 700;
   color: #1a1a1a;
+  margin: 0;
 }
 
-/* Tarjetas y Contenedores */
+/* ==========================================
+   2. TARJETAS Y COMPONENTES DE EDICIÓN
+   ========================================== */
 .glassCard {
   background: #ffffff;
   border-radius: 25px;
   border: none;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
 }
 
 .linkItem {
@@ -32,17 +48,48 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   margin-bottom: 1rem;
   padding: 1rem;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .linkItem:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Avatar y Perfil */
-.avatarPreviewWrapper {
-  text-align: center;
-  margin-bottom: 1.5rem;
+.primaryBtn {
+  border-radius: 12px;
+  padding: 0.8rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.primaryBtn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+   3. FORMULARIO DE APARIENCIA (BIO Y COLORES)
+   ========================================== */
+.bioTextArea {
+  resize: vertical;
+  min-height: 100px;
+  max-height: 180px; /* Límite físico para no romper el layout */
+  border-radius: 12px !important;
+  transition: border-color 0.2s;
+}
+
+.charCounter {
+  font-size: 0.8rem;
+  text-align: right;
+  margin-top: 5px;
+  color: #6c757d;
+}
+
+.charCounterError {
+  color: #dc3545;
+  font-weight: bold;
 }
 
 .avatarImage {
@@ -55,21 +102,20 @@
   border: 4px solid #fff;
 }
 
-/* Color Pickers */
-.colorPickerGroup {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
 .colorInputCustom {
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   padding: 0;
-  border: none;
-  border-radius: 10px;
+  border: 2px solid #eee;
+  border-radius: 12px;
   cursor: pointer;
   margin: 0 auto;
   overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.colorInputCustom:hover {
+  transform: scale(1.1);
 }
 
 .colorInputCustom::-webkit-color-swatch {
@@ -77,96 +123,19 @@
   border-radius: 10px;
 }
 
-.statusIndicator {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.socialIconsPreview {
-  display: flex;
-  gap: 20px;
-  margin-top: 25px;
-  justify-content: center;
-  font-size: 1.5rem; /* Tamaño de los íconos */
-}
-
-.socialIcon {
-  transition: transform 0.2s ease;
-  cursor: pointer;
-}
-
-.socialIcon:hover {
-  transform: scale(1.2);
-}
-
-/* Botones */
-.primaryBtn {
-  border-radius: 12px;
-  padding: 0.8rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.primaryBtn:hover {
-  filter: brightness(1.1);
-  transform: scale(1.02);
-}
-
-.dashboardWrapper {
-  min-height: 100vh;
-  padding-top: 80px;
-  background-color: #f8f9fa;
-}
-
-.headerSection {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.configColumn {
-  background-color: #fff;
-  min-height: 100vh;
-  border-right: 1px solid #e0e0e0;
-}
-
-/* Dashboard.module.css */
-.bioTextArea {
-  resize: vertical; /* Solo permite estirar hacia abajo, no hacia los lados */
-  min-height: 100px;
-  max-height: 200px; /* 👈 Acá está el límite para que no sea infinito */
-  border-radius: 12px !important;
-}
-
-.charCounter {
-  font-size: 0.8rem;
-  text-align: right;
-  margin-top: 5px;
-  color: #6c757d;
-}
-
-.charCounterError {
-  color: #dc3545; /* Rojo si se pasa */
-  font-weight: bold;
-}
-
-/* --- CELULAR --- */
+/* ==========================================
+   4. PREVISUALIZACIÓN (EL MOCKUP DEL CELULAR)
+   ========================================== */
 .previewColumn {
-  display: none; /* Escondido por defecto (móvil) */
+  display: none; /* Mobile first */
   justify-content: center;
   align-items: flex-start;
-  padding-top: 2rem;
+  padding-top: 3rem;
   background-color: #f0f2f5;
 }
 
 @media (min-width: 992px) {
-  .previewColumn {
-    display: flex; /* Se muestra en desktop */
-  }
+  .previewColumn { display: flex; }
 }
 
 .phoneSticky {
@@ -175,22 +144,21 @@
 }
 
 .phoneMockup {
-  width: 300px;
-  height: 600px;
+  width: 310px;
+  height: 620px;
   background: #1a1a1a;
-  border-radius: 40px;
-  padding: 10px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  border: 6px solid #2a2a2a;
+  border-radius: 45px;
+  padding: 12px;
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.3);
+  border: 7px solid #2a2a2a;
 }
 
 .phoneScreen {
   width: 100%;
   height: 100%;
-  border-radius: 30px;
+  border-radius: 35px;
   overflow-y: auto;
   position: relative;
-  /* IMPORTANTE: Centrado total del contenido */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -199,68 +167,87 @@
   background-repeat: no-repeat !important;
 }
 
+/* Scrollbar invisible para el mockup */
+.phoneScreen::-webkit-scrollbar { display: none; }
+
 .previewContent {
-  width: 100%; /* Para que los hijos se centren respecto al ancho total */
-  padding: 40px 15px;
+  width: 100%;
+  padding: 45px 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .previewAvatar {
-  width: 80px;
-  height: 80px;
+  width: 85px;
+  height: 85px;
   border-radius: 50%;
   object-fit: cover;
-  /* El color lo manejamos por inline-style en el JSX, pero el ancho va acá */
-  border: 4px solid;
+  border: 4px solid; /* El color viene del style inline */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.previewAvatarPlaceholder {
-  width: 75px;
-  height: 75px;
-  border-radius: 50%;
-  background: linear-gradient(45deg, #0d6efd, #00ff87);
+  margin-bottom: 15px;
 }
 
 .previewLinks {
   width: 100%;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 .previewLinkItem {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 12px;
   text-align: center;
   font-weight: 600;
-  font-size: 0.9rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  font-size: 0.95rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
-/* --- BOTÓN FLOTANTE MÓVIL --- */
+.socialIconsPreview {
+  display: flex;
+  gap: 20px;
+  margin-top: 25px;
+  justify-content: center;
+  font-size: 1.6rem;
+}
+
+.socialIcon {
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.socialIcon:hover {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+/* ==========================================
+   5. INTERFAZ MÓVIL Y MODALES
+   ========================================== */
 .mobilePreviewBtn {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
+  bottom: 25px;
+  right: 25px;
+  z-index: 1050;
   border-radius: 50px;
-  padding: 12px 25px;
-  font-weight: bold;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  padding: 14px 28px;
+  font-weight: 700;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4);
   display: flex;
   align-items: center;
 }
 
 @media (min-width: 992px) {
-  .mobilePreviewBtn {
-    display: none; /* Desaparece en desktop */
-  }
+  .mobilePreviewBtn { display: none; }
 }
 
 .mobileModal :global(.modal-content) {
-  border-radius: 30px;
+  border-radius: 40px;
   border: none;
+  overflow: hidden;
 }
