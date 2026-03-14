@@ -1,24 +1,23 @@
+
 /* index.css */
 :root {
-  /* TEMA CLARO (Default) */
+  /* TEMA CLARO */
   --bg-main: #f8f9fa;
   --bg-config: #ffffff;
   --text-main: #1a1a1a;
-  --text-muted: #6c757d;
   --border-color: #e0e0e0;
-  --glass-card: rgba(255, 255, 255, 0.15);
-  --input-bg: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.7); /* Vidrio claro */
+  --glass-border: rgba(255, 255, 255, 0.3);
 }
 
 [data-theme='dark'] {
-  /* TEMA OSCURO (Vibe Nocturna) */
-  --bg-main: #0f172a;     /* Azul noche profundo */
-  --bg-config: #1e293b;   /* Slate oscuro para el panel */
-  --text-main: #f1f5f9;   /* Blanco suave para no cansar la vista */
-  --text-muted: #94a3b8;
+  /* TEMA OSCURO */
+  --bg-main: #0f172a;     /* Azul noche */
+  --bg-config: #1e293b;   /* Gris pizarra */
+  --text-main: #f1f5f9;
   --border-color: #334155;
-  --glass-card: rgba(15, 23, 42, 0.3);
-  --input-bg: #1e293b;
+  --glass-bg: rgba(255, 255, 255, 0.05); /* Vidrio oscuro sutil */
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 body {

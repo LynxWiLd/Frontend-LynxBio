@@ -1,18 +1,20 @@
 /* ==========================================
-   1. ESTRUCTURA GENERAL DEL DASHBOARD
+   1. ESTRUCTURA GLOBAL Y WRAPPERS
    ========================================== */
 .dashboardWrapper {
   min-height: 100vh;
   padding-top: 80px;
-  background-color: #f8f9fa;
   font-family: "Poppins", sans-serif;
+  background-color: var(--bg-main) !important;
+  transition: background-color 0.3s ease;
 }
 
 .configColumn {
-  background-color: #fff;
   min-height: 100vh;
-  border-right: 1px solid #e0e0e0;
   padding: 2rem;
+  background-color: var(--bg-config) !important;
+  border-right: 1px solid var(--border-color) !important;
+  transition: all 0.3s ease;
 }
 
 .headerSection {
@@ -22,33 +24,46 @@
   margin-bottom: 2rem;
 }
 
-/* Tarjetas de edición (Formularios) */
-.glassCard {
-  background: #ffffff;
-  border-radius: 25px;
-  border: none;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+.headerSection h2 {
+  font-weight: 700;
+  color: var(--text-main) !important;
 }
 
-/* El Textarea: Bloqueado contra estiramientos manuales */
+/* ==========================================
+   2. PANELES Y FORMULARIOS DE EDICIÓN
+   ========================================== */
+.glassCard {
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 25px;
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1) !important;
+  transition: transform 0.2s ease;
+}
+
 .bioTextArea {
+  width: 100%;
+  padding: 12px !important;
+  border-radius: 12px !important;
   resize: none !important;
   min-height: 100px !important;
   max-height: 150px !important;
-  border-radius: 12px !important;
-  border: 1px solid #dee2e6 !important;
-  padding: 12px !important;
+  background-color: var(--input-bg) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
   transition: border-color 0.2s;
 }
 
 .bioTextArea:focus {
+  outline: none;
   border-color: #0d6efd !important;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15) !important;
 }
 
-/* Avatar dentro del Formulario (No el del celu) */
 .avatarImage {
   width: 110px;
   height: 110px;
@@ -60,20 +75,24 @@
 }
 
 /* ==========================================
-   2. PREVISUALIZACIÓN (EL MOCKUP DEL CELULAR)
+   3. PREVISUALIZACIÓN (MOCKUP DEL CELULAR)
    ========================================== */
 .previewColumn {
   display: none; /* Mobile-first */
   justify-content: center;
   align-items: flex-start;
   padding-top: 3rem;
-  background-color: #f0f2f5;
+  background-color: #f0f2f5; /* Un tono neutro para resaltar el celu */
 }
 
 @media (min-width: 992px) {
   .previewColumn {
     display: flex;
   }
+}
+
+[data-theme="dark"] .previewColumn {
+  background-color: #0b1120; /* Fondo más oscuro en preview para dark mode */
 }
 
 .phoneSticky {
@@ -87,8 +106,8 @@
   background: #1a1a1a;
   border-radius: 45px;
   padding: 12px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
   border: 7px solid #2a2a2a;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   position: relative;
 }
@@ -97,16 +116,20 @@
   width: 100%;
   height: 100%;
   border-radius: 35px;
-  overflow-y: auto;
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
+  position: relative;
+  background-color: var(--bg-config) !important;
   background-position: center !important;
   background-size: cover !important;
 }
 
-/* Capa oscura (Overlay) para que el cristal resalte */
+.phoneScreen::-webkit-scrollbar {
+  display: none;
+}
+
 .phoneOverlay {
   position: absolute;
   top: 0;
@@ -117,7 +140,9 @@
   z-index: 1;
 }
 
-/* LA TARJETA DE VIDRIO (Glassmorphism) */
+/* ==========================================
+   4. CONTENIDO INTERNO DEL PREVIEW (GLASS)
+   ========================================== */
 .phoneGlassCard {
   position: relative;
   z-index: 2;
@@ -125,34 +150,31 @@
   margin: 40px 0;
   padding: 25px 15px;
   border-radius: 25px;
-  background: rgba(255, 255, 255, 0.12);
+  text-align: center;
+  background: var(--glass-bg) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  text-align: center;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Elementos dentro del cristal del celu */
 .previewAvatar {
   width: 85px !important;
   height: 85px !important;
   border-radius: 50% !important;
   object-fit: cover;
-  border: 4px solid;
+  border: 4px solid; /* El color se maneja inline por el user */
   margin-bottom: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .previewBio {
   width: 100%;
-  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 15px;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  word-break: break-word;
-  font-size: 0.85rem;
-  margin-bottom: 15px;
-  line-height: 1.4;
 }
 
 .previewLinks {
@@ -164,11 +186,10 @@
   padding: 12px;
   margin-bottom: 10px;
   border-radius: 12px;
-  text-align: center;
   font-weight: 700;
   font-size: 0.85rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease;
 }
 
@@ -181,7 +202,7 @@
 }
 
 /* ==========================================
-   3. ELEMENTOS INTERACTIVOS Y UTILIDADES
+   5. UTILIDADES E INTERFACES GLOBALES
    ========================================== */
 .mobilePreviewBtn {
   position: fixed;
@@ -201,7 +222,7 @@
   font-size: 0.8rem;
   text-align: right;
   margin-top: 5px;
-  color: #6c757d;
+  color: var(--text-muted);
 }
 
 .charCounterError {
@@ -228,53 +249,21 @@
   border-radius: 8px;
 }
 
-/* Ocultar scrollbar en el mockup para mayor realismo */
-.phoneScreen::-webkit-scrollbar {
-  display: none;
-}
-
-/* Ajustes para el modal de vista previa móvil */
-.mobileModal :global(.modal-content) {
-  border-radius: 40px;
-  border: none;
-  overflow: hidden;
-}
-
-/* Dashboard.module.css */
-
-.dashboardWrapper {
-  background-color: var(--bg-main) !important;
-}
-
-.configColumn {
-  background-color: var(--bg-config) !important;
-  border-right: 1px solid var(--border-color) !important;
-}
-
-.glassCard {
-  background: var(--bg-config) !important;
-  color: var(--text-main) !important;
-  border: 1px solid var(--border-color) !important;
-}
-
-.headerSection h2 {
-  color: var(--text-main) !important;
-}
-
-/* El textarea también tiene que ser oscuro */
-.bioTextArea {
-  background-color: var(--input-bg) !important;
-  color: var(--text-main) !important;
-  border: 1px solid var(--border-color) !important;
-}
-
-/* Estilo para los Tabs en modo oscuro */
+/* --- BOOTSTRAP OVERRIDES --- */
 :global(.nav-tabs .nav-link) {
   color: var(--text-muted);
+  border: none;
 }
 
 :global(.nav-tabs .nav-link.active) {
   background-color: var(--bg-config) !important;
   color: var(--text-main) !important;
-  border-color: var(--border-color) !important;
+  border-bottom: 2px solid #0d6efd !important;
+}
+
+:global(.modal-content) {
+  border-radius: 40px;
+  border: none;
+  background-color: var(--bg-config) !important;
+  color: var(--text-main);
 }
