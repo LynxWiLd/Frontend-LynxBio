@@ -1,22 +1,35 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MainLayout from './layouts/MainLayout';
-import Dashboard from './pages/Dashboard';
-import Login from './pages/Login';
-import PublicPage from './pages/PublicPage';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+// Layouts
+import MainLayout from "./layouts/MainLayout";
+
+// Pages
+import HomePage from "./pages/HomePage";
+import Dashboard from "./pages/Dashboard";
+import PublicPage from "./pages/PublicPage";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* RUTAS CON NAVBAR Y FOOTER */}
+        {/* 1. Ruta Pública y de Landing (Usa el Layout para tener Navbar y Footer) */}
         <Route path="/" element={<MainLayout />}>
+          <Route index element={<HomePage />} />
           <Route path="dashboard" element={<Dashboard />} />
-          {/* Podés agregar más rutas aquí como /settings o /analytics */}
         </Route>
 
-        {/* RUTAS SIN NAVBAR (Páginas limpias) */}
-        <Route path="/login" element={<Login />} />
+        {/* 2. Ruta de Perfil (Limpia, sin el Navbar del sistema) */}
         <Route path="/:username" element={<PublicPage />} />
+
+        {/* 3. Ruta 404 o por defecto (Opcional) */}
+        <Route
+          path="*"
+          element={
+            <div className="text-center mt-5">
+              <h1>404 - Not Found</h1>
+            </div>
+          }
+        />
       </Routes>
     </Router>
   );
