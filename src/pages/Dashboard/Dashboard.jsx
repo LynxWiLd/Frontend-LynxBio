@@ -15,7 +15,7 @@ import { FaInstagram, FaGithub, FaXTwitter } from "react-icons/fa6";
 import Swal from "sweetalert2";
 
 import api from "../../services/axiosConfig";
-import styles from "./Dashboard.module.css"; 
+import styles from "./Dashboard.module.css";
 
 import AddLinkCard from "../../components/dashboard/AddLinkCard";
 import LinkItem from "../../components/dashboard/LinkItem";
@@ -70,7 +70,12 @@ const Dashboard = () => {
     try {
       const res = await api.post("/links", data);
       setLinks(res.data);
-      Swal.fire({ icon: "success", title: "¡Link agregado!", timer: 1500, showConfirmButton: false });
+      Swal.fire({
+        icon: "success",
+        title: "¡Link agregado!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
       Swal.fire({ icon: "error", title: "Error al agregar el link" });
     }
@@ -91,7 +96,12 @@ const Dashboard = () => {
       try {
         const res = await api.delete(`/links/${id}`);
         setLinks(res.data.links || res.data);
-        Swal.fire({ icon: "success", title: "¡Eliminado!", timer: 1000, showConfirmButton: false });
+        Swal.fire({
+          icon: "success",
+          title: "¡Eliminado!",
+          timer: 1000,
+          showConfirmButton: false,
+        });
       } catch (err) {
         Swal.fire("Error", "No se pudo eliminar", "error");
       }
@@ -102,7 +112,12 @@ const Dashboard = () => {
   const handleSaveSettings = async () => {
     try {
       await api.put("/auth/settings", settings);
-      Swal.fire({ icon: "success", title: "¡Apariencia guardada!", timer: 1500, showConfirmButton: false });
+      Swal.fire({
+        icon: "success",
+        title: "¡Apariencia guardada!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
       Swal.fire({ icon: "error", title: "Error al guardar configuración" });
     }
@@ -122,16 +137,24 @@ const Dashboard = () => {
     formData.append("type", type);
 
     try {
-      Swal.fire({ title: "Subiendo obra de arte...", didOpen: () => Swal.showLoading() });
+      Swal.fire({
+        title: "Subiendo obra de arte...",
+        didOpen: () => Swal.showLoading(),
+      });
       const res = await api.post("/auth/upload-avatar", formData);
-      
+
       const newSettings = { ...settings };
       if (type === "avatar") newSettings.profile.avatarUrl = res.data.url;
       else newSettings.theme.backgroundImage = res.data.url;
-      
+
       setSettings(newSettings);
       await api.put("/auth/settings", newSettings); // Auto-save
-      Swal.fire({ icon: "success", title: "¡Imagen lista!", timer: 1500, showConfirmButton: false });
+      Swal.fire({
+        icon: "success",
+        title: "¡Imagen lista!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
       Swal.fire("Error", "No se pudo subir la imagen", "error");
     }
@@ -140,7 +163,12 @@ const Dashboard = () => {
   const copyToClipboard = () => {
     const url = `${window.location.origin}/${settings.profile.username}`;
     navigator.clipboard.writeText(url);
-    Swal.fire({ icon: "info", title: "¡Link copiado!", timer: 1000, showConfirmButton: false });
+    Swal.fire({
+      icon: "info",
+      title: "¡Link copiado!",
+      timer: 1000,
+      showConfirmButton: false,
+    });
   };
 
   const PhonePreview = () => (
@@ -149,30 +177,49 @@ const Dashboard = () => {
         className={styles.phoneScreen}
         style={{
           backgroundColor: settings.theme.backgroundColor,
-          backgroundImage: settings.theme.backgroundImage ? `url(${settings.theme.backgroundImage})` : "none",
-          color: settings.theme.textColor,
+          backgroundImage: settings.theme.backgroundImage
+            ? `url(${settings.theme.backgroundImage})`
+            : "none",
         }}
       >
-        <div className={styles.previewContent}>
+        {/* Capa oscura si hay fondo (igual que en PublicPage) */}
+        {settings.theme.backgroundImage && (
+          <div className={styles.phoneOverlay} />
+        )}
+
+        <div
+          className={styles.phoneGlassCard}
+          style={{ color: settings.theme.textColor }}
+        >
           <img
-            src={settings.profile.avatarUrl || "https://via.placeholder.com/150"}
+            src={
+              settings.profile.avatarUrl || "https://via.placeholder.com/150"
+            }
             className={styles.previewAvatar}
             style={{ borderColor: settings.theme.buttonColor }}
             alt="Avatar"
           />
-          <h5 className="fw-bold mt-2">@{settings.profile.username || "usuario"}</h5>
-          <p>{settings.profile.bio}</p>
+          <h5 className="fw-bold mt-2">
+            @{settings.profile.username || "usuario"}
+          </h5>
+          <p className={styles.previewBio}>{settings.profile.bio}</p>
+
           <div className={styles.previewLinks}>
             {links.map((link) => (
               <div
                 key={link._id}
                 className={styles.previewLinkItem}
-                style={{ backgroundColor: link.buttonColor, color: link.buttonTextColor }}
+                style={{
+                  backgroundColor: link.buttonColor,
+                  color: link.buttonTextColor,
+                  backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1))`,
+                }}
               >
                 {link.title}
               </div>
             ))}
           </div>
+
           <div className={styles.socialIconsPreview}>
             {settings.socials.instagram && <FaInstagram className="mx-2" />}
             {settings.socials.github && <FaGithub className="mx-2" />}
@@ -183,12 +230,13 @@ const Dashboard = () => {
     </div>
   );
 
-  if (loading) return (
-    <Container className="text-center mt-5">
-      <Spinner animation="border" variant="primary" />
-      <p>Sincronizando con la manada...</p>
-    </Container>
-  );
+  if (loading)
+    return (
+      <Container className="text-center mt-5">
+        <Spinner animation="border" variant="primary" />
+        <p>Sincronizando con la manada...</p>
+      </Container>
+    );
 
   return (
     <Container fluid className={styles.dashboardWrapper}>
@@ -196,28 +244,46 @@ const Dashboard = () => {
         <Col lg={7} xl={8} className={styles.configColumn}>
           <div className={styles.headerSection}>
             <h2 className="fw-bold">Panel de Control</h2>
-            <Button variant="outline-dark" onClick={copyToClipboard} className="rounded-pill px-4">
+            <Button
+              variant="outline-dark"
+              onClick={copyToClipboard}
+              className="rounded-pill px-4"
+            >
               <FaCopy className="me-2" /> Mi Link
             </Button>
           </div>
 
           <Tabs defaultActiveKey="links" className="mb-4">
-            <Tab eventKey="links" title={<span><FaLink className="me-2" /> Enlaces</span>}>
+            <Tab
+              eventKey="links"
+              title={
+                <span>
+                  <FaLink className="me-2" /> Enlaces
+                </span>
+              }
+            >
               {/* 👈 AGREGAMOS EL FORMULARIO PARA CREAR LINKS */}
               <AddLinkCard handleAddLink={handleAddLink} />
-              
+
               <ListGroup variant="flush" className="mt-4">
                 {links.map((link) => (
-                  <LinkItem 
-                    key={link._id} 
-                    link={link} 
-                    handleDeleteLink={handleDeleteLink} 
+                  <LinkItem
+                    key={link._id}
+                    link={link}
+                    handleDeleteLink={handleDeleteLink}
                   />
                 ))}
               </ListGroup>
             </Tab>
 
-            <Tab eventKey="appearance" title={<span><FaPalette className="me-2" /> Apariencia</span>}>
+            <Tab
+              eventKey="appearance"
+              title={
+                <span>
+                  <FaPalette className="me-2" /> Apariencia
+                </span>
+              }
+            >
               <AppearanceForm
                 settings={settings}
                 setSettings={setSettings}
@@ -235,11 +301,19 @@ const Dashboard = () => {
         </Col>
       </Row>
 
-      <Button className={styles.mobilePreviewBtn} onClick={() => setShowMobilePreview(true)}>
+      <Button
+        className={styles.mobilePreviewBtn}
+        onClick={() => setShowMobilePreview(true)}
+      >
         <FaEye className="me-2" /> Vista previa
       </Button>
 
-      <Modal show={showMobilePreview} onHide={() => setShowMobilePreview(false)} centered className={styles.mobileModal}>
+      <Modal
+        show={showMobilePreview}
+        onHide={() => setShowMobilePreview(false)}
+        centered
+        className={styles.mobileModal}
+      >
         <Modal.Body className="d-flex justify-content-center bg-light rounded">
           <PhonePreview />
         </Modal.Body>

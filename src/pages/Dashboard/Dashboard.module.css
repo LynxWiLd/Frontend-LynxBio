@@ -1,5 +1,6 @@
-/* Dashboard.module.css */
-
+/* ==========================================
+   1. ESTRUCTURA GENERAL DEL DASHBOARD
+   ========================================== */
 .dashboardWrapper {
   min-height: 100vh;
   padding-top: 80px;
@@ -14,9 +15,38 @@
   padding: 2rem;
 }
 
-/* --- COLUMNA DEL CELULAR (PREVIEW) --- */
+.headerSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* Tarjetas de edición (Links y Apariencia) */
+.glassCard {
+  background: #ffffff;
+  border-radius: 25px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* El Textarea que ya NO se estira */
+.bioTextArea {
+  resize: none !important;
+  min-height: 100px !important;
+  max-height: 150px !important;
+  border-radius: 12px !important;
+  border: 1px solid #dee2e6 !important;
+  padding: 12px !important;
+}
+
+/* ==========================================
+   2. PREVISUALIZACIÓN (EL MOCKUP DEL CELULAR)
+   ========================================== */
 .previewColumn {
-  display: none; /* Escondido en móvil */
+  display: none;
   justify-content: center;
   align-items: flex-start;
   padding-top: 3rem;
@@ -24,7 +54,9 @@
 }
 
 @media (min-width: 992px) {
-  .previewColumn { display: flex; }
+  .previewColumn {
+    display: flex;
+  }
 }
 
 .phoneSticky {
@@ -41,6 +73,7 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
   border: 7px solid #2a2a2a;
   overflow: hidden;
+  position: relative;
 }
 
 .phoneScreen {
@@ -48,6 +81,7 @@
   height: 100%;
   border-radius: 35px;
   overflow-y: auto;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -55,34 +89,57 @@
   background-size: cover !important;
 }
 
-.previewContent {
-  width: 100%;
-  padding: 40px 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Capa oscura para que el vidrio resalte */
+.phoneOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
 }
 
-/* FIX: El Bebé vuelve a su tamaño */
+/* LA TARJETA DE VIDRIO (IGUAL QUE EN PUBLIC PAGE) */
+.phoneGlassCard {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  margin: 40px 0;
+  padding: 25px 15px;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Foto de Perfil en el celu */
 .previewAvatar {
   width: 85px !important;
   height: 85px !important;
   border-radius: 50% !important;
-  object-fit: cover; /* No se estira */
+  object-fit: cover;
   border: 4px solid;
   margin-bottom: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* FIX: Las "SSSS" ya no rompen el diseño */
-.previewContent p {
+/* Bio: No rompe más con las SSSSS */
+.previewBio {
   width: 100%;
   text-align: center;
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
-  font-size: 0.9rem;
-  margin-bottom: 20px;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+}
+
+.previewLinks {
+  width: 100%;
 }
 
 .previewLinkItem {
@@ -91,18 +148,23 @@
   margin-bottom: 10px;
   border-radius: 12px;
   text-align: center;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border: none;
 }
 
-/* TEXTAREA BLOQUEADO */
-.bioTextArea {
-  resize: none !important;
-  min-height: 100px !important;
-  max-height: 150px !important;
-  border-radius: 12px !important;
+.socialIconsPreview {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  font-size: 1.5rem;
+  margin-top: 10px;
 }
 
+/* ==========================================
+   3. ELEMENTOS INTERACTIVOS MÓVIL
+   ========================================== */
 .mobilePreviewBtn {
   position: fixed;
   bottom: 25px;
@@ -112,4 +174,30 @@
   padding: 12px 25px;
   font-weight: bold;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.charCounter {
+  font-size: 0.8rem;
+  text-align: right;
+  margin-top: 5px;
+  color: #6c757d;
+}
+
+.charCounterError {
+  color: #dc3545 !important;
+  font-weight: bold;
+}
+
+.colorInputCustom {
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Scrollbar invisible para el mockup */
+.phoneScreen::-webkit-scrollbar {
+  display: none;
 }
