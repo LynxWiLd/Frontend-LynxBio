@@ -1,6 +1,6 @@
 import { ListGroup, Button } from 'react-bootstrap';
 import { FaTrashAlt } from 'react-icons/fa';
-import styles from '../../../pages/Dashboard/Dashboard.module.css';
+import styles from '../../pages/Dashboard/Dashboard.module.css';
 
 const LinkItem = ({ link, handleDeleteLink }) => (
   <ListGroup.Item className={styles.linkItem}>

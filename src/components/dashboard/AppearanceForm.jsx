@@ -1,6 +1,6 @@
 import { Card, Form, Row, Col, Button } from 'react-bootstrap';
 import { FaImage, FaSave } from 'react-icons/fa';
-import styles from '../../../pages/Dashboard/Dashboard.module.css';
+import styles from '../../pages/Dashboard/Dashboard.module.css';
 
 const AppearanceForm = ({ settings, setSettings, handleImageUpload, handleSaveSettings }) => {
   return (

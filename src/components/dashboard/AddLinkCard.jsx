@@ -1,6 +1,6 @@
 import { Card, Form, Row, Col, Button } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
-import styles from '../../../pages/Dashboard/Dashboard.module.css';
+import styles from '../../pages/Dashboard/Dashboard.module.css';
 
 const AddLinkCard = ({ newLink, setNewLink, handleAddLink }) => (
   <Card className={`${styles.glassCard} mb-4 bg-light`}>
