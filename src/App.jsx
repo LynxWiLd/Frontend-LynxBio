@@ -1,17 +1,36 @@
 import { useState, useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Importamos esto
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { AuthContext } from './context/AuthContext';
 import LoginModal from './components/LoginModal';
-import RegisterModal from './components/RegisterModal'; // Nuevo
+import RegisterModal from './components/RegisterModal';
 import Dashboard from './pages/Dashboard';
+import PublicPage from './pages/PublicPage'; // ¡No te olvides de este!
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false); // Nuevo estado
+  const [showRegister, setShowRegister] = useState(false);
   const { user, logout } = useContext(AuthContext);
 
-  return (
+  // Componente interno para la Home (Landing o Dashboard)
+  const Home = () => (
     <>
+      {user ? (
+        <Dashboard />
+      ) : (
+        <Container className="mt-5 text-center py-5">
+          <h1 className="display-4 fw-bold">Tu bio, un solo enlace.</h1>
+          <p className="lead text-muted">Organiza tus redes sociales y contenido en una página simple.</p>
+          <Button variant="primary" size="lg" onClick={() => setShowRegister(true)}>
+            Comenzar Gratis
+          </Button>
+        </Container>
+      )}
+    </>
+  );
+
+  return (
+    <Router>
       <Navbar bg="dark" variant="dark" expand="lg" className="shadow-sm">
         <Container>
           <Navbar.Brand href="/">LynxBio</Navbar.Brand>
@@ -35,22 +54,17 @@ function App() {
         </Container>
       </Navbar>
 
-      {user ? (
-        <Dashboard />
-      ) : (
-        <Container className="mt-5 text-center py-5">
-          <h1 className="display-4 fw-bold">Tu bio, un solo enlace.</h1>
-          <p className="lead text-muted">Organiza tus redes sociales y contenido en una página simple.</p>
-          <Button variant="primary" size="lg" onClick={() => setShowRegister(true)}>
-            Comenzar Gratis
-          </Button>
-        </Container>
-      )}
+      <Routes>
+        {/* Ruta principal: Muestra Landing o Dashboard */}
+        <Route path="/" element={<Home />} />
 
-      {/* Modales */}
+        {/* Ruta dinámica: Muestra la página de links de CUALQUIER usuario */}
+        <Route path="/:username" element={<PublicPage />} />
+      </Routes>
+
       <LoginModal show={showLogin} handleClose={() => setShowLogin(false)} />
       <RegisterModal show={showRegister} handleClose={() => setShowRegister(false)} />
-    </>
+    </Router>
   );
 }
 
