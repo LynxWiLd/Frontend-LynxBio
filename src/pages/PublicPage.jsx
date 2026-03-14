@@ -65,7 +65,6 @@ const PublicPage = () => {
         className={styles.glassCard}
         style={{ color: theme?.textColor || "#000" }}
       >
-        // ... dentro del componente Image ...
         <Image
           src={profile?.avatarUrl || "https://via.placeholder.com/150"}
           roundedCircle
