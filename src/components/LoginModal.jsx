@@ -23,25 +23,27 @@ const LoginModal = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Llamamos a la función login del contexto (aseguráte de que exista)
-      await login(formData.email, formData.password);
-      handleCloseModals();
-      Swal.fire({
-        icon: "success",
-        title: "¡Bienvenido!",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Credenciales incorrectas",
-      });
+  e.preventDefault();
+  console.log("1. Intentando enviar datos:", formData); // Paso 1
+
+  try {
+    if (!login) {
+      console.error("ERROR: La función 'login' no existe en el contexto.");
+      return;
     }
-  };
+
+    await login(formData.email, formData.password);
+    console.log("2. ¡Login exitoso en el context!"); // Paso 2
+
+  } catch (err) {
+    // 👇 ESTO ES CLAVE: Mostramos el error REAL en la consola
+    console.error("ERROR REAL CAPTURADO:", err); 
+    
+    // Solo mostramos el Swal si el error viene del servidor (400)
+    const mensaje = err.response?.data?.msg || "Error interno de código";
+    Swal.fire({ icon: "error", title: "Ups!", text: mensaje });
+  }
+};
 
   return (
     <Modal show={showLogin} onHide={handleCloseModals} centered>
