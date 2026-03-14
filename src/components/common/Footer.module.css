@@ -1,0 +1,35 @@
+.footer {
+  background-color: #ffffff;
+  padding: 2rem 0;
+  margin-top: auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  color: #6c757d;
+  font-family: 'Poppins', sans-serif;
+}
+
+.brandName {
+  color: #0d6efd;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.heart {
+  color: #e74c3c;
+  display: inline-block;
+  animation: pulse 1.5s infinite;
+}
+
+.projectBadge {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.6;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
