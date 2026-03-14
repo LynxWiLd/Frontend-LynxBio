@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Button,
@@ -10,7 +10,8 @@ import {
   Spinner,
   Modal,
 } from "react-bootstrap";
-import { FaCopy, FaPalette, FaLink, FaEye } from "react-icons/fa"; // Agregamos FaEye
+import { FaCopy, FaPalette, FaLink, FaEye } from "react-icons/fa";
+import { FaInstagram, FaGithub, FaXTwitter } from "react-icons/fa6"; // Importamos la X de Twitter
 import Swal from "sweetalert2";
 
 import api from "../../services/axiosConfig";
@@ -23,7 +24,7 @@ import AppearanceForm from "../../components/dashboard/AppearanceForm";
 const Dashboard = () => {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showMobilePreview, setShowMobilePreview] = useState(false); // Estado para el modal de celu
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
 
   const [newLink, setNewLink] = useState({
     title: "",
@@ -38,7 +39,7 @@ const Dashboard = () => {
     theme: {
       backgroundColor: "#ffffff",
       backgroundImage: "",
-      buttonColor: "#000000",
+      buttonColor: "#000000", // Este es el color del "Marco Foto"
       buttonTextColor: "#ffffff",
       textColor: "#000000",
     },
@@ -72,7 +73,6 @@ const Dashboard = () => {
     }
   };
 
-  // ... (Tus funciones handleAddLink, handleDeleteLink, handleSaveSettings, handleImageUpload se mantienen igual) ...
   const handleAddLink = async (e) => {
     e.preventDefault();
     try {
@@ -134,9 +134,29 @@ const Dashboard = () => {
     }
   };
 
+  // --- FUNCIÓN DE SUBIDA CON VALIDACIÓN ---
   const handleImageUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Validación de tipo
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      return Swal.fire(
+        "Formato no válido",
+        "Solo imágenes JPG, PNG o WEBP",
+        "error",
+      );
+    }
+
+    // Validación de tamaño (2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      return Swal.fire(
+        "Archivo muy pesado",
+        "La imagen debe pesar menos de 2MB",
+        "warning",
+      );
+    }
 
     const formData = new FormData();
     formData.append("image", file);
@@ -148,15 +168,19 @@ const Dashboard = () => {
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading(),
       });
+
       const res = await api.post("/auth/upload-avatar", formData);
       const newSettings = { ...settings };
+
       if (type === "avatar") newSettings.profile.avatarUrl = res.data.url;
       else newSettings.theme.backgroundImage = res.data.url;
+
       setSettings(newSettings);
-      await api.put("/auth/settings", newSettings);
+      await api.put("/auth/settings", newSettings); // Auto-save en la DB
+
       Swal.fire({
         icon: "success",
-        title: "¡Imagen lista y guardada!",
+        title: "¡Imagen lista!",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -176,7 +200,7 @@ const Dashboard = () => {
     });
   };
 
-  // Componente interno para no repetir el código del celular
+  // --- PREVISUALIZACIÓN DEL CELULAR ---
   const PhonePreview = () => (
     <div className={styles.phoneMockup}>
       <div
@@ -187,17 +211,18 @@ const Dashboard = () => {
             ? `url(${settings.theme.backgroundImage})`
             : "none",
           backgroundSize: "cover",
+          backgroundPosition: "center",
           color: settings.theme.textColor,
         }}
       >
         <div className={styles.previewContent}>
-          {/* --- MARCO FOTO: Ahora sí usa el color del selector --- */}
+          {/* Avatar con Marco de Color */}
           {settings.profile.avatarUrl ? (
             <img
               src={settings.profile.avatarUrl}
               alt="Avatar"
               className={styles.previewAvatar}
-              style={{ borderColor: settings.theme.buttonColor }} // Usamos buttonColor como color de marco
+              style={{ borderColor: settings.theme.buttonColor }}
             />
           ) : (
             <div
@@ -222,7 +247,6 @@ const Dashboard = () => {
                 key={link._id}
                 className={styles.previewLinkItem}
                 style={{
-                  /* --- BOTONES: Respetan su propio color de la DB --- */
                   backgroundColor: link.buttonColor || "#000000",
                   color: link.buttonTextColor || "#ffffff",
                 }}
@@ -230,6 +254,19 @@ const Dashboard = () => {
                 {link.title}
               </div>
             ))}
+          </div>
+
+          {/* Iconos Sociales */}
+          <div className={styles.socialIconsPreview}>
+            {settings.socials.instagram && (
+              <FaInstagram className={styles.socialIcon} />
+            )}
+            {settings.socials.github && (
+              <FaGithub className={styles.socialIcon} />
+            )}
+            {settings.socials.twitter && (
+              <FaXTwitter className={styles.socialIcon} />
+            )}
           </div>
         </div>
       </div>
@@ -247,7 +284,6 @@ const Dashboard = () => {
   return (
     <Container fluid className={styles.dashboardWrapper}>
       <Row className="h-100">
-        {/* COLUMNA IZQUIERDA: CONFIGURACIÓN */}
         <Col lg={7} xl={8} className={styles.configColumn}>
           <div className="py-4 px-md-4">
             <div className={styles.headerSection}>
@@ -305,7 +341,6 @@ const Dashboard = () => {
           </div>
         </Col>
 
-        {/* COLUMNA DERECHA: PREVIEW (CELULAR) - Solo visible en Escritorio */}
         <Col lg={5} xl={4} className={styles.previewColumn}>
           <div className={styles.phoneSticky}>
             <h5 className="text-muted text-center mb-3">
@@ -316,7 +351,6 @@ const Dashboard = () => {
         </Col>
       </Row>
 
-      {/* BOTÓN FLOTANTE PARA MÓVIL */}
       <Button
         className={styles.mobilePreviewBtn}
         onClick={() => setShowMobilePreview(true)}
@@ -324,7 +358,6 @@ const Dashboard = () => {
         <FaEye className="me-2" /> Vista previa
       </Button>
 
-      {/* MODAL DE PREVIEW PARA MÓVIL */}
       <Modal
         show={showMobilePreview}
         onHide={() => setShowMobilePreview(false)}
