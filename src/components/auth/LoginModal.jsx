@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom"; // 1. Importamos el hook de navegación
 import Swal from "sweetalert2";
 

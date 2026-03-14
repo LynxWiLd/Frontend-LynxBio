@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Button, Image, Spinner } from "react-bootstrap";
 import { FaInstagram, FaTwitter, FaGithub, FaGlobe } from "react-icons/fa";
-import api from "../api/axios";
+import api from "../../services/axiosConfig";
 import styles from "./PublicPage.module.css"; // 1. Importamos el CSS
 
 const PublicPage = () => {

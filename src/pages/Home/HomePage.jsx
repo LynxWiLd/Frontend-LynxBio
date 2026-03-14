@@ -2,7 +2,7 @@ import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // Sacamos Link porque ahora usamos Modales
 import { FaRocket, FaPalette, FaLink, FaUserCheck } from "react-icons/fa";
 import { useContext, useEffect } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 const HomePage = () => {
   // 1. Traemos user y las funciones de los modales del contexto

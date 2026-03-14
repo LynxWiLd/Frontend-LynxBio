@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 
 // Pages
-import HomePage from "./pages/HomePage";
-import Dashboard from "./pages/Dashboard";
-import PublicPage from "./pages/PublicPage";
+import HomePage from "./pages/Home/HomePage";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import PublicPage from "./pages/PublicProfile/PublicPage";
 
 function App() {
   return (

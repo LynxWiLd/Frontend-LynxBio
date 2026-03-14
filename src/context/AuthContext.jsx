@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import api from "../api/axios"; // Usamos tu instancia de axios configurada
+import api from "../services/axiosConfig"; // Usamos tu instancia de axios configurada
 
 export const AuthContext = createContext();
 

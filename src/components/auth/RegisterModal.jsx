@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
-import api from "../api/axios";
-import { AuthContext } from "../context/AuthContext";
+import api from "../../services/axiosConfig";
+import { AuthContext } from "../../context/AuthContext";
 import Swal from "sweetalert2";
 
 const RegisterModal = () => {

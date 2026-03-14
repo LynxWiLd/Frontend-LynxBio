@@ -26,7 +26,7 @@ import {
   FaImage,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
-import api from "../api/axios";
+import api from "../../services/axiosConfig";
 
 const Dashboard = () => {
   const [links, setLinks] = useState([]);
