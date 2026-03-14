@@ -1,98 +1,80 @@
-import { useState, useContext } from "react"; // 1. Agregamos useState
+import { useState, useContext } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom"; // 1. Importamos el hook de navegación
 import Swal from "sweetalert2";
 
 const LoginModal = () => {
-  // Extraemos las funciones del contexto
-  const { showLogin, handleCloseModals, handleOpenRegister, login } =
-    useContext(AuthContext);
+  const { showLogin, handleCloseModals, handleOpenRegister, login } = useContext(AuthContext);
+  
+  const navigate = useNavigate(); // 2. Inicializamos el navegador
+  
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
-  // 2. Creamos el estado local para el formulario
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
-  // 3. Definimos la función handleChange que faltaba
-  const ArabhandleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  console.log("1. Intentando enviar datos:", formData); // Paso 1
+    e.preventDefault();
+    try {
+      // Intentamos el login a través del contexto
+      await login(formData.email, formData.password);
+      
+      // --- SI EL LOGIN ES EXITOSO: ---
+      handleCloseModals(); // 3. Cerramos la ventana modal
+      
+      navigate("/dashboard"); // 4. Redirigimos al Panel de Control
+      
+      Swal.fire({
+        icon: "success",
+        title: "¡Bienvenido!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
 
-  try {
-    if (!login) {
-      console.error("ERROR: La función 'login' no existe en el contexto.");
-      return;
+    } catch (err) {
+      const msg = err.response?.data?.msg || "Credenciales incorrectas";
+      Swal.fire({ icon: "error", title: "Error", text: msg });
     }
-
-    await login(formData.email, formData.password);
-    console.log("2. ¡Login exitoso en el context!"); // Paso 2
-
-  } catch (err) {
-    // 👇 ESTO ES CLAVE: Mostramos el error REAL en la consola
-    console.error("ERROR REAL CAPTURADO:", err); 
-    
-    // Solo mostramos el Swal si el error viene del servidor (400)
-    const mensaje = err.response?.data?.msg || "Error interno de código";
-    Swal.fire({ icon: "error", title: "Ups!", text: mensaje });
-  }
-};
+  };
 
   return (
     <Modal show={showLogin} onHide={handleCloseModals} centered>
       <Modal.Header closeButton className="border-0 pb-0">
-        <Modal.Title className="fw-bold w-100 text-center">
-          Iniciá Sesión
-        </Modal.Title>
+        <Modal.Title className="fw-bold w-100 text-center">Iniciá Sesión</Modal.Title>
       </Modal.Header>
       <Modal.Body className="px-4 pb-4">
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
+          <Form.Group className="mb-3">
             <Form.Label className="fw-semibold">Email</Form.Label>
             <Form.Control
               type="email"
-              name="email" // IMPORTANTE: debe coincidir con el campo en formData
+              name="email"
               placeholder="tu@email.com"
-              value={formData.email}
-              onChange={ArabhandleChange} // <-- Ahora sí existe
+              onChange={handleChange}
               required
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Group className="mb-4">
             <Form.Label className="fw-semibold">Contraseña</Form.Label>
             <Form.Control
               type="password"
               name="password"
-              placeholder="Mínimo 6 caracteres"
-              value={formData.password}
-              onChange={ArabhandleChange} // <-- Ahora sí existe
+              placeholder="Tu contraseña"
+              onChange={handleChange}
               required
             />
           </Form.Group>
 
-          <Button
-            variant="primary"
-            className="w-100 py-2 mb-3 rounded-pill fw-bold"
-            type="submit"
-          >
-            Entrar
+          <Button variant="primary" className="w-100 py-2 mb-3 rounded-pill fw-bold shadow-sm" type="submit">
+            Entrar a LynxBio
           </Button>
 
           <p className="text-center mb-0 text-muted">
             ¿No tenés cuenta?{" "}
-            <Button
-              variant="link"
-              className="p-0 fw-bold text-decoration-none"
-              onClick={handleOpenRegister}
-            >
+            <Button variant="link" className="p-0 fw-bold text-decoration-none" onClick={handleOpenRegister}>
               Registrate
             </Button>
           </p>
