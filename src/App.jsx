@@ -1,12 +1,13 @@
-// Actualiza tu App.jsx
 import { useState, useContext } from 'react';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { AuthContext } from './context/AuthContext';
 import LoginModal from './components/LoginModal';
-import Dashboard from './pages/Dashboard'; // Importamos el nuevo Dashboard
+import RegisterModal from './components/RegisterModal'; // Nuevo
+import Dashboard from './pages/Dashboard';
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false); // Nuevo estado
   const { user, logout } = useContext(AuthContext);
 
   return (
@@ -21,27 +22,34 @@ function App() {
                 <Button variant="outline-danger" size="sm" onClick={logout}>Salir</Button>
               </>
             ) : (
-              <Button variant="outline-light" size="sm" onClick={() => setShowLogin(true)}>
-                Iniciar Sesión
-              </Button>
+              <div className="d-flex gap-2">
+                <Button variant="link" className="text-white text-decoration-none" onClick={() => setShowLogin(true)}>
+                  Login
+                </Button>
+                <Button variant="primary" size="sm" onClick={() => setShowRegister(true)}>
+                  Registrarse
+                </Button>
+              </div>
             )}
           </Nav>
         </Container>
       </Navbar>
 
       {user ? (
-        <Dashboard /> // Si está logueado, mostramos el dashboard
+        <Dashboard />
       ) : (
         <Container className="mt-5 text-center py-5">
           <h1 className="display-4 fw-bold">Tu bio, un solo enlace.</h1>
-          <p className="lead text-muted">Organiza tus redes sociales y contenido en una página simple y económica.</p>
-          <Button variant="primary" size="lg" onClick={() => setShowLogin(true)}>
+          <p className="lead text-muted">Organiza tus redes sociales y contenido en una página simple.</p>
+          <Button variant="primary" size="lg" onClick={() => setShowRegister(true)}>
             Comenzar Gratis
           </Button>
         </Container>
       )}
 
+      {/* Modales */}
       <LoginModal show={showLogin} handleClose={() => setShowLogin(false)} />
+      <RegisterModal show={showRegister} handleClose={() => setShowRegister(false)} />
     </>
   );
 }
