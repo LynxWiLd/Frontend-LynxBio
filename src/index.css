@@ -1,29 +1,28 @@
-/* index.css o App.css */
-
+/* index.css */
 :root {
   /* TEMA CLARO (Default) */
-  --bg-color: #f8f9fa;
-  --text-color: #1a1a1a;
-  --card-bg: #ffffff;
+  --bg-main: #f8f9fa;
+  --bg-config: #ffffff;
+  --text-main: #1a1a1a;
+  --text-muted: #6c757d;
   --border-color: #e0e0e0;
+  --glass-card: rgba(255, 255, 255, 0.15);
+  --input-bg: #ffffff;
 }
 
 [data-theme='dark'] {
-  /* TEMA OSCURO */
-  --bg-color: #121212;
-  --text-color: #f8f9fa;
-  --card-bg: #1e1e1e;
-  --border-color: #333333;
+  /* TEMA OSCURO (Vibe Nocturna) */
+  --bg-main: #0f172a;     /* Azul noche profundo */
+  --bg-config: #1e293b;   /* Slate oscuro para el panel */
+  --text-main: #f1f5f9;   /* Blanco suave para no cansar la vista */
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --glass-card: rgba(15, 23, 42, 0.3);
+  --input-bg: #1e293b;
 }
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  background-color: var(--bg-main);
+  color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Aplicar variables a tus clases de los módulos */
-.glassCard {
-  background: var(--card-bg) !important;
-  color: var(--text-color) !important;
 }
