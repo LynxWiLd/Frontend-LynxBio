@@ -1,4 +1,5 @@
-/* ESTRUCTURA GENERAL */
+/* Dashboard.module.css */
+
 .dashboardWrapper {
   min-height: 100vh;
   padding-top: 80px;
@@ -10,70 +11,105 @@
   background-color: #fff;
   min-height: 100vh;
   border-right: 1px solid #e0e0e0;
-  padding-bottom: 5rem;
+  padding: 2rem;
 }
 
-/* COMPONENTES DE EDICIÓN */
-.glassCard {
-  background: #ffffff;
-  border-radius: 25px;
-  padding: 1.8rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1.5rem;
+/* --- COLUMNA DEL CELULAR (PREVIEW) --- */
+.previewColumn {
+  display: none; /* Escondido en móvil */
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 3rem;
+  background-color: #f0f2f5;
 }
 
-/* EL TEXTAREA (BLOQUEADO) */
-.bioTextArea {
-  resize: none !important; /* Prohibido estirar */
-  min-height: 100px !important;
-  max-height: 150px !important;
-  border-radius: 12px !important;
-  border: 1px solid #dee2e6 !important;
-  padding: 12px !important;
-  font-size: 0.95rem;
-  transition: border-color 0.2s;
+@media (min-width: 992px) {
+  .previewColumn { display: flex; }
 }
 
-.bioTextArea:focus {
-  border-color: #0d6efd !important;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15) !important;
+.phoneSticky {
+  position: sticky;
+  top: 100px;
 }
 
-/* CONTADOR DE CARACTERES */
-.charCounter {
-  font-size: 0.8rem;
-  text-align: right;
-  margin-top: 5px;
-  color: #6c757d;
-}
-
-.charCounterError {
-  color: #dc3545 !important;
-  font-weight: bold;
-}
-
-/* AVATAR Y COLORES */
-.avatarImage {
-  width: 110px;
-  height: 110px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 4px solid #fff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.colorInputCustom {
-  width: 50px;
-  height: 50px;
-  padding: 0;
-  border: 2px solid #eee;
-  border-radius: 12px;
-  cursor: pointer;
-  margin: 0 auto;
+.phoneMockup {
+  width: 310px;
+  height: 620px;
+  background: #1a1a1a;
+  border-radius: 45px;
+  padding: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  border: 7px solid #2a2a2a;
   overflow: hidden;
 }
 
-.colorInputCustom::-webkit-color-swatch {
-  border: none;
-  border-radius: 10px;
+.phoneScreen {
+  width: 100%;
+  height: 100%;
+  border-radius: 35px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+.previewContent {
+  width: 100%;
+  padding: 40px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* FIX: El Bebé vuelve a su tamaño */
+.previewAvatar {
+  width: 85px !important;
+  height: 85px !important;
+  border-radius: 50% !important;
+  object-fit: cover; /* No se estira */
+  border: 4px solid;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* FIX: Las "SSSS" ya no rompen el diseño */
+.previewContent p {
+  width: 100%;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.previewLinkItem {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* TEXTAREA BLOQUEADO */
+.bioTextArea {
+  resize: none !important;
+  min-height: 100px !important;
+  max-height: 150px !important;
+  border-radius: 12px !important;
+}
+
+.mobilePreviewBtn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 1000;
+  border-radius: 50px;
+  padding: 12px 25px;
+  font-weight: bold;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
