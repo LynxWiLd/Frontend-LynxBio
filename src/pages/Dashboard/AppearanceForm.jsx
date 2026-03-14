@@ -75,16 +75,18 @@ const AppearanceForm = ({
         <Form.Label className="fw-bold">Bio (Breve descripción)</Form.Label>
         <Form.Control
           as="textarea"
-          rows={3}
           className={styles.bioTextArea}
-          isInvalid={!!errors.bio}
+          placeholder="Contanos algo de vos..."
+          maxLength={150} // 👈 Esto corta el chorro a nivel teclado
           {...register("bio", {
             maxLength: { value: 150, message: "Máximo 150 caracteres" },
           })}
-          name="bio"
           onChange={(e) => {
-            register("bio").onChange(e); // Avisamos a Hook Form
-            handleInputChange(e); // Actualizamos el celu de la derecha
+            // Esto mantiene el preview sincronizado
+            setSettings({
+              ...settings,
+              profile: { ...settings.profile, bio: e.target.value },
+            });
           }}
         />
         <Form.Control.Feedback type="invalid">
