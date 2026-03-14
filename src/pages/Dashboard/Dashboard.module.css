@@ -249,6 +249,41 @@
   border-radius: 8px;
 }
 
+/* Dashboard.module.css */
+
+.linkItem {
+  background-color: var(
+    --bg-item
+  ) !important; /* Usamos la variable de index.css */
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+  margin-bottom: 12px !important;
+  border-radius: 15px !important; /* Más redondeado, más moderno */
+  padding: 1rem 1.2rem !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.linkItem:hover {
+  transform: scale(1.01) translateX(5px);
+  border-color: #0d6efd !important; /* Brilla el borde al pasar el mouse */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.linkUrl {
+  color: var(--text-main);
+  opacity: 0.6; /* Se vuelve sutil sin perder el color del tema */
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+
+.statusIndicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
 /* --- BOOTSTRAP OVERRIDES --- */
 /* Dashboard.module.css */
 
