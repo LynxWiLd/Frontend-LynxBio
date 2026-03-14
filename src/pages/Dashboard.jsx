@@ -10,7 +10,6 @@ import {
   Tab,
   ListGroup,
   Spinner,
-  InputGroup,
 } from "react-bootstrap";
 import {
   FaPlus,
@@ -20,6 +19,9 @@ import {
   FaCopy,
   FaPalette,
   FaLink,
+  FaInstagram,
+  FaGithub,
+  FaTwitter,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import api from "../api/axios";
@@ -29,7 +31,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [newLink, setNewLink] = useState({ title: "", url: "" });
   const [settings, setSettings] = useState({
-    profile: { bio: "", avatarUrl: "" },
+    profile: { bio: "", avatarUrl: "", username: "" }, // Username dentro de profile
+    socials: { instagram: "", github: "", twitter: "" }, // Agregamos socials
     theme: {
       backgroundColor: "#ffffff",
       buttonColor: "#000000",
@@ -46,7 +49,8 @@ const Dashboard = () => {
       const res = await api.get("/auth/me");
       setLinks(res.data.links || []);
       setSettings({
-        profile: res.data.profile || { bio: "", avatarUrl: "" },
+        profile: { ...res.data.profile, username: res.data.username }, // Unificamos datos
+        socials: res.data.socials || { instagram: "", github: "", twitter: "" },
         theme: res.data.theme || {
           backgroundColor: "#ffffff",
           buttonColor: "#000000",
@@ -60,6 +64,7 @@ const Dashboard = () => {
     }
   };
 
+  // --- Funciones de Links ---
   const handleAddLink = async (e) => {
     e.preventDefault();
     try {
@@ -95,11 +100,8 @@ const Dashboard = () => {
     if (result.isConfirmed) {
       try {
         const res = await api.delete(`/links/${id}`);
-
-        // ✅ CORRECCIÓN: Si res.data.links existe lo usamos, sino usamos res.data directo
         const updatedLinks = res.data.links ? res.data.links : res.data;
         setLinks(updatedLinks);
-
         Swal.fire({
           icon: "success",
           title: "¡Borrado!",
@@ -107,12 +109,12 @@ const Dashboard = () => {
           timer: 1000,
         });
       } catch (err) {
-        console.error(err);
         Swal.fire("Error", "No se pudo eliminar el enlace.", "error");
       }
     }
   };
 
+  // --- Funciones de Configuración ---
   const handleSaveSettings = async () => {
     try {
       await api.put("/auth/settings", settings);
@@ -127,13 +129,42 @@ const Dashboard = () => {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      Swal.fire({
+        title: "Subiendo...",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+      const res = await api.post("/auth/upload-avatar", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setSettings({
+        ...settings,
+        profile: { ...settings.profile, avatarUrl: res.data.url },
+      });
+      Swal.fire({
+        icon: "success",
+        title: "¡Foto actualizada!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      Swal.fire("Error", "No se pudo subir la imagen", "error");
+    }
+  };
+
   const copyToClipboard = () => {
-    const url = `${window.location.origin}/${settings.profile.username || ""}`; // Necesitarías guardar el username en el state si lo querés dinámico
+    const url = `${window.location.origin}/${settings.profile.username || ""}`;
     navigator.clipboard.writeText(url);
     Swal.fire({
       icon: "info",
       title: "URL Copiada",
-      text: "Ya puedes pegarla en tu bio de Instagram",
+      text: "Ya puedes pegarla en tu bio",
       timer: 2000,
     });
   };
@@ -155,7 +186,7 @@ const Dashboard = () => {
         </Button>
       </div>
 
-      <Tabs defaultActiveKey="links" className="mb-4 custom-tabs">
+      <Tabs defaultActiveKey="links" className="mb-4">
         <Tab
           eventKey="links"
           title={
@@ -198,7 +229,6 @@ const Dashboard = () => {
                   </Row>
                 </Form>
               </Card>
-
               <ListGroup className="shadow-sm">
                 {links.map((link) => (
                   <ListGroup.Item
@@ -245,11 +275,35 @@ const Dashboard = () => {
           <Row className="justify-content-center">
             <Col md={6}>
               <Card className="shadow-sm border-0 p-4">
+                {/* Avatar Section */}
+                <div className="text-center mb-4">
+                  <img
+                    src={
+                      settings.profile.avatarUrl ||
+                      "https://via.placeholder.com/150"
+                    }
+                    alt="Avatar"
+                    className="rounded-circle mb-3 shadow"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <Form.Control
+                    type="file"
+                    size="sm"
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                  />
+                </div>
+
+                {/* Bio Section */}
                 <Form.Group className="mb-3">
                   <Form.Label className="fw-bold">Bio</Form.Label>
                   <Form.Control
                     as="textarea"
-                    rows={3}
+                    rows={2}
                     value={settings.profile.bio}
                     onChange={(e) =>
                       setSettings({
@@ -259,12 +313,60 @@ const Dashboard = () => {
                     }
                   />
                 </Form.Group>
-                <Row>
-                  <Col md={6}>
-                    <Form.Label className="fw-bold">Fondo de página</Form.Label>
+
+                {/* Socials Section */}
+                <div className="mb-4">
+                  <Form.Label className="fw-bold">
+                    Redes Sociales (URLs)
+                  </Form.Label>
+                  <Form.Group className="mb-2">
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <FaInstagram />
+                      </span>
+                      <Form.Control
+                        placeholder="Instagram URL"
+                        value={settings.socials.instagram}
+                        onChange={(e) =>
+                          setSettings({
+                            ...settings,
+                            socials: {
+                              ...settings.socials,
+                              instagram: e.target.value,
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                  </Form.Group>
+                  <Form.Group>
+                    <div className="input-group">
+                      <span className="input-group-text">
+                        <FaGithub />
+                      </span>
+                      <Form.Control
+                        placeholder="GitHub URL"
+                        value={settings.socials.github}
+                        onChange={(e) =>
+                          setSettings({
+                            ...settings,
+                            socials: {
+                              ...settings.socials,
+                              github: e.target.value,
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                  </Form.Group>
+                </div>
+
+                {/* Colors Section */}
+                <Row className="mb-3">
+                  <Col>
+                    <Form.Label className="fw-bold">Fondo</Form.Label>
                     <Form.Control
                       type="color"
-                      className="w-100 mb-3"
                       value={settings.theme.backgroundColor}
                       onChange={(e) =>
                         setSettings({
@@ -277,13 +379,10 @@ const Dashboard = () => {
                       }
                     />
                   </Col>
-                  <Col md={6}>
-                    <Form.Label className="fw-bold">
-                      Color de botones
-                    </Form.Label>
+                  <Col>
+                    <Form.Label className="fw-bold">Botones</Form.Label>
                     <Form.Control
                       type="color"
-                      className="w-100 mb-3"
                       value={settings.theme.buttonColor}
                       onChange={(e) =>
                         setSettings({
@@ -297,12 +396,13 @@ const Dashboard = () => {
                     />
                   </Col>
                 </Row>
+
                 <Button
                   variant="primary"
-                  className="mt-3 w-100"
+                  className="w-100 fw-bold"
                   onClick={handleSaveSettings}
                 >
-                  <FaSave className="me-2" /> Guardar Todo
+                  <FaSave className="me-2" /> GUARDAR TODO
                 </Button>
               </Card>
             </Col>
