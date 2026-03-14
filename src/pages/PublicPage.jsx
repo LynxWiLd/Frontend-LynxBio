@@ -65,18 +65,25 @@ const PublicPage = () => {
         className={styles.glassCard}
         style={{ color: theme?.textColor || "#000" }}
       >
+        // ... dentro del componente Image ...
         <Image
           src={profile?.avatarUrl || "https://via.placeholder.com/150"}
           roundedCircle
-          className={styles.avatar}
-          style={{ borderColor: theme?.buttonColor || "#fff" }}
+          className={styles.avatar} // Usamos la clase del CSS
+          style={{
+            width: "120px",
+            height: "120px",
+            objectFit: "cover",
+            // 👇 ACÁ: El color global 'buttonColor' ahora solo afecta al borde de la foto
+            borderColor: theme?.buttonColor || "#ffffff",
+            borderStyle: "solid",
+            borderWidth: "4px",
+          }}
         />
-
         <h2 className="fw-bold mb-1">@{username}</h2>
         <p className="mb-4 fw-medium" style={{ opacity: 0.9 }}>
           {profile?.bio}
         </p>
-
         <div className="w-100 d-grid gap-3 mb-5">
           {links.map((link) => (
             <Button
@@ -96,7 +103,6 @@ const PublicPage = () => {
             </Button>
           ))}
         </div>
-
         <div className={styles.socialIcons}>
           {socials?.instagram && (
             <a

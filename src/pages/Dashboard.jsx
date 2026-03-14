@@ -506,8 +506,9 @@ const Dashboard = () => {
                     />
                   </Col>
                   <Col xs={4}>
+                    {/* Cambiamos el texto de 'Botones' a 'Marco Perfil' */}
                     <Form.Label className="fw-bold d-block small">
-                      Botones
+                      Marco Perfil
                     </Form.Label>
                     <Form.Control
                       type="color"
