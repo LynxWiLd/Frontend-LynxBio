@@ -44,11 +44,14 @@ const AppearanceForm = ({
 
       {/* --- FOTO DE PERFIL --- */}
       <div className="text-center mb-4">
-        <Form.Label className="fw-bold d-block">
+        <Form.Label className="fw-bold d-block mb-3">
           <FaUserCircle className="me-2" />
           Imagen de Perfil
         </Form.Label>
-        <div className="position-relative d-inline-block">
+
+        <div className={styles.avatarContainer}>
+          {" "}
+          {/* 👈 Usamos la nueva clase */}
           <img
             src={
               settings.profile.avatarUrl || "https://via.placeholder.com/150"
@@ -60,17 +63,26 @@ const AppearanceForm = ({
             <Button
               variant="danger"
               size="sm"
-              className="position-absolute top-0 end-0 rounded-circle shadow-sm"
+              className="position-absolute shadow-sm"
+              /* Ajustamos la posición para que no quede "flotando" fuera del círculo */
+              style={{
+                top: "5px",
+                right: "5px",
+                borderRadius: "50%",
+                padding: "5px 8px",
+              }}
               onClick={() => handleRemoveImage("avatar")}
             >
               <FaTrash size={12} />
             </Button>
           )}
         </div>
+
         <Form.Control
           type="file"
           size="sm"
-          className="mt-2"
+          className="mt-3 mx-auto"
+          style={{ maxWidth: "250px" }} // 👈 Limitamos el ancho del input file
           onChange={(e) => handleImageUpload(e, "avatar")}
           accept="image/*"
         />

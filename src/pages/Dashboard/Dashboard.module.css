@@ -24,13 +24,40 @@
   margin-bottom: 2rem;
 }
 
-.dashboardTitle {
-  font-weight: 800;
-  color: var(--text-main) !important;
+/* ==========================================
+   2. IDENTIDAD VISUAL (AVATAR Y FOTOS) - 🛠️ FIX AQUÍ
+   ========================================== */
+.avatarContainer {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.avatarImage {
+  width: 130px;           /* 👈 Tamaño controlado */
+  height: 130px;
+  border-radius: 50%;     /* 👈 Círculo perfecto */
+  object-fit: cover;      /* 👈 No se estira, se recorta */
+  border: 4px solid var(--border-color);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  background-color: var(--bg-item);
+}
+
+.avatarImage:hover {
+  transform: scale(1.05);
+}
+
+/* Responsivo para el Avatar en móviles */
+@media (max-width: 576px) {
+  .avatarImage {
+    width: 100px;
+    height: 100px;
+  }
 }
 
 /* ==========================================
-   2. PANELES Y FORMULARIOS (GLASSMORPHISM)
+   3. PANELES Y FORMULARIOS (GLASSMORPHISM)
    ========================================== */
 .glassCard {
   padding: 1.5rem;
@@ -42,13 +69,6 @@
   border: 1px solid var(--glass-border) !important;
   color: var(--text-main) !important;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1) !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-/* 🛠️ Mejora: Brillo sutil al pasar el mouse sobre la card */
-.glassCard:hover {
-  border-color: #0d6efd44 !important;
-  box-shadow: 0 8px 32px 0 rgba(13, 110, 253, 0.1) !important;
 }
 
 .bioTextArea {
@@ -62,21 +82,14 @@
   border: 1px solid var(--border-color) !important;
 }
 
-.bioTextArea:focus {
-  outline: none;
-  border-color: #0d6efd !important;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15) !important;
-}
-
 /* ==========================================
-   3. PREVISUALIZACIÓN (MOCKUP)
+   4. PREVISUALIZACIÓN (MOCKUP)
    ========================================== */
 .previewColumn {
   display: none;
   justify-content: center;
   align-items: flex-start;
   padding-top: 3rem;
-  /* 🛠️ FIX: Cambiamos el fondo hardcodeado por la variable de configuración */
   background-color: var(--bg-config); 
   transition: background-color 0.3s ease;
 }
@@ -93,7 +106,7 @@
 .phoneMockup {
   width: 310px;
   height: 620px;
-  background: #121212; /* El marco del celu siempre oscuro es más pro */
+  background: #121212;
   border-radius: 45px;
   padding: 12px;
   border: 8px solid #2a2a2a;
@@ -102,20 +115,8 @@
   position: relative;
 }
 
-.phoneScreen {
-  width: 100%;
-  height: 100%;
-  border-radius: 35px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow-y: auto;
-  position: relative;
-  /* Aquí NO usamos var(--bg-config) porque el usuario elige su propio fondo */
-}
-
 /* ==========================================
-   4. LISTA DE ENLACES (LINKITEM)
+   5. LISTA DE ENLACES (LINKITEM)
    ========================================== */
 .linkItem {
   background-color: var(--bg-item) !important;
@@ -127,34 +128,30 @@
   transition: all 0.2s ease-in-out !important;
 }
 
-.linkItem:hover {
-  transform: scale(1.01) translateX(5px);
-  border-color: #0d6efd !important;
-  background-color: var(--glass-bg) !important;
+/* ==========================================
+   6. SELECTORES DE COLOR PERSONALIZADOS
+   ========================================== */
+.colorInputCustom {
+  width: 100%;
+  height: 45px;
+  padding: 4px;
+  border-radius: 10px !important;
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  cursor: pointer;
 }
 
-.linkUrl {
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  word-break: break-all;
+.colorInputCustom::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
 }
 
 /* ==========================================
-   5. BOOTSTRAP OVERRIDES (Limpios)
+   7. BOOTSTRAP OVERRIDES (Limpios)
    ========================================== */
-
-/* Tabs modernas sin bordes feos */
 :global(.nav-tabs) {
   border-bottom: 2px solid var(--border-color) !important;
   gap: 10px;
-}
-
-:global(.nav-tabs .nav-link) {
-  color: var(--text-muted) !important;
-  border: none !important;
-  font-weight: 600;
-  border-radius: 10px 10px 0 0 !important;
-  transition: all 0.3s ease;
 }
 
 :global(.nav-tabs .nav-link.active) {
@@ -163,7 +160,6 @@
   border-bottom: 2px solid #0d6efd !important;
 }
 
-/* Inputs globales del dashboard */
 :global(.form-control) {
   background-color: var(--input-bg) !important;
   border: 1px solid var(--border-color) !important;
@@ -171,32 +167,14 @@
   border-radius: 10px !important;
 }
 
-:global(.form-control:focus) {
-  background-color: var(--input-bg) !important;
-  color: var(--text-main) !important;
-  border-color: #0d6efd !important;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1) !important;
+.charCounter {
+  font-size: 0.8rem;
+  text-align: right;
+  margin-top: 5px;
+  color: var(--text-muted);
 }
 
-:global(.form-control::placeholder) {
-  color: var(--text-muted) !important;
-  opacity: 0.5;
-}
-
-/* ==========================================
-   6. UTILIDADES
-   ========================================== */
-.copyBtn {
-  border-color: var(--border-color) !important;
-  color: var(--text-main) !important;
-}
-
-.copyBtn:hover {
-  background-color: #0d6efd !important;
-  color: white !important;
-  border-color: #0d6efd !important;
-}
-
-.loadingText {
-  color: var(--text-main) !important;
+.charCounterError {
+  color: #dc3545 !important;
+  font-weight: bold;
 }
