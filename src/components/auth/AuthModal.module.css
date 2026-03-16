@@ -1,0 +1,44 @@
+.modalContent {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 25px !important;
+  color: var(--text-main) !important;
+}
+
+.modalTitle {
+  color: var(--text-main) !important;
+}
+
+.modalSubtitle {
+  color: var(--text-muted) !important;
+}
+
+.label {
+  color: var(--text-main);
+}
+
+/* Estilo para los inputs */
+.inputControl {
+  background-color: var(--bg-main) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  border-radius: 12px !important;
+  padding: 10px 15px;
+}
+
+.inputControl::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.6;
+}
+
+.inputControl:focus {
+  background-color: var(--bg-main) !important;
+  border-color: #0d6efd !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15) !important;
+}
+
+/* Arreglo para la "X" de cerrar en modo oscuro */
+[data-theme='dark'] .modalContent :global(.btn-close) {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}

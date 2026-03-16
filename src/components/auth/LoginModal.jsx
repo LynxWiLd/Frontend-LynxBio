@@ -1,16 +1,16 @@
 import { useContext, useState } from "react";
 import { Modal, Button, Form, Spinner } from "react-bootstrap";
-import { useForm } from "react-hook-form"; // 👈 La estrella del show
+import { useForm } from "react-hook-form";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import styles from "./AuthModal.module.css"; // 👈 Importamos los nuevos estilos
 
 const LoginModal = () => {
   const { showLogin, handleCloseModals, handleOpenRegister, login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Configuramos el hook
   const {
     register,
     handleSubmit,
@@ -18,14 +18,12 @@ const LoginModal = () => {
     reset
   } = useForm();
 
-  // Esta función solo se ejecuta si las validaciones pasan
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
       await login(data.email, data.password);
-      
       handleCloseModals();
-      reset(); // Limpia el formulario
+      reset();
       navigate("/dashboard");
       
       Swal.fire({
@@ -34,6 +32,8 @@ const LoginModal = () => {
         text: "Iniciaste sesión correctamente.",
         timer: 2000,
         showConfirmButton: false,
+        background: 'var(--bg-card)', // 👈 Swal también se adapta
+        color: 'var(--text-main)'
       });
     } catch (err) {
       const msg = err.response?.data?.msg || "Credenciales incorrectas.";
@@ -41,7 +41,9 @@ const LoginModal = () => {
         icon: "error", 
         title: "Ups...", 
         text: msg,
-        confirmButtonColor: "#007bff"
+        confirmButtonColor: "#0d6efd",
+        background: 'var(--bg-card)',
+        color: 'var(--text-main)'
       });
     } finally {
       setIsSubmitting(false);
@@ -49,24 +51,32 @@ const LoginModal = () => {
   };
 
   return (
-    <Modal show={showLogin} onHide={handleCloseModals} centered>
+    <Modal 
+      show={showLogin} 
+      onHide={handleCloseModals} 
+      centered
+      contentClassName={styles.modalContent} // 👈 Clave para el modo oscuro
+    >
       <Modal.Header closeButton className="border-0 pb-0">
-        <Modal.Title className="fw-bold w-100 text-center fs-2">Iniciá Sesión</Modal.Title>
+        <Modal.Title className={`fw-bold w-100 text-center fs-2 ${styles.modalTitle}`}>
+          Iniciá Sesión
+        </Modal.Title>
       </Modal.Header>
+
       <Modal.Body className="px-4 pb-4">
-        <p className="text-center text-muted mb-4">¡Qué bueno verte de nuevo en LynxBio!</p>
+        <p className={`text-center mb-4 ${styles.modalSubtitle}`}>
+          ¡Qué bueno verte de nuevo en LynxBio!
+        </p>
         
-        {/* El handleSubmit de la librería envuelve a nuestro onSubmit */}
         <Form onSubmit={handleSubmit(onSubmit)}>
-          
           {/* EMAIL */}
           <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Email</Form.Label>
+            <Form.Label className={`fw-semibold ${styles.label}`}>Email</Form.Label>
             <Form.Control
               type="email"
               placeholder="nombre@ejemplo.com"
-              className="py-2"
-              isInvalid={!!errors.email} // Se pone rojo si hay error
+              className={styles.inputControl}
+              isInvalid={!!errors.email}
               {...register("email", { 
                 required: "El email es obligatorio",
                 pattern: {
@@ -82,11 +92,11 @@ const LoginModal = () => {
 
           {/* PASSWORD */}
           <Form.Group className="mb-4">
-            <Form.Label className="fw-semibold">Contraseña</Form.Label>
+            <Form.Label className={`fw-semibold ${styles.label}`}>Contraseña</Form.Label>
             <Form.Control
               type="password"
               placeholder="Tu contraseña secreta"
-              className="py-2"
+              className={styles.inputControl}
               isInvalid={!!errors.password}
               {...register("password", { 
                 required: "La contraseña es obligatoria",
@@ -100,7 +110,7 @@ const LoginModal = () => {
 
           <Button 
             variant="primary" 
-            className="w-100 py-2 mb-3 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center" 
+            className="w-100 py-2 mb-3 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center border-0" 
             type="submit"
             disabled={isSubmitting}
           >
@@ -114,7 +124,7 @@ const LoginModal = () => {
             )}
           </Button>
 
-          <p className="text-center mb-0 text-muted">
+          <p className={`text-center mb-0 ${styles.modalSubtitle}`}>
             ¿No tenés cuenta?{" "}
             <Button 
               variant="link" 

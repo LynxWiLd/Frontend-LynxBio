@@ -1,117 +1,112 @@
+/* ESTRUCTURA BASE */
 .pageWrapper {
-  background-color: #fff;
+  background-color: var(--bg-main);
   min-height: 100vh;
   font-family: "Poppins", sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.3s ease;
 }
 
+/* --- HERO SECTION --- */
 .heroSection {
   width: 100%;
   position: relative;
-  padding: 100px 0 150px 0;
-  background-color: #f8f9fa;
+  padding: 120px 0 150px 0;
+  background-color: var(--bg-main);
   overflow: hidden;
 }
 
-/* Capa que contiene el texto y botones */
-.heroContent {
-  position: relative;
-  z-index: 10; /* Asegura que esté por encima de los fondos */
-}
-
 .title {
-  color: #1a1a1a;
+  color: var(--text-main) !important;
   letter-spacing: -1.5px;
   line-height: 1.1;
+  transition: color 0.3s ease;
 }
 
 .subtitle {
-  color: #6c757d;
+  color: var(--text-muted) !important;
   line-height: 1.4;
+  transition: color 0.3s ease;
 }
 
-/* Fondo de Conexiones */
+/* FONDOS DE CONEXIONES */
 .connectionBackground {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0; width: 100%; height: 100%;
   background-image:
     linear-gradient(45deg, transparent 45%, #0d6efd 50%, transparent 55%),
     linear-gradient(135deg, transparent 45%, #0d6efd 50%, transparent 55%),
     linear-gradient(to right, #0d6efd 1px, transparent 1px),
     linear-gradient(to bottom, #0d6efd 1px, transparent 1px);
-  background-size:
-    150px 150px,
-    150px 150px,
-    75px 75px,
-    75px 75px;
-  background-position: 0 0;
-  opacity: 0.05;
+  background-size: 150px 150px, 150px 150px, 75px 75px, 75px 75px;
+  opacity: 0.08;
   z-index: 1;
-  pointer-events: none; /* Los clics pasan a través */
 }
 
 .connectionBackgroundOverlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 50% 50%, transparent 50%, #f8f9fa 100%);
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at 50% 50%, transparent 30%, var(--bg-main) 85%);
   z-index: 2;
-  pointer-events: none; /* Los clics pasan a través */
 }
 
-/* Botones */
-.primaryBtn {
-  background-color: #0d6efd;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+.heroContent {
+  position: relative;
+  z-index: 10;
 }
 
-.primaryBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(13, 110, 253, 0.3) !important;
+/* --- TÍTULOS DE SECCIÓN --- */
+.sectionTitle {
+  color: var(--text-main) !important;
+  transition: color 0.3s ease;
 }
 
-.secondaryBtn {
-  border-color: #0d6efd;
-  color: #0d6efd;
-  background-color: transparent;
-  transition: all 0.2s ease;
-}
-
-.secondaryBtn:hover {
-  background-color: rgba(13, 110, 253, 0.05);
-  transform: translateY(-3px);
-}
-
-/* Cards de Features */
+/* CARDS DE FEATURES */
 .featuresSection {
   position: relative;
   z-index: 5;
+  background-color: var(--bg-main);
 }
 
 .stepCard {
   border-radius: 25px !important;
-  background-color: #fff;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  transition: all 0.3s ease !important;
 }
 
 .stepCard:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
+  border-color: #0d6efd !important;
 }
 
 .iconWrapper {
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--bg-main) !important;
+  border: 4px solid var(--bg-card) !important;
+  color: #0d6efd !important;
+  border-radius: 50%;
+}
+
+/* BOTONES */
+.primaryBtn { 
+  background-color: #0d6efd !important; 
+  border: none !important; 
+}
+
+.secondaryBtn {
+  border: 2px solid #0d6efd !important;
+  color: #0d6efd !important;
+  background-color: transparent !important;
+}
+
+[data-theme='dark'] .secondaryBtn {
+    color: #4da3ff !important;
+    border-color: #4da3ff !important;
 }

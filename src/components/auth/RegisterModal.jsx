@@ -1,30 +1,29 @@
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
 import { Modal, Button, Form, Alert, Spinner } from "react-bootstrap";
-import { useForm } from "react-hook-form"; // 👈 El motor de validaciones
+import { useForm } from "react-hook-form";
 import api from "../../services/axiosConfig";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import styles from "./AuthModal.module.css"; // 👈 Usamos el mismo CSS del Login
 
 const RegisterModal = () => {
   const { showRegister, handleCloseModals, login } = useContext(AuthContext);
   const navigate = useNavigate();
   
-  const [apiError, setApiError] = useState(null); // Para errores del backend
+  const [apiError, setApiError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Configuramos React Hook Form
   const {
     register,
     handleSubmit,
-    watch, // Para observar cambios en el username en tiempo real
+    watch,
     formState: { errors },
     reset
   } = useForm({
     defaultValues: { username: "", email: "", password: "" }
   });
 
-  // Observamos el campo username para el texto de ayuda
   const currentUsername = watch("username");
 
   const onSubmit = async (data) => {
@@ -32,10 +31,8 @@ const RegisterModal = () => {
     setIsSubmitting(true);
 
     try {
-      // 1. Registro
       await api.post("/auth/register", data);
 
-      // 2. Login Automático
       try {
         await login(data.email, data.password);
         handleCloseModals();
@@ -48,6 +45,8 @@ const RegisterModal = () => {
           text: "Tu cuenta de LynxBio está lista.",
           timer: 2500,
           showConfirmButton: false,
+          background: 'var(--bg-card)', // 👈 Adaptamos el Swal
+          color: 'var(--text-main)'
         });
       } catch (loginErr) {
         handleCloseModals();
@@ -55,6 +54,8 @@ const RegisterModal = () => {
           icon: "info",
           title: "Cuenta creada",
           text: "Cuenta creada con éxito, por favor iniciá sesión manualmente.",
+          background: 'var(--bg-card)',
+          color: 'var(--text-main)'
         });
       }
     } catch (err) {
@@ -66,14 +67,20 @@ const RegisterModal = () => {
   };
 
   return (
-    <Modal show={showRegister} onHide={handleCloseModals} centered>
+    <Modal 
+      show={showRegister} 
+      onHide={handleCloseModals} 
+      centered
+      contentClassName={styles.modalContent} // 👈 Mantiene el fondo oscuro/claro
+    >
       <Modal.Header closeButton className="border-0 pb-0">
-        <Modal.Title className="fw-bold w-100 text-center fs-2">
+        <Modal.Title className={`fw-bold w-100 text-center fs-2 ${styles.modalTitle}`}>
           Unite a LynxBio
         </Modal.Title>
       </Modal.Header>
+
       <Modal.Body className="px-4 pb-4">
-        <p className="text-center text-muted mb-4">
+        <p className={`text-center mb-4 ${styles.modalSubtitle}`}>
           Crea tu página de enlaces en un toque.
         </p>
 
@@ -87,11 +94,11 @@ const RegisterModal = () => {
           
           {/* USERNAME */}
           <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Nombre de usuario</Form.Label>
+            <Form.Label className={`fw-semibold ${styles.label}`}>Nombre de usuario</Form.Label>
             <Form.Control
               type="text"
               placeholder="ej: facu.dev"
-              className="py-2"
+              className={styles.inputControl}
               isInvalid={!!errors.username}
               {...register("username", { 
                 required: "El nombre de usuario es obligatorio",
@@ -105,9 +112,9 @@ const RegisterModal = () => {
             <Form.Control.Feedback type="invalid">
               {errors.username?.message}
             </Form.Control.Feedback>
-            <Form.Text className="text-muted small ps-1">
+            <Form.Text className={`${styles.modalSubtitle} small ps-1`}>
               Tu link será:{" "}
-              <strong>
+              <strong className="text-primary">
                 lynxbio.vercel.app/{currentUsername || "usuario"}
               </strong>
             </Form.Text>
@@ -115,11 +122,11 @@ const RegisterModal = () => {
 
           {/* EMAIL */}
           <Form.Group className="mb-3">
-            <Form.Label className="fw-semibold">Email</Form.Label>
+            <Form.Label className={`fw-semibold ${styles.label}`}>Email</Form.Label>
             <Form.Control
               type="email"
               placeholder="tu@email.com"
-              className="py-2"
+              className={styles.inputControl}
               isInvalid={!!errors.email}
               {...register("email", { 
                 required: "El email es obligatorio",
@@ -136,11 +143,11 @@ const RegisterModal = () => {
 
           {/* PASSWORD */}
           <Form.Group className="mb-4">
-            <Form.Label className="fw-semibold">Contraseña</Form.Label>
+            <Form.Label className={`fw-semibold ${styles.label}`}>Contraseña</Form.Label>
             <Form.Control
               type="password"
               placeholder="Mínimo 6 caracteres"
-              className="py-2"
+              className={styles.inputControl}
               isInvalid={!!errors.password}
               {...register("password", { 
                 required: "La contraseña es obligatoria",
@@ -155,7 +162,7 @@ const RegisterModal = () => {
           <Button
             variant="primary"
             type="submit"
-            className="w-100 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center"
+            className="w-100 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center border-0"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

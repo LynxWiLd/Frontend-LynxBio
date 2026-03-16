@@ -8,14 +8,17 @@ import HomePage from "./pages/Home/HomePage";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import PublicPage from "./pages/PublicProfile/PublicPage";
 
-// Components (Modales Globales)
+// Components Globales
 import LoginModal from "./components/auth/LoginModal";
 import RegisterModal from "./components/auth/RegisterModal";
+import ThemeToggle from "./components/ThemeToggle/ThemeToggle"; // 👈 Importamos el nuevo dueño de la luz
 
 function App() {
   return (
     <Router>
-      {/* 🟢 MODALES GLOBALES: Viven fuera de las rutas para estar siempre disponibles */}
+      {/* ☀️ COMPONENTES GLOBALES 🌙 */}
+      {/* Viven aquí para que floten sobre cualquier ruta sin reiniciarse */}
+      <ThemeToggle /> 
       <LoginModal />
       <RegisterModal />
 
@@ -33,7 +36,7 @@ function App() {
         <Route
           path="*"
           element={
-            <div className="text-center mt-5">
+            <div className="text-center mt-5" style={{ color: 'var(--text-main)' }}>
               <h1>404 - Not Found</h1>
               <p>Parece que este lince se perdió en el bosque.</p>
             </div>

@@ -1,25 +1,30 @@
-/* Navbar.module.css */
-
+/* --- ESTRUCTURA GENERAL --- */
 .navbarCustom {
   transition: all 0.4s ease-in-out;
   border-bottom: 1px solid transparent;
   background-color: transparent;
 }
 
+/* Efecto Vidrio en el Scroll */
 .navbarScrolled {
-  background-color: rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  background-color: var(--glass-bg) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* Agrupamos los estilos del logo */
+/* --- LOGO Y MARCA --- */
 .navbarLogo {
   height: 38px;
   width: auto;
   margin-right: 12px;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* Cambio de color del logo en Dark Mode */
+[data-theme='dark'] .navbarLogo {
+  filter: brightness(0) invert(1);
 }
 
 .brandContainer {
@@ -29,49 +34,68 @@
   transition: transform 0.3s ease;
 }
 
-/* El efecto de hover ahora es más pro */
 .brandContainer:hover .navbarLogo {
   transform: scale(1.1) rotate(-8deg);
 }
 
 .brandText {
-  font-weight: 700;
+  font-weight: 800;
   font-size: 1.8rem;
   font-family: "Poppins", sans-serif;
-
-  /* El "Stencil" del degradado */
-  background: linear-gradient(45deg, #004e92, #00ff87);
+  
+  /* Stencil del degradado (Modo Claro) */
+  background: linear-gradient(45deg, #007cf0, #00dfd8);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
-  /* Fallback para navegadores viejos */
-  color: #004e92;
+  
+  color: #007cf0;
+  transition: all 0.3s ease;
 }
 
+/* FIX PARA DARK MODE: Evita el bloque sólido y mantiene el degradado */
+[data-theme='dark'] .brandText {
+  background: linear-gradient(45deg, #38bdf8, #4ade80) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-color: transparent !important;
+}
+
+/* --- LINKS Y BOTONES --- */
 .navButton {
   font-weight: 600 !important;
+  color: var(--text-main) !important;
   transition: all 0.2s ease;
 }
 
-/* Bootstrap Overrides */
-/* Navbar.module.css */
-
+/* --- DROPDOWN Y USUARIO --- */
 .userDropdown :global(.dropdown-toggle) {
   background-color: var(--bg-card) !important;
   color: var(--text-main) !important;
   border: 1px solid var(--border-color) !important;
+  border-radius: 50px !important;
+  padding: 8px 20px !important;
+  transition: all 0.3s ease !important;
 }
 
 .dropdownMenu {
   background-color: var(--bg-card) !important;
   border: 1px solid var(--border-color) !important;
+  border-radius: 15px !important;
+  padding: 10px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+  margin-top: 10px !important;
 }
 
 .dropdownMenu :global(.dropdown-item) {
   color: var(--text-main) !important;
+  border-radius: 8px !important;
+  padding: 8px 15px !important;
+  font-weight: 500;
 }
 
 .dropdownMenu :global(.dropdown-item:hover) {
   background-color: var(--bg-main) !important;
+  transform: translateX(5px);
 }

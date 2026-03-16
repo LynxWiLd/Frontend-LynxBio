@@ -9,7 +9,7 @@ const HomePage = () => {
   const { user, handleOpenRegister, handleOpenLogin } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Redirigir si ya está logueado
+  // Redirigir al dashboard si el usuario ya está logueado
   useEffect(() => {
     if (user) {
       navigate("/dashboard");
@@ -18,13 +18,12 @@ const HomePage = () => {
 
   return (
     <div className={styles.pageWrapper}>
-      {/* HERO SECTION */}
+      {/* --- HERO SECTION --- */}
       <section className={styles.heroSection}>
-        {/* Fondos decorativos (ahora son "fantasmas" para el mouse) */}
+        {/* Fondos decorativos dinámicos */}
         <div className={styles.connectionBackground} />
         <div className={styles.connectionBackgroundOverlay} />
 
-        {/* Contenido Real (Capa superior) */}
         <Container className={styles.heroContent}>
           <Row className="justify-content-center text-center">
             <Col md={10} lg={8}>
@@ -32,9 +31,8 @@ const HomePage = () => {
                 ¡Bienvenido a LynxBio! <br />
                 Tu mundo, un link.
               </h1>
-              <p className={`lead fs-3 mb-5 text-muted ${styles.subtitle}`}>
-                La forma más simple y facha de organizar y compartir todos tus
-                links.
+              <p className={`lead fs-3 mb-5 ${styles.subtitle}`}>
+                La forma más simple y facha de organizar y compartir todos tus links.
               </p>
 
               <div className="d-flex gap-3 justify-content-center">
@@ -61,11 +59,11 @@ const HomePage = () => {
         </Container>
       </section>
 
-      {/* FEATURES SECTION */}
+      {/* --- FEATURES SECTION --- */}
       <Container className={`py-5 ${styles.featuresSection}`}>
         <Row className="justify-content-center text-center mb-5">
           <Col md={8}>
-            <h2 className="display-5 fw-bold">
+            <h2 className={`display-5 fw-bold ${styles.sectionTitle}`}>
               Todos tus enlaces importantes en un solo lugar facha.
             </h2>
           </Col>
@@ -73,28 +71,33 @@ const HomePage = () => {
 
         <Row className="justify-content-center text-center mb-4">
           <Col md={8}>
-            <h3 className="h1 fw-bold mb-4">¿Cómo funciona?</h3>
+            <h3 className={`h1 fw-bold mb-4 ${styles.sectionTitle}`}>¿Cómo funciona?</h3>
           </Col>
         </Row>
 
         <Row className="g-4 text-center">
           {[
-            {
-              icon: <FaUserCheck size={40} />,
-              text: "Registrate en segundos.",
+            { 
+              icon: <FaUserCheck size={40} />, 
+              text: "Registrate en segundos." 
             },
-            { icon: <FaPalette size={40} />, text: "Personalizá tu perfil." },
-            { icon: <FaLink size={40} />, text: "Cargá tus links." },
-            { icon: <FaRocket size={40} />, text: "Compartí tu URL." },
+            { 
+              icon: <FaPalette size={40} />, 
+              text: "Personalizá tu perfil." 
+            },
+            { 
+              icon: <FaLink size={40} />, 
+              text: "Cargá tus links." 
+            },
+            { 
+              icon: <FaRocket size={40} />, 
+              text: "Compartí tu URL." 
+            },
           ].map((step, index) => (
             <Col key={index} xs={12} sm={6} lg={3}>
-              <Card
-                className={`h-100 border-0 shadow-lg text-center p-4 ${styles.stepCard}`}
-              >
+              <Card className={`h-100 border-0 p-4 shadow ${styles.stepCard}`}>
                 <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-                  <div
-                    className={`mb-4 shadow border border-white border-4 rounded-circle bg-white text-primary ${styles.iconWrapper}`}
-                  >
+                  <div className={`mb-4 ${styles.iconWrapper}`}>
                     {step.icon}
                   </div>
                   <Card.Text className="h4 fw-bold">{step.text}</Card.Text>

@@ -1,26 +1,46 @@
 /* index.css */
+
 :root {
+  /* --- TEMA CLARO (Default) --- */
   --bg-main: #f8f9fa;
   --bg-card: #ffffff;
-  --bg-item: #ffffff; /* Fondo de los links en la lista */
+  --bg-item: #ffffff;
   --text-main: #1a1a1a;
+  --text-muted: #6c757d;    /* Gris para URLs y textos secundarios */
   --border-color: #dee2e6;
   --input-bg: #ffffff;
+  
+  /* Glassmorphism Claro */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
 }
 
 [data-theme="dark"] {
-  --bg-main: #0b1120; /* Azul noche muy profundo */
-  --bg-card: #1e293b; /* Gris pizarra para tarjetas */
-  --bg-item: #161e2c; /* Un tono intermedio para los ítems de la lista */
-  --text-main: #f1f5f9;
+  /* --- TEMA OSCURO --- */
+  --bg-main: #0b1120;       /* Azul noche profundo */
+  --bg-card: #1e293b;       /* Gris pizarra para tarjetas */
+  --bg-item: #161e2c;       /* Fondo para los links en la lista */
+  --text-main: #f1f5f9;     /* Blanco suave */
+  --text-muted: #94a3b8;    /* Gris azulado para URLs en modo oscuro */
   --border-color: #334155;
-  --input-bg: #0f172a; /* Fondo oscuro para los inputs */
+  --input-bg: #0f172a;
+  
+  /* Glassmorphism Oscuro (Esencial para que se note el "vidrio") */
+  --glass-bg: rgba(255, 255, 255, 0.05); 
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
+/* --- ESTILOS GLOBALES --- */
 body {
+  margin: 0;
+  padding: 0;
   background-color: var(--bg-main);
   color: var(--text-main);
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  font-family: 'Poppins', sans-serif; /* Asegurate de tener la fuente importada */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Transición suave para todos los elementos que usen variables */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
