@@ -2,19 +2,24 @@ import { Navbar, Nav, Container, Button, Dropdown } from "react-bootstrap";
 import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { FaUserCircle, FaSignOutAlt, FaMoon, FaSun } from "react-icons/fa"; // Sumamos Moon y Sun
+import { FaUserCircle, FaSignOutAlt, FaMoon, FaSun } from "react-icons/fa";
 import styles from "./Navbar.module.css";
 
 const CustomNavbar = () => {
-  const { user, logout, handleOpenLogin, handleOpenRegister } =
-    useContext(AuthContext);
+  const { user, logout, handleOpenLogin, handleOpenRegister } = useContext(AuthContext);
   const [scrolled, setScrolled] = useState(false);
 
-  // 1. Lógica de Dark Mode
-  const [isDark, setIsDark] = useState(
-    localStorage.getItem("theme") === "dark",
-  );
+  // 1. Lógica de Dark Mode con detección de sistema
+  const [isDark, setIsDark] = useState(() => {
+    // Primero: ¿Ya guardó una preferencia en este navegador?
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) return savedTheme === "dark";
 
+    // Segundo: Si no hay nada guardado, ¿qué prefiere su sistema operativo?
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  // Aplicar el tema al cambiar el estado
   useEffect(() => {
     const root = document.documentElement;
     if (isDark) {
@@ -26,7 +31,22 @@ const CustomNavbar = () => {
     }
   }, [isDark]);
 
-  // Detectar el scroll
+  // Escuchar si el usuario cambia el modo en su Windows/Mac/Android mientras la app está abierta
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    
+    const handleChange = (e) => {
+      // Solo cambiamos automáticamente si el usuario no eligió un tema manual antes
+      if (!localStorage.getItem("theme")) {
+        setIsDark(e.matches);
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  // Detectar el scroll para estilos visuales
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -90,7 +110,6 @@ const CustomNavbar = () => {
                     Mi Panel
                   </Dropdown.Item>
 
-                  {/* 👈 BOTÓN DE DARK MODE */}
                   <Dropdown.Item onClick={() => setIsDark(!isDark)}>
                     {isDark ? (
                       <div className="d-flex align-items-center">
