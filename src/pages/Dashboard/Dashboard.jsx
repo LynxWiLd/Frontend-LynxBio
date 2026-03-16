@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Button,
@@ -6,20 +6,21 @@ import {
   Tab,
   Row,
   Col,
-  ListGroup,
   Spinner,
   Modal,
 } from "react-bootstrap";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import { FaCopy, FaPalette, FaLink, FaEye } from "react-icons/fa";
-import { FaInstagram, FaGithub, FaXTwitter } from "react-icons/fa6";
 import Swal from "sweetalert2";
 
 import api from "../../services/axiosConfig";
 import styles from "./Dashboard.module.css";
 
+// Componentes
 import AddLinkCard from "../../components/dashboard/AddLinkCard";
 import LinkItem from "../../components/dashboard/LinkItem";
 import AppearanceForm from "../../components/dashboard/AppearanceForm";
+import PhonePreview from "../../components/dashboard/PhonePreview"; // 👈 El nuevo integrante
 
 const Dashboard = () => {
   const [links, setLinks] = useState([]);
@@ -65,26 +66,37 @@ const Dashboard = () => {
     }
   };
 
-  // --- HANDLERS (Igual que antes, pero con Swal adaptado) ---
+  // --- 🪄 LÓGICA DE REORDENAMIENTO ---
+  const handleDragEnd = async (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(links);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setLinks(items);
+
+    try {
+      const newOrder = items.map((link) => link._id);
+      await api.put("/links/reorder", { newOrder });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error al guardar orden",
+        background: "var(--bg-card)",
+        color: "var(--text-main)",
+      });
+    }
+  };
+
+  // --- HANDLERS (Links, Settings, Imágenes) ---
   const handleAddLink = async (data) => {
     try {
       const res = await api.post("/links", data);
       setLinks(res.data);
-      Swal.fire({
-        icon: "success",
-        title: "¡Link agregado!",
-        timer: 1500,
-        showConfirmButton: false,
-        background: "var(--bg-card)",
-        color: "var(--text-main)",
-      });
+      Swal.fire({ icon: "success", title: "¡Link agregado!", timer: 1500, showConfirmButton: false, background: "var(--bg-card)", color: "var(--text-main)" });
     } catch (err) {
-      Swal.fire({ 
-        icon: "error", 
-        title: "Error", 
-        background: "var(--bg-card)",
-        color: "var(--text-main)" 
-      });
+      Swal.fire({ icon: "error", title: "Error", background: "var(--bg-card)", color: "var(--text-main)" });
     }
   };
 
@@ -104,21 +116,8 @@ const Dashboard = () => {
       try {
         const res = await api.delete(`/links/${id}`);
         setLinks(res.data.links || res.data);
-        Swal.fire({
-          icon: "success",
-          title: "¡Eliminado!",
-          timer: 1000,
-          showConfirmButton: false,
-          background: "var(--bg-card)",
-          color: "var(--text-main)",
-        });
       } catch (err) {
-        Swal.fire({ 
-            icon: "error", 
-            title: "Error", 
-            background: "var(--bg-card)",
-            color: "var(--text-main)" 
-        });
+        Swal.fire({ icon: "error", title: "Error", background: "var(--bg-card)", color: "var(--text-main)" });
       }
     }
   };
@@ -126,175 +125,46 @@ const Dashboard = () => {
   const handleSaveSettings = async () => {
     try {
       await api.put("/auth/settings", settings);
-      Swal.fire({
-        icon: "success",
-        title: "¡Apariencia guardada!",
-        timer: 1500,
-        showConfirmButton: false,
-        background: "var(--bg-card)",
-        color: "var(--text-main)",
-      });
+      Swal.fire({ icon: "success", title: "¡Apariencia guardada!", timer: 1500, showConfirmButton: false, background: "var(--bg-card)", color: "var(--text-main)" });
     } catch (err) {
-      Swal.fire({ 
-        icon: "error", 
-        title: "Error", 
-        background: "var(--bg-card)",
-        color: "var(--text-main)" 
-      });
+      Swal.fire({ icon: "error", title: "Error", background: "var(--bg-card)", color: "var(--text-main)" });
     }
   };
 
   const handleImageUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      return Swal.fire({
-        title: "Archivo muy pesado",
-        text: "Máximo 2MB",
-        icon: "warning",
-        background: "var(--bg-card)",
-        color: "var(--text-main)"
-      });
-    }
-
     const formData = new FormData();
     formData.append("image", file);
     formData.append("type", type);
 
     try {
-      Swal.fire({
-        title: "Subiendo obra de arte...",
-        background: "var(--bg-card)",
-        color: "var(--text-main)",
-        didOpen: () => Swal.showLoading(),
-      });
+      Swal.fire({ title: "Subiendo obra...", background: "var(--bg-card)", color: "var(--text-main)", didOpen: () => Swal.showLoading() });
       const res = await api.post("/auth/upload-avatar", formData);
-
       const newSettings = { ...settings };
       if (type === "avatar") newSettings.profile.avatarUrl = res.data.url;
       else newSettings.theme.backgroundImage = res.data.url;
-
       setSettings(newSettings);
       await api.put("/auth/settings", newSettings);
-      Swal.fire({
-        icon: "success",
-        title: "¡Imagen lista!",
-        timer: 1500,
-        showConfirmButton: false,
-        background: "var(--bg-card)",
-        color: "var(--text-main)",
-      });
+      Swal.close();
     } catch (err) {
-      Swal.fire({ 
-        icon: "error", 
-        title: "Error", 
-        background: "var(--bg-card)",
-        color: "var(--text-main)" 
-      });
+      Swal.fire({ icon: "error", title: "Error al subir", background: "var(--bg-card)", color: "var(--text-main)" });
     }
   };
 
   const handleRemoveImage = async (type) => {
-    const result = await Swal.fire({
-      title: `¿Quitar ${type === "avatar" ? "foto de perfil" : "fondo"}?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Sí, quitar",
-      background: "var(--bg-card)",
-      color: "var(--text-main)",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        const newSettings = { ...settings };
-        if (type === "avatar") newSettings.profile.avatarUrl = "";
-        else newSettings.theme.backgroundImage = "";
-
-        setSettings(newSettings);
-        await api.put("/auth/settings", newSettings);
-        Swal.fire({
-          icon: "success",
-          title: "¡Eliminado!",
-          timer: 1000,
-          showConfirmButton: false,
-          background: "var(--bg-card)",
-          color: "var(--text-main)",
-        });
-      } catch (err) {
-        Swal.fire({ icon: "error", title: "Error", background: "var(--bg-card)", color: "var(--text-main)" });
-      }
-    }
+    const newSettings = { ...settings };
+    if (type === "avatar") newSettings.profile.avatarUrl = "";
+    else newSettings.theme.backgroundImage = "";
+    setSettings(newSettings);
+    await api.put("/auth/settings", newSettings);
   };
 
   const copyToClipboard = () => {
     const url = `${window.location.origin}/${settings.profile.username}`;
     navigator.clipboard.writeText(url);
-    Swal.fire({
-      icon: "info",
-      title: "¡Link copiado!",
-      timer: 1000,
-      showConfirmButton: false,
-      background: "var(--bg-card)",
-      color: "var(--text-main)",
-    });
+    Swal.fire({ icon: "info", title: "Link copiado", timer: 1000, showConfirmButton: false, background: "var(--bg-card)", color: "var(--text-main)" });
   };
-
-  const PhonePreview = () => (
-    <div className={styles.phoneMockup}>
-      <div
-        className={styles.phoneScreen}
-        style={{
-          backgroundColor: settings.theme.backgroundColor,
-          backgroundImage: settings.theme.backgroundImage
-            ? `url(${settings.theme.backgroundImage})`
-            : "none",
-        }}
-      >
-        {settings.theme.backgroundImage && (
-          <div className={styles.phoneOverlay} />
-        )}
-
-        <div
-          className={styles.phoneGlassCard}
-          style={{ color: settings.theme.textColor }}
-        >
-          <img
-            src={settings.profile.avatarUrl || "https://via.placeholder.com/150"}
-            className={styles.previewAvatar}
-            style={{ borderColor: settings.theme.buttonColor }}
-            alt="Avatar"
-          />
-          <h5 className="fw-bold mt-2">
-            @{settings.profile.username || "usuario"}
-          </h5>
-          <p className={styles.previewBio}>{settings.profile.bio}</p>
-
-          <div className={styles.previewLinks}>
-            {links.map((link) => (
-              <div
-                key={link._id}
-                className={styles.previewLinkItem}
-                style={{
-                  backgroundColor: link.buttonColor,
-                  color: link.buttonTextColor,
-                  backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1))`,
-                }}
-              >
-                {link.title}
-              </div>
-            ))}
-          </div>
-
-          <div className={styles.socialIconsPreview}>
-            {settings.socials.instagram && <FaInstagram className="mx-2" />}
-            {settings.socials.github && <FaGithub className="mx-2" />}
-            {settings.socials.twitter && <FaXTwitter className="mx-2" />}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   if (loading)
     return (
@@ -309,45 +179,36 @@ const Dashboard = () => {
       <Row className="h-100">
         <Col lg={7} xl={8} className={styles.configColumn}>
           <div className={styles.headerSection}>
-            <h2 className={`fw-bold ${styles.dashboardTitle}`}>Panel de Control</h2>
-            <Button
-              variant="outline-primary"
-              onClick={copyToClipboard}
-              className={`rounded-pill px-4 ${styles.copyBtn}`}
-            >
+            <h2 className={styles.dashboardTitle}>Panel de Control</h2>
+            <Button variant="outline-primary" onClick={copyToClipboard} className={`rounded-pill px-4 ${styles.copyBtn}`}>
               <FaCopy className="me-2" /> Mi Link
             </Button>
           </div>
 
           <Tabs defaultActiveKey="links" className={`mb-4 ${styles.customTabs}`}>
-            <Tab
-              eventKey="links"
-              title={
-                <span className={styles.tabTitle}>
-                  <FaLink className="me-2" /> Enlaces
-                </span>
-              }
-            >
+            <Tab eventKey="links" title={<span className={styles.tabTitle}><FaLink className="me-2" /> Enlaces</span>}>
               <AddLinkCard handleAddLink={handleAddLink} />
-              <ListGroup variant="flush" className="mt-4">
-                {links.map((link) => (
-                  <LinkItem
-                    key={link._id}
-                    link={link}
-                    handleDeleteLink={handleDeleteLink}
-                  />
-                ))}
-              </ListGroup>
+              
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="links-list">
+                  {(provided) => (
+                    <div {...provided.droppableProps} ref={provided.innerRef} className="mt-4">
+                      {links.map((link, index) => (
+                        <LinkItem
+                          key={link._id}
+                          link={link}
+                          index={index}
+                          handleDeleteLink={handleDeleteLink}
+                        />
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </Tab>
 
-            <Tab
-              eventKey="appearance"
-              title={
-                <span className={styles.tabTitle}>
-                  <FaPalette className="me-2" /> Apariencia
-                </span>
-              }
-            >
+            <Tab eventKey="appearance" title={<span className={styles.tabTitle}><FaPalette className="me-2" /> Apariencia</span>}>
               <AppearanceForm
                 settings={settings}
                 setSettings={setSettings}
@@ -359,29 +220,22 @@ const Dashboard = () => {
           </Tabs>
         </Col>
 
+        {/* --- VISTA PREVIA ESCRITORIO --- */}
         <Col lg={5} xl={4} className={styles.previewColumn}>
           <div className={styles.phoneSticky}>
-            <PhonePreview />
+            <PhonePreview settings={settings} links={links} />
           </div>
         </Col>
       </Row>
 
-      <Button
-        className={styles.mobilePreviewBtn}
-        onClick={() => setShowMobilePreview(true)}
-      >
+      <Button className={styles.mobilePreviewBtn} onClick={() => setShowMobilePreview(true)}>
         <FaEye className="me-2" /> Vista previa
       </Button>
 
-      <Modal
-        show={showMobilePreview}
-        onHide={() => setShowMobilePreview(false)}
-        centered
-        className={styles.mobileModal}
-        contentClassName={styles.mobileModalContent}
-      >
+      {/* --- VISTA PREVIA MÓVIL --- */}
+      <Modal show={showMobilePreview} onHide={() => setShowMobilePreview(false)} centered contentClassName={styles.mobileModalContent}>
         <Modal.Body className={`d-flex justify-content-center rounded border-0 ${styles.modalBody}`}>
-          <PhonePreview />
+          <PhonePreview settings={settings} links={links} />
         </Modal.Body>
       </Modal>
     </Container>
