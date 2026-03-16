@@ -24,8 +24,13 @@
   margin-bottom: 2rem;
 }
 
+.dashboardTitle {
+  font-weight: 800;
+  color: var(--text-main) !important;
+}
+
 /* ==========================================
-   2. IDENTIDAD VISUAL (AVATAR Y FOTOS) - 🛠️ FIX AQUÍ
+   2. IDENTIDAD VISUAL (AVATAR Y FOTOS)
    ========================================== */
 .avatarContainer {
   position: relative;
@@ -34,10 +39,10 @@
 }
 
 .avatarImage {
-  width: 130px;           /* 👈 Tamaño controlado */
+  width: 130px;
   height: 130px;
-  border-radius: 50%;     /* 👈 Círculo perfecto */
-  object-fit: cover;      /* 👈 No se estira, se recorta */
+  border-radius: 50%;
+  object-fit: cover;
   border: 4px solid var(--border-color);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
@@ -48,7 +53,16 @@
   transform: scale(1.05);
 }
 
-/* Responsivo para el Avatar en móviles */
+/* El botón de borrar sobre el avatar */
+.removeAvatarBtn {
+  top: 5px !important;
+  right: 5px !important;
+  border-radius: 50% !important;
+  padding: 5px 8px !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+}
+
 @media (max-width: 576px) {
   .avatarImage {
     width: 100px;
@@ -128,22 +142,38 @@
   transition: all 0.2s ease-in-out !important;
 }
 
+.dragHandle {
+  color: var(--text-muted);
+  cursor: grab;
+  padding: 5px;
+}
+
 /* ==========================================
    6. SELECTORES DE COLOR PERSONALIZADOS
    ========================================== */
 .colorInputCustom {
-  width: 100%;
-  height: 45px;
-  padding: 4px;
-  border-radius: 10px !important;
-  background-color: var(--input-bg) !important;
-  border: 1px solid var(--border-color) !important;
+  width: 50px !important;
+  height: 50px !important;
+  padding: 0 !important;
+  border-radius: 50% !important; /* Circular para que parezca paleta de artista */
+  background-color: transparent !important;
+  border: 2px solid var(--border-color) !important;
   cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.colorInputCustom:hover {
+  transform: scale(1.1);
+}
+
+.colorInputCustom::-webkit-color-swatch-wrapper {
+  padding: 0;
 }
 
 .colorInputCustom::-webkit-color-swatch {
   border: none;
-  border-radius: 6px;
+  border-radius: 50%;
 }
 
 /* ==========================================
@@ -167,6 +197,14 @@
   border-radius: 10px !important;
 }
 
+/* ==========================================
+   8. UTILIDADES Y SCROLLBARS
+   ========================================== */
+.copyBtn {
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
 .charCounter {
   font-size: 0.8rem;
   text-align: right;
@@ -177,4 +215,22 @@
 .charCounterError {
   color: #dc3545 !important;
   font-weight: bold;
+}
+
+/* Scrollbar personalizado para que no rompa el Glassmorphism */
+.dashboardWrapper ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dashboardWrapper ::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+.dashboardWrapper ::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+.dashboardWrapper ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }

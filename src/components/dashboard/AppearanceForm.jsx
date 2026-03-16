@@ -7,7 +7,6 @@ import {
   FaUserCircle,
   FaInfoCircle,
 } from "react-icons/fa";
-// 1. Importamos el mapa de iconos (acordate de la X si cambiaste el nombre)
 import { ICON_MAP } from "../../constants/iconMap";
 import styles from "../../pages/Dashboard/Dashboard.module.css";
 
@@ -36,26 +35,18 @@ const AppearanceForm = ({
   const bioWatch = watch("bio", settings.profile.bio);
 
   return (
-    <Form
-      onSubmit={handleSubmit(handleSaveSettings)}
-      className={styles.glassCard}
-    >
+    <Form onSubmit={handleSubmit(handleSaveSettings)} className={styles.glassCard}>
       <h4 className="fw-bold mb-4 text-center">Identidad Visual</h4>
 
       {/* --- FOTO DE PERFIL --- */}
-      <div className="text-center mb-4">
+      <div className="text-center mb-5">
         <Form.Label className="fw-bold d-block mb-3">
-          <FaUserCircle className="me-2" />
-          Imagen de Perfil
+          <FaUserCircle className="me-2" /> Imagen de Perfil
         </Form.Label>
-
+        
         <div className={styles.avatarContainer}>
-          {" "}
-          {/* 👈 Usamos la nueva clase */}
           <img
-            src={
-              settings.profile.avatarUrl || "https://via.placeholder.com/150"
-            }
+            src={settings.profile.avatarUrl || "https://via.placeholder.com/150"}
             alt="Avatar"
             className={styles.avatarImage}
           />
@@ -63,14 +54,7 @@ const AppearanceForm = ({
             <Button
               variant="danger"
               size="sm"
-              className="position-absolute shadow-sm"
-              /* Ajustamos la posición para que no quede "flotando" fuera del círculo */
-              style={{
-                top: "5px",
-                right: "5px",
-                borderRadius: "50%",
-                padding: "5px 8px",
-              }}
+              className={`position-absolute ${styles.removeAvatarBtn}`}
               onClick={() => handleRemoveImage("avatar")}
             >
               <FaTrash size={12} />
@@ -82,14 +66,14 @@ const AppearanceForm = ({
           type="file"
           size="sm"
           className="mt-3 mx-auto"
-          style={{ maxWidth: "250px" }} // 👈 Limitamos el ancho del input file
+          style={{ maxWidth: "250px" }}
           onChange={(e) => handleImageUpload(e, "avatar")}
           accept="image/*"
         />
       </div>
 
       {/* --- FONDO PERSONALIZADO --- */}
-      <div className="mb-4">
+      <div className="mb-5">
         <Form.Label className="fw-bold d-block">
           <FaImage className="me-2" /> Fondo de Pantalla
         </Form.Label>
@@ -101,11 +85,7 @@ const AppearanceForm = ({
             accept="image/*"
           />
           {settings.theme.backgroundImage && (
-            <Button
-              variant="outline-danger"
-              size="sm"
-              onClick={() => handleRemoveImage("background")}
-            >
+            <Button variant="outline-danger" size="sm" onClick={() => handleRemoveImage("background")}>
               <FaTrash />
             </Button>
           )}
@@ -114,26 +94,21 @@ const AppearanceForm = ({
 
       {/* --- PALETA DE COLORES --- */}
       <hr />
-      <div className="d-flex justify-content-between align-items-center mb-3">
+      <div className="d-flex justify-content-between align-items-center mb-4">
         <h5 className="fw-bold m-0 text-primary">Paleta de Colores</h5>
-        <Button
-          variant="success"
-          size="sm"
-          className="rounded-pill px-3 fw-bold shadow-sm"
-          onClick={handleSaveSettings}
-        >
-          <FaCheckCircle className="me-1" /> Aplicar Colores
+        <Button variant="success" size="sm" className="rounded-pill px-3 fw-bold shadow-sm" onClick={handleSaveSettings}>
+          <FaCheckCircle className="me-1" /> Aplicar
         </Button>
       </div>
 
-      <Row className="text-center mb-4">
+      <Row className="text-center mb-4 g-2">
         {[
           { label: "Fondo", key: "backgroundColor" },
           { label: "Borde Foto", key: "buttonColor" },
           { label: "Texto", key: "textColor" },
         ].map((item) => (
-          <Col xs={4} key={item.key}>
-            <Form.Label className="small fw-bold">{item.label}</Form.Label>
+          <Col xs={4} key={item.key} className="d-flex flex-column align-items-center">
+            <Form.Label className="small fw-bold mb-2">{item.label}</Form.Label>
             <Form.Control
               type="color"
               className={styles.colorInputCustom}
@@ -153,8 +128,7 @@ const AppearanceForm = ({
       <hr />
       <Form.Group className="mb-4">
         <Form.Label className="fw-bold">
-          <FaInfoCircle className="me-2" />
-          Bio (Descripción)
+          <FaInfoCircle className="me-2" /> Bio (Descripción)
         </Form.Label>
         <Form.Control
           as="textarea"
@@ -162,46 +136,32 @@ const AppearanceForm = ({
           placeholder="Escribí algo que te defina..."
           {...register("bio", {
             maxLength: 150,
-            onChange: (e) =>
-              setSettings((prev) => ({
-                ...prev,
-                profile: { ...prev.profile, bio: e.target.value },
-              })),
+            onChange: (e) => setSettings(prev => ({ ...prev, profile: { ...prev.profile, bio: e.target.value } })),
           })}
         />
-        <div
-          className={`${styles.charCounter} ${bioWatch?.length >= 150 ? styles.charCounterError : ""}`}
-        >
+        <div className={`${styles.charCounter} ${bioWatch?.length >= 150 ? styles.charCounterError : ""}`}>
           {bioWatch?.length || 0} / 150
         </div>
       </Form.Group>
 
-      {/* --- REDES SOCIALES DINÁMICAS --- */}
+      {/* --- REDES SOCIALES --- */}
       <hr />
       <h5 className="fw-bold mb-3">Redes Sociales</h5>
       <Row>
         {["instagram", "twitter", "github"].map((social) => {
-          // 2. Extraemos el componente del mapa
           const SocialIcon = ICON_MAP[social] || ICON_MAP.web;
-
           return (
             <Col md={4} key={social} className="mb-3">
               <Form.Group>
                 <Form.Label className="small fw-bold text-capitalize d-flex align-items-center">
-                  <span className="me-2 d-flex align-items-center text-primary">
-                    <SocialIcon />
-                  </span>
+                  <span className="me-2 d-flex align-items-center text-primary"><SocialIcon /></span>
                   {social}
                 </Form.Label>
                 <Form.Control
                   type="text"
                   placeholder={`@usuario`}
                   {...register(social, {
-                    onChange: (e) =>
-                      setSettings((prev) => ({
-                        ...prev,
-                        socials: { ...prev.socials, [social]: e.target.value },
-                      })),
+                    onChange: (e) => setSettings(prev => ({ ...prev, socials: { ...prev.socials, [social]: e.target.value } })),
                   })}
                 />
               </Form.Group>
@@ -210,11 +170,7 @@ const AppearanceForm = ({
         })}
       </Row>
 
-      <Button
-        variant="primary"
-        type="submit"
-        className="w-100 rounded-pill fw-bold py-2 shadow mt-3"
-      >
+      <Button variant="primary" type="submit" className="w-100 rounded-pill fw-bold py-2 shadow mt-3">
         GUARDAR TODO EL PERFIL
       </Button>
     </Form>
