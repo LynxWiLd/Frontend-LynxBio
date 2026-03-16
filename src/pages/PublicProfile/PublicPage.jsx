@@ -4,7 +4,7 @@ import { Spinner, Image, Button, Container } from "react-bootstrap";
 import { FaInstagram, FaGithub, FaTwitter } from "react-icons/fa";
 import api from "../../services/axiosConfig";
 import styles from "./PublicPage.module.css";
-import Footer from "../../components/Footer/Footer"; // 👈 Tu sello de autoría
+import Footer from "../../components/common/Footer"; // 👈 Tu sello de autoría
 
 const PublicPage = () => {
   const { username } = useParams();
