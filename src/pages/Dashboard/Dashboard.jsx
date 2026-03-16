@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   Container,
   Button,
@@ -65,7 +65,7 @@ const Dashboard = () => {
     }
   };
 
-  // --- FUNCIÓN: AGREGAR LINK ---
+  // --- HANDLERS (Igual que antes, pero con Swal adaptado) ---
   const handleAddLink = async (data) => {
     try {
       const res = await api.post("/links", data);
@@ -75,13 +75,19 @@ const Dashboard = () => {
         title: "¡Link agregado!",
         timer: 1500,
         showConfirmButton: false,
+        background: "var(--bg-card)",
+        color: "var(--text-main)",
       });
     } catch (err) {
-      Swal.fire({ icon: "error", title: "Error al agregar el link" });
+      Swal.fire({ 
+        icon: "error", 
+        title: "Error", 
+        background: "var(--bg-card)",
+        color: "var(--text-main)" 
+      });
     }
   };
 
-  // --- FUNCIÓN: BORRAR LINK ---
   const handleDeleteLink = async (id) => {
     const result = await Swal.fire({
       title: "¿Borrar este link?",
@@ -90,6 +96,8 @@ const Dashboard = () => {
       showCancelButton: true,
       confirmButtonColor: "#d33",
       confirmButtonText: "Sí, borrar",
+      background: "var(--bg-card)",
+      color: "var(--text-main)",
     });
 
     if (result.isConfirmed) {
@@ -101,14 +109,20 @@ const Dashboard = () => {
           title: "¡Eliminado!",
           timer: 1000,
           showConfirmButton: false,
+          background: "var(--bg-card)",
+          color: "var(--text-main)",
         });
       } catch (err) {
-        Swal.fire("Error", "No se pudo eliminar", "error");
+        Swal.fire({ 
+            icon: "error", 
+            title: "Error", 
+            background: "var(--bg-card)",
+            color: "var(--text-main)" 
+        });
       }
     }
   };
 
-  // --- FUNCIÓN: GUARDAR APARIENCIA ---
   const handleSaveSettings = async () => {
     try {
       await api.put("/auth/settings", settings);
@@ -117,19 +131,31 @@ const Dashboard = () => {
         title: "¡Apariencia guardada!",
         timer: 1500,
         showConfirmButton: false,
+        background: "var(--bg-card)",
+        color: "var(--text-main)",
       });
     } catch (err) {
-      Swal.fire({ icon: "error", title: "Error al guardar configuración" });
+      Swal.fire({ 
+        icon: "error", 
+        title: "Error", 
+        background: "var(--bg-card)",
+        color: "var(--text-main)" 
+      });
     }
   };
 
-  // --- FUNCIÓN: SUBIR IMÁGENES (Avatar o Fondo) ---
   const handleImageUpload = async (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      return Swal.fire("Archivo muy pesado", "Máximo 2MB", "warning");
+      return Swal.fire({
+        title: "Archivo muy pesado",
+        text: "Máximo 2MB",
+        icon: "warning",
+        background: "var(--bg-card)",
+        color: "var(--text-main)"
+      });
     }
 
     const formData = new FormData();
@@ -139,6 +165,8 @@ const Dashboard = () => {
     try {
       Swal.fire({
         title: "Subiendo obra de arte...",
+        background: "var(--bg-card)",
+        color: "var(--text-main)",
         didOpen: () => Swal.showLoading(),
       });
       const res = await api.post("/auth/upload-avatar", formData);
@@ -148,48 +176,53 @@ const Dashboard = () => {
       else newSettings.theme.backgroundImage = res.data.url;
 
       setSettings(newSettings);
-      await api.put("/auth/settings", newSettings); // Auto-save
+      await api.put("/auth/settings", newSettings);
       Swal.fire({
         icon: "success",
         title: "¡Imagen lista!",
         timer: 1500,
         showConfirmButton: false,
+        background: "var(--bg-card)",
+        color: "var(--text-main)",
       });
     } catch (err) {
-      Swal.fire("Error", "No se pudo subir la imagen", "error");
+      Swal.fire({ 
+        icon: "error", 
+        title: "Error", 
+        background: "var(--bg-card)",
+        color: "var(--text-main)" 
+      });
     }
   };
 
-  // --- FUNCIÓN: ELIMINAR IMÁGENES (Avatar o Fondo) ---
   const handleRemoveImage = async (type) => {
     const result = await Swal.fire({
       title: `¿Quitar ${type === "avatar" ? "foto de perfil" : "fondo"}?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Sí, quitar",
-      cancelButtonText: "Cancelar",
+      background: "var(--bg-card)",
+      color: "var(--text-main)",
     });
 
     if (result.isConfirmed) {
       try {
         const newSettings = { ...settings };
-        if (type === "avatar") {
-          newSettings.profile.avatarUrl = "";
-        } else {
-          newSettings.theme.backgroundImage = "";
-        }
+        if (type === "avatar") newSettings.profile.avatarUrl = "";
+        else newSettings.theme.backgroundImage = "";
 
         setSettings(newSettings);
         await api.put("/auth/settings", newSettings);
-
         Swal.fire({
           icon: "success",
           title: "¡Eliminado!",
           timer: 1000,
           showConfirmButton: false,
+          background: "var(--bg-card)",
+          color: "var(--text-main)",
         });
       } catch (err) {
-        Swal.fire("Error", "No se pudo eliminar", "error");
+        Swal.fire({ icon: "error", title: "Error", background: "var(--bg-card)", color: "var(--text-main)" });
       }
     }
   };
@@ -202,6 +235,8 @@ const Dashboard = () => {
       title: "¡Link copiado!",
       timer: 1000,
       showConfirmButton: false,
+      background: "var(--bg-card)",
+      color: "var(--text-main)",
     });
   };
 
@@ -216,7 +251,6 @@ const Dashboard = () => {
             : "none",
         }}
       >
-        {/* Capa oscura si hay fondo (igual que en PublicPage) */}
         {settings.theme.backgroundImage && (
           <div className={styles.phoneOverlay} />
         )}
@@ -226,9 +260,7 @@ const Dashboard = () => {
           style={{ color: settings.theme.textColor }}
         >
           <img
-            src={
-              settings.profile.avatarUrl || "https://via.placeholder.com/150"
-            }
+            src={settings.profile.avatarUrl || "https://via.placeholder.com/150"}
             className={styles.previewAvatar}
             style={{ borderColor: settings.theme.buttonColor }}
             alt="Avatar"
@@ -268,7 +300,7 @@ const Dashboard = () => {
     return (
       <Container className="text-center mt-5">
         <Spinner animation="border" variant="primary" />
-        <p>Sincronizando con la manada...</p>
+        <p className={styles.loadingText}>Sincronizando con la manada...</p>
       </Container>
     );
 
@@ -277,28 +309,26 @@ const Dashboard = () => {
       <Row className="h-100">
         <Col lg={7} xl={8} className={styles.configColumn}>
           <div className={styles.headerSection}>
-            <h2 className="fw-bold">Panel de Control</h2>
+            <h2 className={`fw-bold ${styles.dashboardTitle}`}>Panel de Control</h2>
             <Button
-              variant="outline-dark"
+              variant="outline-primary"
               onClick={copyToClipboard}
-              className="rounded-pill px-4"
+              className={`rounded-pill px-4 ${styles.copyBtn}`}
             >
               <FaCopy className="me-2" /> Mi Link
             </Button>
           </div>
 
-          <Tabs defaultActiveKey="links" className="mb-4">
+          <Tabs defaultActiveKey="links" className={`mb-4 ${styles.customTabs}`}>
             <Tab
               eventKey="links"
               title={
-                <span>
+                <span className={styles.tabTitle}>
                   <FaLink className="me-2" /> Enlaces
                 </span>
               }
             >
-              {/* 👈 AGREGAMOS EL FORMULARIO PARA CREAR LINKS */}
               <AddLinkCard handleAddLink={handleAddLink} />
-
               <ListGroup variant="flush" className="mt-4">
                 {links.map((link) => (
                   <LinkItem
@@ -313,7 +343,7 @@ const Dashboard = () => {
             <Tab
               eventKey="appearance"
               title={
-                <span>
+                <span className={styles.tabTitle}>
                   <FaPalette className="me-2" /> Apariencia
                 </span>
               }
@@ -348,8 +378,9 @@ const Dashboard = () => {
         onHide={() => setShowMobilePreview(false)}
         centered
         className={styles.mobileModal}
+        contentClassName={styles.mobileModalContent}
       >
-        <Modal.Body className="d-flex justify-content-center bg-light rounded">
+        <Modal.Body className={`d-flex justify-content-center rounded border-0 ${styles.modalBody}`}>
           <PhonePreview />
         </Modal.Body>
       </Modal>
