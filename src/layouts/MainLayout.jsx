@@ -1,19 +1,19 @@
-import { Outlet } from 'react-router-dom';
-import CustomNavbar from '../components/common/CustomNavbar';
-import Footer from '../components/common/Footer';
+// layouts/MainLayout.jsx
+import { Outlet } from "react-router-dom";
+import CustomNavbar from "../components/Navbar/CustomNavbar";
+import Footer from "../components/Footer/Footer";
+import ThemeToggle from "../components/ThemeToggle/ThemeToggle"; // 👈 Lo traemos para acá
 
 const MainLayout = () => {
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <>
+      <ThemeToggle /> {/* ☀️ Solo vive dentro de este Layout 🌙 */}
       <CustomNavbar />
-      
-      {/* El contenido de la página actual se renderiza aquí */}
-      <main className="flex-grow-1">
+      <main>
         <Outlet />
       </main>
-
       <Footer />
-    </div>
+    </>
   );
 };
 

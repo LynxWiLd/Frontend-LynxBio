@@ -1,3 +1,5 @@
+/* PublicPage.module.css */
+
 .publicPageWrapper {
   min-height: 100vh;
   width: 100%;
@@ -5,10 +7,9 @@
   background-position: center;
   background-attachment: fixed;
   position: relative;
-  padding: 60px 15px;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column; /* 👈 Clave para que el footer se vaya al fondo */
+  transition: background-color 0.3s ease;
 }
 
 .overlay {
@@ -17,23 +18,31 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4); /* Capa de contraste */
-  z-index: 0;
+  background: rgba(0, 0, 0, 0.45); /* Un toque más de contraste para legibilidad */
+  z-index: 1;
+}
+
+/* Contenedor que empuja al footer hacia abajo */
+.mainContent {
+  flex: 1; /* 👈 Esto ocupa todo el espacio sobrante */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centra la tarjeta verticalmente si hay espacio */
+  padding: 60px 15px;
+  position: relative;
+  z-index: 2;
 }
 
 .glassCard {
-  position: relative;
-  z-index: 1;
   width: 100%;
   max-width: 480px;
   padding: 40px 25px;
   border-radius: 30px;
-  /* El corazón del diseño: Glassmorphism */
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.08); /* Más sutil para que el fondo respire */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
   text-align: center;
 }
 
@@ -42,49 +51,71 @@
   height: 120px;
   object-fit: cover;
   margin-bottom: 1.5rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
   border-width: 4px;
   border-style: solid;
+  transition: transform 0.3s ease;
+}
+
+.avatar:hover {
+  transform: scale(1.05);
 }
 
 .linkButton {
-  padding: 18px !important;
-  border-radius: 20px !important;
+  padding: 16px !important;
+  border-radius: 18px !important;
   font-weight: 700 !important;
   font-size: 1.1rem !important;
   border: none !important;
-  transition:
-    transform 0.2s ease,
-    filter 0.2s ease !important;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s ease, filter 0.2s ease !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
 .linkButton:hover {
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(-3px) scale(1.01);
   filter: brightness(1.2);
 }
 
 .socialIcons {
   display: flex;
-  gap: 2rem;
+  gap: 1.8rem;
   justify-content: center;
-  font-size: 2.2rem;
-  margin-top: 10px;
+  font-size: 2rem;
+  margin-top: 15px;
 }
 
 .socialIcons a {
-  transition: transform 0.2s ease;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+  transition: all 0.2s ease;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+  opacity: 0.9;
 }
 
 .socialIcons a:hover {
-  transform: scale(1.2);
+  transform: translateY(-3px) scale(1.1);
+  opacity: 1;
+}
+
+/* --- SECCIÓN DEL FOOTER --- */
+.publicFooterWrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding-bottom: 20px;
+  opacity: 0.7; /* Lo hacemos sutil para no robar protagonismo */
+  transition: opacity 0.3s ease;
+}
+
+.publicFooterWrapper:hover {
+  opacity: 1;
 }
 
 .loaderWrapper {
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: #121212;
+  color: white;
 }
