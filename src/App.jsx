@@ -11,7 +11,6 @@ import PublicPage from "./pages/PublicProfile/PublicPage";
 // Components Globales
 import LoginModal from "./components/auth/LoginModal";
 import RegisterModal from "./components/auth/RegisterModal";
-import ThemeToggle from "./components/ThemeToggle/ThemeToggle"; // 👈 Importamos el nuevo dueño de la luz
 
 // App.jsx
 function App() {
