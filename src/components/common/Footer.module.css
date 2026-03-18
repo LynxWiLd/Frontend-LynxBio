@@ -1,63 +1,82 @@
 /* Footer.module.css */
 
 .footer {
-  background-color: var(--bg-main);
-  padding: 3rem 0;
-  margin-top: auto;
-  border-top: 1px solid var(--border-color);
-  color: var(--text-muted);
+  /* 🪄 LA CLAVE: Fondo transparente para que no "tape" el perfil */
+  background-color: transparent !important; 
+  padding: 2.5rem 0;
+  margin: 0; 
+  /* Sacamos el borde sólido que corta el diseño */
+  border-top: 1px solid rgba(255, 255, 255, 0.1); 
+  color: inherit; /* Hereda el color del texto del padre (blanco o negro) */
   font-family: 'Poppins', sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  width: 100%;
+  transition: all 0.3s ease;
 }
 
-/* El nombre con el efecto Stencil */
+/* El nombre con el efecto Stencil / Gradient */
 .brandName {
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.5px;
+  /* Gradiente premium */
   background: linear-gradient(45deg, #007cf0, #00dfd8);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: #0d6efd; /* Fallback */
-  display: inline-block; /* Importante para que el clip funcione bien */
+  display: inline-block;
 }
 
-/* 🛠️ FIX PARA EL MODO OSCURO: Repetimos el recorte para evitar el bloque sólido */
+/* Ajuste para el modo oscuro/claro global */
 [data-theme='dark'] .brandName {
   background: linear-gradient(45deg, #38bdf8, #4ade80) !important;
-  
-  /* Volvemos a pedirle que lo recorte */
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  
-  background-color: transparent !important;
+}
+
+.footerText {
+  opacity: 0.8;
+  font-weight: 500;
 }
 
 .heart {
-  color: #e74c3c;
+  color: #ff4d4d;
   display: inline-block;
   animation: pulse 1.5s infinite;
   margin: 0 4px;
 }
 
+/* El Badge tipo "Glassmorphism" para que no desentone */
 .projectBadge {
   display: inline-block;
   margin-top: 0.8rem;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   font-weight: 600;
-  padding: 4px 12px;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
+  padding: 4px 14px;
+  /* Fondo semi-transparente para que se vea el color de atrás */
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50px;
-  color: var(--text-muted);
-  transition: all 0.3s ease;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.rollingCode {
+  font-size: 0.75rem;
+  opacity: 0.6;
 }
 
 @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.2); }
   100% { transform: scale(1); }
+}
+
+/* Fix para pantallas muy chicas */
+@media (max-width: 576px) {
+  .footer {
+    padding: 1.5rem 0;
+  }
 }

@@ -1,33 +1,47 @@
+/* ==========================================
+   1. WRAPPER Y FONDO
+   ========================================== */
 .publicPageWrapper {
   min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
-  position: relative; /* 👈 Esencial para que el overlay sepa dónde quedarse */
+  position: relative;
+  /* 🪄 El background-color aquí debe ser el mismo que el del body 
+     para evitar que se vea blanco en los bordes o al scrollear */
+  background-color: #121212; 
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   overflow-x: hidden;
+  margin: 0;
+  padding: 0;
 }
 
+/* El "negro suave" que mencionaste */
 .overlay {
-  position: absolute; /* 👈 Con esto deja de "empujar" el contenido */
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6); /* El "negro suave" ahora es una capa de fondo */
-  z-index: 1; /* 👈 Por debajo del contenido */
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+  /* 🛠️ FIX: Asegura que cubra todo el alto si la página crece por muchos links */
+  height: 100%; 
 }
 
+/* ==========================================
+   2. CONTENEDOR DE CONTENIDO
+   ========================================== */
 .mainContainer {
-  flex: 1; /* 👈 Esto empuja el footer al fondo */
+  flex: 1; /* Empuja el footer al fondo de la pantalla */
   display: flex;
   justify-content: center;
   align-items: center; 
   position: relative;
-  z-index: 2; /* 👈 Por ENCIMA del overlay */
-  padding: 40px 15px;
+  z-index: 2; /* Por ENCIMA del overlay */
+  padding: 60px 15px; /* Más aire arriba y abajo */
 }
 
 .glassCard {
@@ -43,13 +57,17 @@
   text-align: center;
 }
 
+/* ==========================================
+   3. ELEMENTOS DEL PERFIL
+   ========================================== */
 .avatar {
   width: 120px;
   height: 120px;
   object-fit: cover;
+  border-radius: 50%; /* 👈 FUNDAMENTAL: Para que sea círculo */
   border: 4px solid;
   margin-bottom: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
 .linkButton {
@@ -57,30 +75,48 @@
   border-radius: 18px !important;
   font-weight: 700 !important;
   border: none !important;
-  transition: transform 0.2s ease !important;
+  transition: transform 0.2s ease, filter 0.2s ease !important;
+  margin-bottom: 0.5rem;
 }
 
 .linkButton:hover {
   transform: translateY(-3px) scale(1.02);
+  filter: brightness(1.1);
 }
 
 .socialIcons {
   display: flex;
   gap: 1.5rem;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin-top: 20px;
 }
 
+.socialIcons a {
+  transition: transform 0.2s ease;
+}
+
+.socialIcons a:hover {
+  transform: scale(1.15);
+}
+
+/* ==========================================
+   4. FOOTER (Eliminando el margen blanco)
+   ========================================== */
 .publicFooter {
   position: relative;
-  z-index: 2; /* 👈 También por encima del overlay */
+  z-index: 2;
   padding: 20px 0;
   width: 100%;
   text-align: center;
+  /* 🪄 LA CLAVE: Que sea transparente para que se vea el fondo de la app */
+  background-color: transparent !important;
+  margin-top: auto; 
 }
 
-/* Loader y Error */
+/* ==========================================
+   5. UTILS
+   ========================================== */
 .loaderWrapper, .errorWrapper {
   height: 100vh;
   display: flex;
