@@ -11,14 +11,19 @@ const AddLinkCard = ({ handleAddLink }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      icon: "web", // Valor por defecto
+      icon: "web",
       buttonColor: "#000000",
       buttonTextColor: "#ffffff",
     },
   });
 
   const onSubmit = (data) => {
-    handleAddLink(data);
+    // 🪄 Limpiamos espacios en blanco accidentales antes de mandar al backend
+    const cleanedData = {
+      ...data,
+      url: data.url.trim()
+    };
+    handleAddLink(cleanedData);
     reset();
   };
 
@@ -27,7 +32,7 @@ const AddLinkCard = ({ handleAddLink }) => {
       <h5 className="fw-bold mb-3">Agregar Nuevo Enlace</h5>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Row>
-          {/* Título */}
+          {/* Título del botón */}
           <Col md={6} className="mb-2">
             <Form.Group>
               <Form.Label className="small fw-bold">
@@ -35,7 +40,7 @@ const AddLinkCard = ({ handleAddLink }) => {
               </Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Ej: Mi Portfolio"
+                placeholder="Ej: Mi TikTok"
                 isInvalid={!!errors.title}
                 {...register("title", {
                   required: "El título es necesario",
@@ -48,20 +53,20 @@ const AddLinkCard = ({ handleAddLink }) => {
             </Form.Group>
           </Col>
 
-          {/* URL */}
+          {/* URL (Link) - AQUÍ ESTABA EL FIX 🪄 */}
           <Col md={6} className="mb-2">
             <Form.Group>
               <Form.Label className="small fw-bold">URL (Link)</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="https://..."
+                placeholder="https://www.tiktok.com/@usuario"
                 isInvalid={!!errors.url}
                 {...register("url", {
                   required: "La URL es obligatoria",
                   pattern: {
-                    value:
-                      /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/,
-                    message: "URL no válida (ej: https://google.com)",
+                    /* ✅ REGEX ACTUALIZADO: Acepta @, ?, &, -, etc. */
+                    value: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
+                    message: "URL no válida (ej: https://tiktok.com/@tuusuario)",
                   },
                 })}
               />
@@ -73,12 +78,13 @@ const AddLinkCard = ({ handleAddLink }) => {
         </Row>
 
         <Row>
-          {/* NUEVO: Selector de Iconos */}
+          {/* Selector de Iconos */}
           <Col md={12} className="mb-3">
             <Form.Group>
               <Form.Label className="small fw-bold">Elegí un Icono</Form.Label>
               <Form.Select
                 {...register("icon")}
+                className={styles.customSelect} // Podés usar estilos del module
                 style={{ borderRadius: "12px", minHeight: "45px" }}
               >
                 {ICON_OPTIONS.map((opt) => (
@@ -91,6 +97,7 @@ const AddLinkCard = ({ handleAddLink }) => {
           </Col>
         </Row>
 
+        {/* Selectores de Color */}
         <Row className="mt-2">
           <Col xs={6}>
             <Form.Label className="small fw-bold d-block">
