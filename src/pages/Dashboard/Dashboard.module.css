@@ -1,16 +1,15 @@
 /* ==========================================
-   1. ESTRUCTURA GLOBAL Y WRAPPERS
+   1. ESTRUCTURA GLOBAL Y LAYOUT
    ========================================== */
 .dashboardWrapper {
   min-height: 100vh;
-  padding-top: 80px;
-  font-family: "Poppins", sans-serif;
+  padding-top: 70px; /* Ajustado para el Navbar */
+  font-family: 'Poppins', sans-serif;
   background-color: var(--bg-main) !important;
   transition: background-color 0.3s ease;
 }
 
 .configColumn {
-  min-height: 100vh;
   padding: 2rem;
   background-color: var(--bg-config) !important;
   border-right: 1px solid var(--border-color) !important;
@@ -20,92 +19,115 @@
 .headerSection {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+  gap: 15px;
+}
+
+@media (max-width: 768px) {
+  .headerSection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .dashboardTitle {
   font-weight: 800;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
   color: var(--text-main) !important;
 }
 
 /* ==========================================
-   2. IDENTIDAD VISUAL (AVATAR Y FOTOS)
+   2. IDENTIDAD VISUAL (AVATAR PRO)
    ========================================== */
-.avatarContainer {
-  position: relative;
+.avatarWrapper {
   display: inline-block;
-  margin-bottom: 1rem;
+  position: relative;
+  padding: 10px;
+}
+
+.avatarContainer {
+  width: 135px;
+  height: 135px;
+  border-radius: 50%;
+  position: relative;
+  /* 🪄 El borde insignia de LynxBio */
+  border: 4px solid var(--primary);
+  background-color: var(--bg-item);
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.avatarContainer:hover {
+  transform: scale(1.03) rotate(2deg);
 }
 
 .avatarImage {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid var(--border-color);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
-  background-color: var(--bg-item);
+  width: 100%;
+  height: 100%;
+  /* 🪄 CLAVE: Evita deformaciones en cualquier foto */
+  object-fit: cover; 
 }
 
-.avatarImage:hover {
-  transform: scale(1.05);
-}
-
-/* El botón de borrar sobre el avatar */
+/* El botón de borrar inteligente */
 .removeAvatarBtn {
-  top: 5px !important;
-  right: 5px !important;
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  z-index: 10;
+  width: 32px !important;
+  height: 32px !important;
   border-radius: 50% !important;
-  padding: 5px 8px !important;
-  border: none !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
-}
-
-@media (max-width: 576px) {
-  .avatarImage {
-    width: 100px;
-    height: 100px;
-  }
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0 !important;
+  border: 2px solid white !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* ==========================================
-   3. PANELES Y FORMULARIOS (GLASSMORPHISM)
+   3. PANELES Y GLASSMORPHISM
    ========================================== */
 .glassCard {
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  border-radius: 25px;
+  padding: 1.8rem;
+  margin-bottom: 1.8rem;
+  border-radius: 28px;
+  /* Efecto Esmerilado Premium */
   background: var(--glass-bg) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--glass-border) !important;
   color: var(--text-main) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
 }
 
 .bioTextArea {
-  width: 100%;
-  padding: 12px !important;
-  border-radius: 12px !important;
-  resize: none !important;
-  min-height: 100px !important;
+  border-radius: 16px !important;
+  padding: 15px !important;
+  font-size: 0.95rem;
   background-color: var(--input-bg) !important;
   color: var(--text-main) !important;
   border: 1px solid var(--border-color) !important;
+  transition: border-color 0.2s;
+}
+
+.bioTextArea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15) !important;
 }
 
 /* ==========================================
-   4. PREVISUALIZACIÓN (MOCKUP)
+   4. VISTA PREVIA Y MODAL MÓVIL
    ========================================== */
 .previewColumn {
   display: none;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 3rem;
-  background-color: var(--bg-config); 
-  transition: background-color 0.3s ease;
+  padding-top: 4rem;
+  background-color: var(--bg-main);
 }
 
 @media (min-width: 992px) {
@@ -115,122 +137,91 @@
 .phoneSticky {
   position: sticky;
   top: 100px;
+  z-index: 5;
 }
 
-.phoneMockup {
-  width: 310px;
-  height: 620px;
-  background: #121212;
-  border-radius: 45px;
-  padding: 12px;
-  border: 8px solid #2a2a2a;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-  position: relative;
+/* Botón flotante para móviles */
+.mobilePreviewBtn {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  border-radius: 50px !important;
+  padding: 12px 25px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4) !important;
+  background-color: #0d6efd !important;
+  border: none !important;
 }
 
-/* ==========================================
-   5. LISTA DE ENLACES (LINKITEM)
-   ========================================== */
-.linkItem {
-  background-color: var(--bg-item) !important;
-  color: var(--text-main) !important;
-  border: 1px solid var(--border-color) !important;
-  margin-bottom: 12px !important;
-  border-radius: 15px !important;
-  padding: 1rem 1.2rem !important;
-  transition: all 0.2s ease-in-out !important;
+/* Estilos para el Modal de Previsualización */
+.mobileModalContent {
+  background: transparent !important;
+  border: none !important;
 }
 
-.dragHandle {
-  color: var(--text-muted);
-  cursor: grab;
-  padding: 5px;
+.modalBody {
+  background: var(--bg-main) !important;
+  border-radius: 30px;
+  padding: 20px !important;
 }
 
 /* ==========================================
-   6. SELECTORES DE COLOR PERSONALIZADOS
+   5. PALETA DE ARTISTA (COLOR PICKERS)
    ========================================== */
 .colorInputCustom {
-  width: 50px !important;
-  height: 50px !important;
+  width: 48px !important;
+  height: 48px !important;
   padding: 0 !important;
-  border-radius: 50% !important; /* Circular para que parezca paleta de artista */
-  background-color: transparent !important;
-  border: 2px solid var(--border-color) !important;
+  border-radius: 50% !important;
   cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.2s ease;
+  border: 3px solid var(--border-color) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .colorInputCustom:hover {
-  transform: scale(1.1);
+  transform: scale(1.15) rotate(5deg);
 }
 
-.colorInputCustom::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-
-.colorInputCustom::-webkit-color-swatch {
-  border: none;
-  border-radius: 50%;
-}
+.colorInputCustom::-webkit-color-swatch-wrapper { padding: 0; }
+.colorInputCustom::-webkit-color-swatch { border: none; border-radius: 50%; }
 
 /* ==========================================
-   7. BOOTSTRAP OVERRIDES (Limpios)
+   6. LOADER Y SINCRONIZACIÓN
    ========================================== */
-:global(.nav-tabs) {
-  border-bottom: 2px solid var(--border-color) !important;
-  gap: 10px;
+.loaderContainer {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
 
-:global(.nav-tabs .nav-link.active) {
-  background-color: transparent !important;
-  color: #0d6efd !important;
-  border-bottom: 2px solid #0d6efd !important;
-}
-
-:global(.form-control) {
-  background-color: var(--input-bg) !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--text-main) !important;
-  border-radius: 10px !important;
+.loadingText {
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
 }
 
 /* ==========================================
-   8. UTILIDADES Y SCROLLBARS
+   7. UTILIDADES
    ========================================== */
 .copyBtn {
-  border-color: var(--border-color) !important;
-  color: var(--text-main) !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease;
 }
 
 .charCounter {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-align: right;
-  margin-top: 5px;
+  margin-top: 8px;
+  font-weight: 600;
   color: var(--text-muted);
 }
 
 .charCounterError {
-  color: #dc3545 !important;
-  font-weight: bold;
-}
-
-/* Scrollbar personalizado para que no rompa el Glassmorphism */
-.dashboardWrapper ::-webkit-scrollbar {
-  width: 8px;
-}
-
-.dashboardWrapper ::-webkit-scrollbar-track {
-  background: var(--bg-main);
-}
-
-.dashboardWrapper ::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 10px;
-}
-
-.dashboardWrapper ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  color: #ef4444 !important;
 }

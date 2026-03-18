@@ -22,14 +22,14 @@ import LinkItem from "../../components/dashboard/LinkItem";
 import AppearanceForm from "../../components/dashboard/AppearanceForm";
 import PhonePreview from "../../components/dashboard/PhonePreview";
 
-// 🪄 CONSTANTE: Imagen por defecto para evitar deformaciones
-const DEFAULT_AVATAR = "https://res.cloudinary.com/dmx6wfy3c/image/upload/v1707185461/default-avatar-lynx_v8n0c6.png";
+// 🪄 CONSTANTE OFICIAL: Tu SVG para evitar deformaciones
+const DEFAULT_AVATAR = "https://res.cloudinary.com/dqlm5tnhk/image/upload/v1773873679/IconProfile_hoxpyj.svg";
 
 const Dashboard = () => {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
-  const [copied, setCopied] = useState(false); // Feedback visual para el copy
+  const [copied, setCopied] = useState(false);
 
   const [settings, setSettings] = useState({
     profile: { bio: "", avatarUrl: "", username: "" },
@@ -51,11 +51,10 @@ const Dashboard = () => {
       const res = await api.get("/auth/me");
       setLinks(res.data.links || []);
       
-      // 🪄 FIX AVATAR: Si no viene avatar, se mantiene el string vacío pero lo manejamos en el render
       setSettings({
         profile: {
           bio: res.data.profile?.bio || "",
-          avatarUrl: res.data.profile?.avatarUrl || "",
+          avatarUrl: res.data.profile?.avatarUrl || DEFAULT_AVATAR, // Refuerzo local
           username: res.data.username || "",
         },
         socials: {
@@ -138,11 +137,13 @@ const Dashboard = () => {
     formData.append("type", type);
 
     try {
-      Swal.fire({ title: "Subiendo obra...", background: "var(--bg-card)", color: "var(--text-main)", didOpen: () => Swal.showLoading() });
+      Swal.fire({ title: "Subiendo rastro...", background: "var(--bg-card)", color: "var(--text-main)", didOpen: () => Swal.showLoading() });
       const res = await api.post("/auth/upload-avatar", formData);
+      
       const newSettings = { ...settings };
       if (type === "avatar") newSettings.profile.avatarUrl = res.data.url;
       else newSettings.theme.backgroundImage = res.data.url;
+      
       setSettings(newSettings);
       await api.put("/auth/settings", newSettings);
       Swal.close();
@@ -151,19 +152,36 @@ const Dashboard = () => {
     }
   };
 
+  // 🪄 CONEXIÓN CON EL BACKEND PARA RESETEO REAL
   const handleRemoveImage = async (type) => {
-    const newSettings = { ...settings };
-    if (type === "avatar") newSettings.profile.avatarUrl = "";
-    else newSettings.theme.backgroundImage = "";
-    setSettings(newSettings);
-    await api.put("/auth/settings", newSettings);
+    try {
+      const res = await api.post("/auth/remove-image", { type });
+
+      // Sincronizamos el estado con lo que el backend reseteó
+      setSettings({
+        ...settings,
+        profile: res.data.profile,
+        theme: res.data.theme
+      });
+
+      Swal.fire({ 
+        icon: "success", 
+        title: type === 'avatar' ? "Avatar reseteado" : "Fondo eliminado", 
+        timer: 1500, 
+        showConfirmButton: false, 
+        background: "var(--bg-card)", 
+        color: "var(--text-main)" 
+      });
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "Error al borrar", background: "var(--bg-card)", color: "var(--text-main)" });
+    }
   };
 
   const copyToClipboard = () => {
     const url = `${window.location.origin}/${settings.profile.username}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000); // Reset del icono tras 2 segs
+    setTimeout(() => setCopied(false), 2000);
     Swal.fire({ icon: "success", title: "¡Rastro copiado!", timer: 1000, showConfirmButton: false, background: "var(--bg-card)", color: "var(--text-main)" });
   };
 
@@ -175,15 +193,6 @@ const Dashboard = () => {
       </div>
     );
 
-  // 🪄 Preparamos los datos para la preview con el avatar por defecto si está vacío
-  const previewSettings = {
-    ...settings,
-    profile: {
-      ...settings.profile,
-      avatarUrl: settings.profile.avatarUrl || DEFAULT_AVATAR
-    }
-  };
-
   return (
     <Container fluid className={styles.dashboardWrapper}>
       <Row className="h-100 g-4">
@@ -192,7 +201,7 @@ const Dashboard = () => {
           <div className={styles.headerSection}>
             <div>
               <h2 className={styles.dashboardTitle}>Panel de Control</h2>
-              <p className="text-muted small">Personaliza tu rastro digital en segundos.</p>
+              <p className="text-muted small">Acomodá tus links y facha en un solo lugar.</p>
             </div>
             <Button 
               variant={copied ? "success" : "outline-primary"} 
@@ -215,7 +224,7 @@ const Dashboard = () => {
                       <div {...provided.droppableProps} ref={provided.innerRef} className="mt-4 pb-5">
                         {links.length === 0 && (
                           <div className="text-center py-5 opacity-50">
-                            <p>No hay enlaces aún. ¡Agregá el primero!</p>
+                            <p>No hay rastros aún. ¡Tirá el primero!</p>
                           </div>
                         )}
                         {links.map((link, index) => (
@@ -248,18 +257,18 @@ const Dashboard = () => {
           </Tabs>
         </Col>
 
-        {/* COLUMNA VISTA PREVIA ESCRITORIO (Solo visible en LG+) */}
+        {/* COLUMNA VISTA PREVIA ESCRITORIO */}
         <Col lg={5} xl={4} className={`d-none d-lg-block ${styles.previewColumn}`}>
           <div className={styles.phoneSticky}>
-            <PhonePreview settings={previewSettings} links={links} />
+            <PhonePreview settings={settings} links={links} />
           </div>
         </Col>
       </Row>
 
-      {/* BOTÓN VISTA PREVIA MÓVIL (Solo visible en pantallas chicas) */}
+      {/* BOTÓN VISTA PREVIA MÓVIL */}
       <div className="d-lg-none">
         <Button className={styles.mobilePreviewBtn} onClick={() => setShowMobilePreview(true)}>
-          <FaEye className="me-2" /> Ver mi página
+          <FaEye className="me-2" /> Vista previa
         </Button>
       </div>
 
@@ -272,10 +281,10 @@ const Dashboard = () => {
         fullscreen="sm-down"
       >
         <Modal.Header closeButton className="border-0 pb-0">
-          <Modal.Title className="fs-6 fw-bold">Vista Previa</Modal.Title>
+          <Modal.Title className="fs-6 fw-bold">Previsualización</Modal.Title>
         </Modal.Header>
         <Modal.Body className={`d-flex justify-content-center align-items-center ${styles.modalBody}`}>
-          <PhonePreview settings={previewSettings} links={links} />
+          <PhonePreview settings={settings} links={links} />
         </Modal.Body>
       </Modal>
     </Container>
