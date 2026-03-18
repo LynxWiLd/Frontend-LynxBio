@@ -1,107 +1,90 @@
-/* ==========================================
-   1. WRAPPER PRINCIPAL
-   ========================================== */
 .publicPageWrapper {
   min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
-  position: relative; /* 👈 Necesario para que el overlay se ancle aquí */
+  position: relative; /* 👈 Esencial para que el overlay sepa dónde quedarse */
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   overflow-x: hidden;
 }
 
-/* 2. EL OVERLAY (La capa de oscuridad) */
 .overlay {
-  position: absolute;
+  position: absolute; /* 👈 Con esto deja de "empujar" el contenido */
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6); /* 👈 Ajustá este valor si querés que sea más o menos negro */
-  z-index: 1; /* 👈 Capa del fondo */
+  background-color: rgba(0, 0, 0, 0.6); /* El "negro suave" ahora es una capa de fondo */
+  z-index: 1; /* 👈 Por debajo del contenido */
 }
 
-/* ==========================================
-   3. CONTENEDOR DE CONTENIDO (mainContainer)
-   ========================================== */
 .mainContainer {
-  flex: 1; /* Empuja el footer al fondo */
+  flex: 1; /* 👈 Esto empuja el footer al fondo */
   display: flex;
   justify-content: center;
   align-items: center; 
-  padding: 40px 15px;
   position: relative;
-  z-index: 2; /* 👈 ¡CLAVE! Esto lo pone POR ENCIMA del negro suave */
+  z-index: 2; /* 👈 Por ENCIMA del overlay */
+  padding: 40px 15px;
 }
 
-/* 4. LA TARJETA GLASSMORFISMO */
 .glassCard {
   width: 100%;
   max-width: 480px;
   padding: 40px 25px;
   border-radius: 30px;
-  background: rgba(255, 255, 255, 0.05); /* Muy transparente para el efecto vidrio */
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   text-align: center;
 }
 
-/* ==========================================
-   5. ELEMENTOS INTERNOS
-   ========================================== */
 .avatar {
   width: 120px;
   height: 120px;
   object-fit: cover;
+  border: 4px solid;
   margin-bottom: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-  border-width: 4px;
-  border-style: solid;
-  transition: transform 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .linkButton {
   padding: 16px !important;
   border-radius: 18px !important;
   font-weight: 700 !important;
-  font-size: 1.1rem !important;
   border: none !important;
-  margin-bottom: 0.5rem;
-  transition: transform 0.2s ease, filter 0.2s ease !important;
+  transition: transform 0.2s ease !important;
 }
 
 .linkButton:hover {
   transform: translateY(-3px) scale(1.02);
-  filter: brightness(1.2);
 }
 
 .socialIcons {
   display: flex;
-  gap: 1.8rem;
+  gap: 1.5rem;
   justify-content: center;
   font-size: 2rem;
-  margin-top: 15px;
+  margin-top: 20px;
 }
 
-/* ==========================================
-   6. SECCIÓN DEL FOOTER (publicFooter)
-   ========================================== */
 .publicFooter {
   position: relative;
-  z-index: 2; /* 👈 También arriba del overlay */
+  z-index: 2; /* 👈 También por encima del overlay */
+  padding: 20px 0;
   width: 100%;
-  padding-bottom: 20px;
-  opacity: 0.7;
+  text-align: center;
 }
 
-.loaderWrapper {
+/* Loader y Error */
+.loaderWrapper, .errorWrapper {
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: #121212;
