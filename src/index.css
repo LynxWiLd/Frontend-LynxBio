@@ -6,7 +6,7 @@
   --bg-card: #ffffff;
   --bg-item: #ffffff;
   --text-main: #1a1a1a;
-  --text-muted: #6c757d;    /* Gris para URLs y textos secundarios */
+  --text-muted: #6c757d;    
   --border-color: #dee2e6;
   --input-bg: #ffffff;
   
@@ -21,26 +21,49 @@
   --bg-card: #1e293b;       /* Gris pizarra para tarjetas */
   --bg-item: #161e2c;       /* Fondo para los links en la lista */
   --text-main: #f1f5f9;     /* Blanco suave */
-  --text-muted: #94a3b8;    /* Gris azulado para URLs en modo oscuro */
+  --text-muted: #94a3b8;    
   --border-color: #334155;
   --input-bg: #0f172a;
   
-  /* Glassmorphism Oscuro (Esencial para que se note el "vidrio") */
+  /* Glassmorphism Oscuro */
   --glass-bg: rgba(255, 255, 255, 0.05); 
   --glass-border: rgba(255, 255, 255, 0.1);
 }
 
-/* --- ESTILOS GLOBALES --- */
-body {
+/* --- ESTILOS GLOBALES Y FIXES DE RENDERIZADO --- */
+
+/* 1. Aplicamos el fondo al nivel más alto (HTML) para matar el blanco inicial */
+html, body {
   margin: 0;
   padding: 0;
-  background-color: var(--bg-main);
+  min-height: 100vh;
+  /* 🪄 El secreto: El fondo siempre coincide con el tema */
+  background-color: var(--bg-main) !important; 
   color: var(--text-main);
-  font-family: 'Poppins', sans-serif; /* Asegurate de tener la fuente importada */
+  font-family: 'Poppins', sans-serif;
+  /* Evita el "rebote" blanco al scrollear en dispositivos Apple/Móviles */
+  overscroll-behavior: none; 
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Transición suave para todos los elementos que usen variables */
+/* 2. Aseguramos que el contenedor de React sea un "Sticky Container" */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 3. Transición suave para todos los elementos que usen variables */
 * {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* 4. Reseteo de márgenes para evitar el "hueco" blanco en el footer */
+footer {
+  margin-top: auto; /* Empuja el footer abajo si hay poco contenido */
+}
+
+/* 5. Estilo para los Spinners de carga para que no se vean raros */
+.spinner-border {
+  color: #0d6efd; /* Tu color insignia de LynxBio */
 }

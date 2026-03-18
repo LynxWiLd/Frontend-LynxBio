@@ -7,8 +7,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  /* 🪄 El background-color aquí debe ser el mismo que el del body 
-     para evitar que se vea blanco en los bordes o al scrollear */
+  /* El fondo de seguridad por si falla la imagen */
   background-color: #121212; 
   background-size: cover;
   background-position: center;
@@ -18,42 +17,43 @@
   padding: 0;
 }
 
-/* El "negro suave" que mencionaste */
+/* El "negro suave" - Ahora fijo y no interfiere con los clics */
 .overlay {
-  position: absolute;
+  position: fixed; /* 👈 Se queda quieto mientras scrolleás */
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 1;
-  /* 🛠️ FIX: Asegura que cubra todo el alto si la página crece por muchos links */
-  height: 100%; 
+  background-color: rgba(0, 0, 0, 0.65); /* Un toque más de contraste */
+  z-index: 1; 
+  pointer-events: none; /* 👈 FUNDAMENTAL: permite cliquear los botones de abajo */
 }
 
 /* ==========================================
    2. CONTENEDOR DE CONTENIDO
    ========================================== */
 .mainContainer {
-  flex: 1; /* Empuja el footer al fondo de la pantalla */
+  flex: 1;
   display: flex;
+  flex-direction: column; /* Alineación vertical para que todo fluya */
   justify-content: center;
   align-items: center; 
   position: relative;
-  z-index: 2; /* Por ENCIMA del overlay */
-  padding: 60px 15px; /* Más aire arriba y abajo */
+  z-index: 2; /* 👈 Por ENCIMA del overlay */
+  padding: 60px 15px;
 }
 
+/* Estilo Glassmorphism Refinado */
 .glassCard {
   width: 100%;
   max-width: 480px;
   padding: 40px 25px;
   border-radius: 30px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.03); /* 🪄 Más transparente para lucir el blur */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
   text-align: center;
 }
 
@@ -64,7 +64,7 @@
   width: 120px;
   height: 120px;
   object-fit: cover;
-  border-radius: 50%; /* 👈 FUNDAMENTAL: Para que sea círculo */
+  border-radius: 50%;
   border: 4px solid;
   margin-bottom: 1.5rem;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
@@ -80,8 +80,8 @@
 }
 
 .linkButton:hover {
-  transform: translateY(-3px) scale(1.02);
-  filter: brightness(1.1);
+  transform: translateY(-4px) scale(1.02);
+  filter: brightness(1.2); /* 👈 Brillo sutil al pasar el mouse */
 }
 
 .socialIcons {
@@ -93,15 +93,18 @@
 }
 
 .socialIcons a {
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
+  color: inherit;
+  text-decoration: none;
 }
 
 .socialIcons a:hover {
-  transform: scale(1.15);
+  transform: translateY(-3px) scale(1.15);
+  opacity: 1;
 }
 
 /* ==========================================
-   4. FOOTER (Eliminando el margen blanco)
+   4. FOOTER (Sin márgenes extra)
    ========================================== */
 .publicFooter {
   position: relative;
@@ -109,13 +112,12 @@
   padding: 20px 0;
   width: 100%;
   text-align: center;
-  /* 🪄 LA CLAVE: Que sea transparente para que se vea el fondo de la app */
   background-color: transparent !important;
   margin-top: auto; 
 }
 
 /* ==========================================
-   5. UTILS
+   5. LOADER / ERROR
    ========================================== */
 .loaderWrapper, .errorWrapper {
   height: 100vh;
@@ -125,4 +127,6 @@
   align-items: center;
   background: #121212;
   color: white;
+  position: relative;
+  z-index: 999;
 }
