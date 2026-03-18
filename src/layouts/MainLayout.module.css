@@ -1,0 +1,48 @@
+/* MainLayout.module.css */
+
+.layoutWrapper {
+  display: flex;
+  flex-direction: column;
+  /* 🪄 LA MAGIA: Asegura que el contenedor siempre mida al menos el alto de la pantalla */
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-main);
+  /* Transición suave para cuando el lince cambia de tema (Sol/Luna) */
+  transition: background-color 0.3s ease;
+}
+
+.mainContent {
+  /* 🪄 EL SECRETO: Al ser flex: 1, este bloque se estira todo lo posible 
+     y "patotea" al footer hacia el fondo de la pantalla. */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* Espaciado para que el contenido respire respecto al Navbar */
+  padding-top: 20px;
+  width: 100%;
+}
+
+/* 🔄 CONTENEDOR DEL LOADER
+   Para que el "Sincronizando con la manada..." quede perfecto en el centro
+*/
+.loaderContainer {
+  flex: 1; /* Ocupa todo el alto disponible del mainContent */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centrado vertical */
+  align-items: center;     /* Centrado horizontal */
+  gap: 20px;
+  padding: 40px;
+}
+
+/* Animación opcional para el texto de carga */
+.loaderContainer p {
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  animation: pulseOpacity 2s infinite ease-in-out;
+}
+
+@keyframes pulseOpacity {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
