@@ -7,7 +7,8 @@
   font-family: "Poppins", sans-serif;
   background-color: var(--bg-main) !important;
   transition: background-color 0.3s ease;
-  /* 🪄 Higiene visual: Scrollbar sutil */
+
+  /* Higiene visual: Scrollbar sutil */
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
 }
@@ -31,7 +32,7 @@
 @media (max-width: 576px) {
   .configColumn {
     padding: 1.2rem;
-  } /* 🪄 Más aire en móviles */
+  }
 }
 
 .headerSection {
@@ -52,140 +53,88 @@
 .dashboardTitle {
   font-weight: 800;
   font-size: 1.8rem;
-  letter-spacing: -0.8px; /* 🪄 Typography fix: un poco más apretado se ve más pro */
+  letter-spacing: -0.8px;
   color: var(--text-main) !important;
 }
 
 /* ==========================================
-   2. IDENTIDAD VISUAL (AVATAR PRO)
+   2. VISTA PREVIA (DESKTOP Y MÓVIL)
    ========================================== */
-.avatarWrapper {
-  display: inline-block;
-  position: relative;
-  padding: 10px;
+.previewColumn {
+  display: none;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 4rem;
+  background-color: var(--bg-main);
 }
 
-.avatarContainer {
-  width: 135px;
-  height: 135px;
-  border-radius: 50%;
-  position: relative;
-  border: 4px solid var(--primary);
-  background-color: var(--bg-item);
-  overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-  /* 🪄 Tu animación con bounce es perfecta */
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+@media (min-width: 992px) {
+  .previewColumn {
+    display: flex;
+  }
 }
 
-.avatarContainer:hover {
-  transform: scale(1.05) rotate(-2deg); /* 🪄 Rotación hacia el otro lado para variar */
+.phoneSticky {
+  position: sticky;
+  top: 100px;
+  z-index: 5;
 }
 
-.avatarImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* Botón flotante para móviles */
+.mobilePreviewBtn {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  border-radius: 50px !important;
+  padding: 12px 25px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4) !important;
+  background-color: #0d6efd !important;
+  border: none !important;
 }
 
-.removeAvatarBtn {
-  position: absolute !important;
-  top: 8px !important;
-  right: 8px !important;
-  z-index: 10;
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  padding: 0 !important;
-  border: 2px solid white !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-  transition: background-color 0.2s;
+/* Estilos para el Modal de Previsualización */
+.mobileModalContent {
+  background: transparent !important;
+  border: none !important;
 }
 
-.removeAvatarBtn:active {
-  transform: scale(0.9);
+.modalBody {
+  background: var(--bg-main) !important;
+  border-radius: 30px;
+  padding: 20px !important;
 }
 
 /* ==========================================
-   3. PANELES Y GLASSMORPHISM
+   3. LOADER Y ESTADOS DE CARGA
    ========================================== */
-.glassCard {
-  padding: 1.8rem;
-  margin-bottom: 1.8rem;
-  border-radius: 28px;
-  background: var(--glass-bg) !important;
-  /* 🪄 Estandarizado a 16px para consistencia visual */
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border) !important;
-  color: var(--text-main) !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+.loaderContainer {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
 
-.bioTextArea {
-  border-radius: 16px !important;
-  padding: 15px !important;
-  font-size: 0.95rem;
-  background-color: var(--input-bg) !important;
-  color: var(--text-main) !important;
-  border: 1px solid var(--border-color) !important;
-  transition: all 0.3s ease;
-}
-
-.bioTextArea:focus {
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1) !important;
-  outline: none;
-}
-
-/* ==========================================
-   5. PALETA DE ARTISTA (GRADIENTE PRO)
-   ========================================== */
-.colorPickerCircle {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 3px solid #fff; /* 🪄 Borde blanco siempre resalta el color elegido */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.colorPopover {
-  background: var(--glass-bg) !important;
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4) !important;
-  z-index: 1070;
-}
-
-/* Estilos de Utilidad */
-.charCounter {
-  font-size: 0.75rem;
-  text-align: right;
-  margin-top: 8px;
+.loadingText {
   font-weight: 600;
   color: var(--text-muted);
+  letter-spacing: 0.5px;
 }
 
-.charCounterError {
-  color: #ff4757 !important; /* 🪄 Un rojo más vibrante para el error */
-  animation: shake 0.5s;
+/* ==========================================
+   4. UTILIDADES DE CABECERA
+   ========================================== */
+.copyBtn {
+  font-weight: 600 !important;
+  transition: all 0.2s ease;
 }
 
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-4px);
-  }
-  75% {
-    transform: translateX(4px);
-  }
+.tabTitle {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
 }
