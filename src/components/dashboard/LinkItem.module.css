@@ -1,0 +1,54 @@
+/* LinkItem.module.css */
+
+.linkItem {
+  background-color: var(--bg-item) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important;
+  margin-bottom: 12px !important;
+  padding: 0.8rem 1rem !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* 🪄 Efecto pro cuando el lince arrastra el link */
+.isDragging {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3) !important;
+  background-color: var(--bg-config) !important;
+  border-color: var(--primary) !important;
+  transform: scale(1.02);
+  z-index: 9999;
+}
+
+.dragHandle {
+  color: var(--text-muted);
+  cursor: grab;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.dragHandle:hover {
+  color: var(--primary);
+}
+
+.linkUrl {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  /* 🪄 Truncado de seguridad para URLs infinitas */
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusIndicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}

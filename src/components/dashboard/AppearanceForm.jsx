@@ -11,7 +11,9 @@ import {
   FaCloudUploadAlt,
 } from "react-icons/fa";
 import { ICON_MAP } from "../../constants/iconMap";
-import styles from "../../pages/Dashboard/Dashboard.module.css";
+
+// 🪄 IMPORTACIÓN LOCAL
+import styles from "./AppearanceForm.module.css"; 
 
 const DEFAULT_AVATAR = "https://res.cloudinary.com/dqlm5tnhk/image/upload/v1773873679/IconProfile_hoxpyj.svg";
 
@@ -26,12 +28,11 @@ const AppearanceForm = ({
     register,
     handleSubmit,
     watch,
-    reset, // 🪄 Importante para el fix de sincronización
+    reset,
   } = useForm({
     mode: "onChange",
   });
 
-  // 🪄 FIX: Sincroniza el form cuando los datos llegan del backend
   useEffect(() => {
     if (settings) {
       reset({
@@ -184,7 +185,6 @@ const AppearanceForm = ({
                 placeholder="@usuario"
                 {...register(social, {
                   onChange: (e) => {
-                    // 🛡️ Limpieza automática: Si pega un link, extraemos solo el final
                     let val = e.target.value.split('/').pop().replace('@', '');
                     setSettings(prev => ({ ...prev, socials: { ...prev.socials, [social]: val } }));
                   }

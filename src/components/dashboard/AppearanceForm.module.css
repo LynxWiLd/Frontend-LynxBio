@@ -1,0 +1,116 @@
+/* AppearanceForm.module.css */
+
+.glassCard {
+  padding: 1.8rem;
+  margin-bottom: 1.8rem;
+  border-radius: 28px;
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* --- FOTO DE PERFIL --- */
+.avatarWrapper {
+  display: inline-block;
+  position: relative;
+  padding: 10px;
+}
+
+.avatarContainer {
+  width: 135px;
+  height: 135px;
+  border-radius: 50%;
+  position: relative;
+  border: 4px solid var(--primary);
+  background-color: var(--bg-item);
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.avatarContainer:hover {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+}
+
+.removeAvatarBtn {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  z-index: 10;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0 !important;
+  border: 2px solid white !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.uploadLabel {
+  transition: all 0.2s ease;
+}
+
+.uploadLabel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+/* --- PALETA DE COLORES --- */
+.colorPickerCircle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.colorPickerCircle:hover {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.colorPopover {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4) !important;
+  z-index: 1070;
+}
+
+/* --- BIO Y TEXTO --- */
+.bioTextArea {
+  border-radius: 16px !important;
+  padding: 15px !important;
+  font-size: 0.95rem;
+  background-color: var(--input-bg) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-color) !important;
+  transition: all 0.3s ease;
+}
+
+.bioTextArea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1) !important;
+  outline: none;
+}
+
+.charCounter {
+  font-size: 0.75rem;
+  text-align: right;
+  margin-top: 8px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
