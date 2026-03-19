@@ -4,9 +4,21 @@
 .dashboardWrapper {
   min-height: 100vh;
   padding-top: 70px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: var(--bg-main) !important;
   transition: background-color 0.3s ease;
+  /* 🪄 Higiene visual: Scrollbar sutil */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+/* Scrollbar para Chrome/Safari */
+.dashboardWrapper::-webkit-scrollbar {
+  width: 6px;
+}
+.dashboardWrapper::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
 }
 
 .configColumn {
@@ -14,6 +26,12 @@
   background-color: var(--bg-config) !important;
   border-right: 1px solid var(--border-color) !important;
   transition: all 0.3s ease;
+}
+
+@media (max-width: 576px) {
+  .configColumn {
+    padding: 1.2rem;
+  } /* 🪄 Más aire en móviles */
 }
 
 .headerSection {
@@ -34,7 +52,7 @@
 .dashboardTitle {
   font-weight: 800;
   font-size: 1.8rem;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.8px; /* 🪄 Typography fix: un poco más apretado se ve más pro */
   color: var(--text-main) !important;
 }
 
@@ -55,18 +73,19 @@
   border: 4px solid var(--primary);
   background-color: var(--bg-item);
   overflow: hidden;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  /* 🪄 Tu animación con bounce es perfecta */
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .avatarContainer:hover {
-  transform: scale(1.03) rotate(2deg);
+  transform: scale(1.05) rotate(-2deg); /* 🪄 Rotación hacia el otro lado para variar */
 }
 
 .avatarImage {
   width: 100%;
   height: 100%;
-  object-fit: cover; 
+  object-fit: cover;
 }
 
 .removeAvatarBtn {
@@ -83,6 +102,11 @@
   padding: 0 !important;
   border: 2px solid white !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+  transition: background-color 0.2s;
+}
+
+.removeAvatarBtn:active {
+  transform: scale(0.9);
 }
 
 /* ==========================================
@@ -93,11 +117,12 @@
   margin-bottom: 1.8rem;
   border-radius: 28px;
   background: var(--glass-bg) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  /* 🪄 Estandarizado a 16px para consistencia visual */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border) !important;
   color: var(--text-main) !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
 .bioTextArea {
@@ -107,137 +132,38 @@
   background-color: var(--input-bg) !important;
   color: var(--text-main) !important;
   border: 1px solid var(--border-color) !important;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .bioTextArea:focus {
   border-color: var(--primary) !important;
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15) !important;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1) !important;
+  outline: none;
 }
 
 /* ==========================================
-   4. VISTA PREVIA Y MODAL MÓVIL
+   5. PALETA DE ARTISTA (GRADIENTE PRO)
    ========================================== */
-.previewColumn {
-  display: none;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 4rem;
-  background-color: var(--bg-main);
-}
-
-@media (min-width: 992px) {
-  .previewColumn { display: flex; }
-}
-
-.phoneSticky {
-  position: sticky;
-  top: 100px;
-  z-index: 5;
-}
-
-.mobilePreviewBtn {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  border-radius: 50px !important;
-  padding: 12px 25px !important;
-  font-weight: 700 !important;
-  box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4) !important;
-  background-color: #0d6efd !important;
-  border: none !important;
-}
-
-.mobileModalContent {
-  background: transparent !important;
-  border: none !important;
-}
-
-.modalBody {
-  background: var(--bg-main) !important;
-  border-radius: 30px;
-  padding: 20px !important;
-}
-
-/* ==========================================
-   5. PALETA DE ARTISTA (GRADIENTE PRO) 🪄
-   ========================================== */
-
-/* El circulito que el usuario toca */
 .colorPickerCircle {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  border: 3px solid var(--border-color);
+  border: 3px solid #fff; /* 🪄 Borde blanco siempre resalta el color elegido */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.colorPickerCircle:hover {
-  transform: scale(1.15) rotate(5deg);
-}
-
-/* El Popover (la cajita flotante de Bootstrap) */
 .colorPopover {
   background: var(--glass-bg) !important;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border) !important;
   border-radius: 20px !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
-  padding: 5px;
-  z-index: 1060; /* Asegura que esté sobre el botón de vista previa */
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4) !important;
+  z-index: 1070;
 }
 
-/* 🪄 ESTILO PARA LA LIBRERÍA REACT-COLORFUL
-   Usamos :global porque la librería tiene sus propias clases que no deben hashearse
-*/
-:global(.react-colorful) {
-  width: 180px !important;
-  height: 180px !important;
-  border-radius: 15px !important;
-  border: none !important;
-}
-
-:global(.react-colorful__hue) {
-  height: 15px !important;
-  border-radius: 10px !important;
-  margin-top: 15px !important;
-}
-
-:global(.react-colorful__last-control) {
-  border-radius: 0 0 15px 15px !important;
-}
-
-/* ==========================================
-   6. LOADER Y SINCRONIZACIÓN
-   ========================================== */
-.loaderContainer {
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-.loadingText {
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.5px;
-}
-
-/* ==========================================
-   7. UTILIDADES
-   ========================================== */
-.copyBtn {
-  font-weight: 600 !important;
-  transition: all 0.2s ease;
-}
-
+/* Estilos de Utilidad */
 .charCounter {
   font-size: 0.75rem;
   text-align: right;
@@ -247,5 +173,19 @@
 }
 
 .charCounterError {
-  color: #ef4444 !important;
+  color: #ff4757 !important; /* 🪄 Un rojo más vibrante para el error */
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
 }
