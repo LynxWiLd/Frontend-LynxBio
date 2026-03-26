@@ -62,8 +62,12 @@
   -webkit-text-fill-color: transparent !important;
 }
 
+/* Footer.module.css */
+
+/* [Secciones 1, 2, 3 permanecen igual...] */
+
 /* ==========================================
-   4. ELEMENTOS VISUALES (Corazón y Badges)
+   4. ELEMENTOS VISUALES (Corazón, Badges, Separador)
    ========================================== */
 .heart {
   color: #ff4d4d;
@@ -72,39 +76,69 @@
   margin: 0 4px;
 }
 
+/* 🪄 EL PROBLEMA ESTABA AQUÍ. El valor por defecto es para modo oscuro */
 .projectBadge {
   display: inline-block;
   margin-top: 0.8rem;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1.2px;
   font-weight: 600;
-  padding: 5px 14px;
-  /* Efecto Glassmorphism para que combine con todo */
+  padding: 6px 16px; /* Un pelín más de padding visual */
+  
+  /* Efecto Glassmorphism insignia */
   background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50px;
-  color: inherit;
+  
+  /* 🪄 FIX 1: Forzamos color claro para modo OSCURO por defecto */
+  color: #f1f5f9 !important; /* Un blanco/gris azulado muy legible */
+  
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none !important; /* Por si es un <a> */
 }
 
-/* Ajuste del badge en modo claro para que no desaparezca */
+/* Hover genérico (para modo oscuro) */
+.projectBadge:hover {
+  background-color: var(--primary);
+  color: white !important;
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 124, 240, 0.4);
+}
+
+/* ==========================================
+   5. AJUSTES DE MODO CLARO (LIGHT THEME) 🪄 FIX DEFINITIVO
+   ========================================== */
+
+/* Refuerzo para el texto general en modo claro */
+:global([data-theme='light']) .footerText {
+  color: #1e293b !important; /* Gris oscuro profundo */
+}
+
+/* 🪄 FIX 2: Arreglo para el Badge en Modo Claro */
 :global([data-theme='light']) .projectBadge {
-  background-color: rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #64748b;
+  /* Fondo muy sutil y borde oscuro para que no desaparezca */
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  
+  /* 🪄 ESTA ES LA CLAVE: Forzamos un color de texto OSCURO */
+  color: #1e293b !important; /* Gris oscuro profundo, super legible */
 }
 
-.rollingCode {
-  font-size: 0.75rem;
-  opacity: 0.7;
+/* Hover en modo claro */
+:global([data-theme='light']) .projectBadge:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important; /* Texto casi negro */
+  border-color: rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.dotSeparator {
-  margin: 0 5px;
-  opacity: 0.5;
-}
+/* [El resto de utilidades y animaciones permanecen igual...] */
 
 /* ==========================================
    5. ANIMACIONES Y RESPONSIVE
@@ -122,4 +156,78 @@
   .footerText {
     font-size: 0.85rem;
   }
+}
+/* ... (Secciones 1 a 5 se mantienen igual) ... */
+
+/* ==========================================
+   6. MODAL GLASSMORPHISM (Términos y Condiciones) 🪄
+   ========================================== */
+
+/* Contenedor principal del Modal */
+.modalGlass {
+  /* 🪄 Cristal Esmerilado Profundo */
+  background: rgba(15, 23, 42, 0.8) !important; /* Un azul noche traslúcido */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  
+  /* Borde insignia de LynxBio */
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 32px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+  color: #f8fafc !important;
+  overflow: hidden;
+}
+
+/* Ajuste para el Modo Claro (opcional, si querés que cambie) */
+:global([data-theme='light']) .modalGlass {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #1e293b !important;
+}
+
+.modalBodyCustom {
+  padding: 2rem !important;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  max-height: 60vh; /* Para que no ocupe toda la pantalla en móviles */
+}
+
+/* Títulos de secciones dentro del modal */
+.modalBodyCustom h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+/* 🪄 Scrollbar personalizado para el Modal (Clean Code) */
+.modalBodyCustom::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modalBodyCustom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modalBodyCustom::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.modalBodyCustom::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* 🪄 Mejora para el Badge (ahora es un disparador) */
+.projectBadge {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.projectBadge:hover {
+  background-color: var(--primary);
+  color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 124, 240, 0.3);
 }

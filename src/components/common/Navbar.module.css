@@ -1,60 +1,103 @@
-/* --- ESTRUCTURA GENERAL --- */
+/* ==========================================
+   1. ESTRUCTURA GENERAL Y LAYOUT
+   ========================================== */
 .navbarCustom {
-  transition: all 0.4s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border-bottom: 1px solid transparent;
   background-color: transparent;
 }
 
-/* Efecto Vidrio en el Scroll */
+/* 🪄 Efecto Vidrio en el Scroll */
 .navbarScrolled {
   background-color: var(--glass-bg) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--glass-border) !important;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
-/* --- LOGO Y MARCA --- */
-.navbarLogo {
-  height: 38px;
-  width: auto;
-  margin-right: 12px;
-  transition: transform 0.3s ease, filter 0.3s ease;
-}
-
-/* Cambio de color del logo en Dark Mode */
-[data-theme='dark'] .navbarLogo {
-  filter: brightness(0) invert(1);
-}
-
+/* ==========================================
+   2. LOGO ANIMADO (EL LINCE QUE HABLA) 🐆
+   ========================================== */
 .brandContainer {
   display: flex;
   align-items: center;
   text-decoration: none;
-  transition: transform 0.3s ease;
+  gap: 12px;
 }
 
-.brandContainer:hover .navbarLogo {
-  transform: scale(1.1) rotate(-8deg);
+/* Contenedor maestro para que las imágenes se superpongan */
+.logoWrapper {
+  position: relative;
+  width: 42px; /* Ajustado para visibilidad pro */
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.navbarLogo {
+  position: absolute; /* 🪄 Clave para que se pisen perfectamente */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease;
+}
+
+/* Estado: Boca Cerrada (Default) */
+.logoClosed {
+  opacity: 1;
+  z-index: 2;
+}
+
+/* Estado: Boca Abierta (Oculto) */
+.logoOpen {
+  opacity: 0;
+  z-index: 1;
+  transform: scale(0.95); /* Un pelín más chico para que al abrir 'crezca' */
+}
+
+/* 🪄 LA MAGIA: Al pasar el mouse por el contenedor, el lince reacciona */
+.brandContainer:hover .logoWrapper {
+  transform: scale(1.1) rotate(-5deg); /* Rebote de artista */
+}
+
+.brandContainer:hover .logoClosed {
+  opacity: 0;
+}
+
+.brandContainer:hover .logoOpen {
+  opacity: 1;
+  transform: scale(1.1); /* Abre la boca y se agranda un toque */
+}
+
+/* Filtro para que el logo se vea blanco en Dark Mode si es necesario */
+:global([data-theme='dark']) .navbarLogo {
+  filter: brightness(0) invert(1);
+}
+
+/* ==========================================
+   3. TIPOGRAFÍA Y BRANDING
+   ========================================== */
 .brandText {
   font-weight: 800;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-family: "Poppins", sans-serif;
+  letter-spacing: -0.8px;
   
-  /* Stencil del degradado (Modo Claro) */
+  /* Gradiente insignia (Modo Claro) */
   background: linear-gradient(45deg, #007cf0, #00dfd8);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  
-  color: #007cf0;
   transition: all 0.3s ease;
 }
 
-/* FIX PARA DARK MODE: Evita el bloque sólido y mantiene el degradado */
-[data-theme='dark'] .brandText {
+/* Refuerzo para el degradado en Modo Oscuro */
+:global([data-theme='dark']) .brandText {
   background: linear-gradient(45deg, #38bdf8, #4ade80) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
@@ -62,40 +105,65 @@
   background-color: transparent !important;
 }
 
-/* --- LINKS Y BOTONES --- */
-.navButton {
-  font-weight: 600 !important;
-  color: var(--text-main) !important;
-  transition: all 0.2s ease;
-}
-
-/* --- DROPDOWN Y USUARIO --- */
+/* ==========================================
+   4. DROPDOWNS Y BOTONES DE USUARIO
+   ========================================== */
 .userDropdown :global(.dropdown-toggle) {
-  background-color: var(--bg-card) !important;
+  background-color: var(--bg-item) !important;
   color: var(--text-main) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 50px !important;
-  padding: 8px 20px !important;
+  padding: 8px 18px !important;
+  font-weight: 600 !important;
   transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.userDropdown :global(.dropdown-toggle::after) {
+  margin-left: 10px;
 }
 
 .dropdownMenu {
   background-color: var(--bg-card) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-color) !important;
-  border-radius: 15px !important;
-  padding: 10px !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
-  margin-top: 10px !important;
+  border-radius: 20px !important;
+  padding: 12px !important;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3) !important;
+  margin-top: 12px !important;
+  animation: dropdownFade 0.2s ease-out;
+}
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .dropdownMenu :global(.dropdown-item) {
   color: var(--text-main) !important;
-  border-radius: 8px !important;
-  padding: 8px 15px !important;
+  border-radius: 12px !important;
+  padding: 10px 15px !important;
   font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .dropdownMenu :global(.dropdown-item:hover) {
   background-color: var(--bg-main) !important;
-  transform: translateX(5px);
+  transform: translateX(6px); /* 🪄 Efecto de desplazamiento pro */
+  color: var(--primary) !important;
+}
+
+/* ==========================================
+   5. UTILIDADES
+   ========================================== */
+.navLinkItem {
+  color: var(--text-muted) !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.navLinkItem:hover {
+  color: var(--primary) !important;
 }

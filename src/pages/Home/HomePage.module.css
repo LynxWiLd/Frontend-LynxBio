@@ -1,112 +1,241 @@
-/* ESTRUCTURA BASE */
+/* ==========================================
+   1. ESTRUCTURA BASE
+   ========================================== */
 .pageWrapper {
   background-color: var(--bg-main);
-  min-height: 100vh;
+  min-height: auto;
+  width: 100%;
   font-family: "Poppins", sans-serif;
-  overflow-x: hidden;
+  position: relative;
+  overflow: hidden;
   transition: background-color 0.3s ease;
 }
 
-/* --- HERO SECTION --- */
-.heroSection {
-  width: 100%;
-  position: relative;
-  padding: 120px 0 150px 0;
-  background-color: var(--bg-main);
-  overflow: hidden;
-}
-
-.title {
-  color: var(--text-main) !important;
-  letter-spacing: -1.5px;
-  line-height: 1.1;
-  transition: color 0.3s ease;
-}
-
-.subtitle {
-  color: var(--text-muted) !important;
-  line-height: 1.4;
-  transition: color 0.3s ease;
-}
-
-/* FONDOS DE CONEXIONES */
-.connectionBackground {
+/* 🪄 BLOBS: En modo claro los hacemos más sutiles, en oscuro que brillen */
+.blob1,
+.blob2 {
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background-image:
-    linear-gradient(45deg, transparent 45%, #0d6efd 50%, transparent 55%),
-    linear-gradient(135deg, transparent 45%, #0d6efd 50%, transparent 55%),
-    linear-gradient(to right, #0d6efd 1px, transparent 1px),
-    linear-gradient(to bottom, #0d6efd 1px, transparent 1px);
-  background-size: 150px 150px, 150px 150px, 75px 75px, 75px 75px;
-  opacity: 0.08;
-  z-index: 1;
-}
-
-.connectionBackgroundOverlay {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: radial-gradient(circle at 50% 50%, transparent 30%, var(--bg-main) 85%);
-  z-index: 2;
-}
-
-.heroContent {
-  position: relative;
-  z-index: 10;
-}
-
-/* --- TÍTULOS DE SECCIÓN --- */
-.sectionTitle {
-  color: var(--text-main) !important;
-  transition: color 0.3s ease;
-}
-
-/* CARDS DE FEATURES */
-.featuresSection {
-  position: relative;
-  z-index: 5;
-  background-color: var(--bg-main);
-}
-
-.stepCard {
-  border-radius: 25px !important;
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border-color) !important;
-  color: var(--text-main) !important;
-  transition: all 0.3s ease !important;
-}
-
-.stepCard:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
-  border-color: #0d6efd !important;
-}
-
-.iconWrapper {
-  width: 90px;
-  height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--bg-main) !important;
-  border: 4px solid var(--bg-card) !important;
-  color: #0d6efd !important;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(0, 124, 240, 0.15) 0%,
+    transparent 70%
+  );
   border-radius: 50%;
+  z-index: 0;
+  filter: blur(80px);
+  pointer-events: none;
 }
 
-/* BOTONES */
-.primaryBtn { 
-  background-color: #0d6efd !important; 
-  border: none !important; 
+[data-theme="dark"] .blob1,
+[data-theme="dark"] .blob2 {
+  background: radial-gradient(
+    circle,
+    rgba(0, 124, 240, 0.25) 0%,
+    transparent 70%
+  );
 }
 
-.secondaryBtn {
-  border: 2px solid #0d6efd !important;
-  color: #0d6efd !important;
-  background-color: transparent !important;
+/* ==========================================
+   2. HERO SECTION (Títulos y Subtítulos)
+   ========================================== */
+.heroSection {
+  position: relative;
+  z-index: 1;
+  padding: 80px 0; /* Ajustado para que no haya un "desierto" de espacio */
 }
 
-[data-theme='dark'] .secondaryBtn {
-    color: #4da3ff !important;
-    border-color: #4da3ff !important;
+.mainTitle {
+  color: #1a1a1a; /* Forzamos color oscuro en modo claro */
+  font-weight: 800;
+  letter-spacing: -2.5px;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+:global([data-theme="dark"]) .mainTitle {
+  color: #ffffff !important;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.gradientText {
+  background: linear-gradient(45deg, #007cf0, #00dfd8);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  /* 🪄 Fallback para navegadores viejos */
+  color: #007cf0;
+}
+
+.heroSubtitle {
+  color: #475569; /* Gris pizarra para mejor contraste en blanco */
+  max-width: 650px;
+  margin: 0 auto 3rem auto;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+:global([data-theme="dark"]) .heroSubtitle {
+  color: #cbd5e1 !important; /* Gris platino en oscuro */
+}
+
+/* ==========================================
+   3. FEATURES SECTION (FIX DE CONTRASTE) 🪄
+   ========================================== */
+.sectionTitle {
+  color: #1a1a1a; /* Color para modo claro */
+  font-weight: 800;
+  transition: color 0.3s ease;
+}
+
+/* 🪄 Título visible en modo oscuro */
+:global([data-theme="dark"]) .sectionTitle {
+  color: #ffffff !important;
+  text-shadow: 0 0 20px rgba(0, 124, 240, 0.2);
+}
+
+/* HomePage.module.css */
+
+.sectionSubtitle {
+  color: #475569; /* Gris oscuro para modo claro */
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+/* 🪄 FIX MODO OSCURO: Para que el lince lea clarito */
+:global([data-theme="dark"]) .sectionSubtitle {
+  color: #cbd5e1 !important; /* Gris platino/blanco azulado */
+  opacity: 0.9;
+  /* Opcional: un toque de nitidez extra */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.featureCard {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 32px !important;
+  padding: 2.5rem 1.5rem;
+  transition: all 0.4s ease !important;
+}
+
+/* 🪄 Transformamos las cards blancas en Glassmorphism para el modo oscuro */
+:global([data-theme="dark"]) .featureCard {
+  background: rgba(30, 41, 59, 0.5) !important; /* Azul pizarra traslúcido */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* Iconos y textos dentro de las cards */
+.featureIcon {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+:global([data-theme="dark"]) .featureCard h4 {
+  color: #f8fafc !important; /* Blanco hueso muy legible */
+}
+
+:global([data-theme="dark"]) .featureCard p {
+  color: #cbd5e1 !important; /* Gris platino */
+}
+
+/* ==========================================
+   4. TEMPLATES TEASER (VISIBILIDAD TOTAL) 🪄
+   ========================================== */
+.templatesTeaser {
+  padding: 100px 0;
+}
+
+.glassBanner {
+  background: rgba(0, 0, 0, 0.03);
+  border: 2px dashed #cbd5e1;
+  padding: 4rem 2rem;
+  border-radius: 40px;
+  transition: all 0.3s ease;
+}
+
+/* 🪄 FIX: El banner de plantillas ahora se ve perfecto en oscuro */
+:global([data-theme="dark"]) .glassBanner {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 2px dashed rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px);
+}
+
+:global([data-theme="dark"]) .glassBanner h3 {
+  color: #ffffff !important;
+}
+
+:global([data-theme="dark"]) .glassBanner p {
+  color: #94a3b8 !important;
+}
+
+/* ==========================================
+   4. FEATURES CARDS
+   ========================================== */
+.featureCard {
+  background: white !important; /* Sólido en claro */
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 28px;
+  padding: 2.5rem;
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03) !important;
+}
+
+:global([data-theme="dark"]) .featureCard {
+  background: rgba(30, 41, 59, 0.7) !important; /* Glassmorphism en oscuro */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
+}
+
+.featureCard h4 {
+  color: #1e293b;
+  font-weight: 700;
+}
+.featureCard p {
+  color: #64748b;
+}
+
+:global([data-theme="dark"]) .featureCard h4 {
+  color: #f8fafc !important;
+}
+:global([data-theme="dark"]) .featureCard p {
+  color: #94a3b8 !important;
+}
+
+/* ==========================================
+   5. TEMPLATES TEASER
+   ========================================== */
+.glassBanner {
+  background: #ffffff !important;
+  border: 2px dashed #cbd5e1 !important;
+  padding: 4rem 2rem;
+  border-radius: 40px;
+}
+
+:global([data-theme="dark"]) .glassBanner {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 2px dashed rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* ==========================================
+   6. RESPONSIVE
+   ========================================== */
+@media (max-width: 991px) {
+  .heroSection {
+    text-align: center;
+  }
+  .heroSubtitle {
+    margin: 0 auto 3rem auto;
+  }
+  .mainTitle {
+    font-size: 3.2rem;
+  }
 }

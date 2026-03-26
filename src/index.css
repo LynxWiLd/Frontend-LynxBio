@@ -1,69 +1,110 @@
-/* index.css */
-
+/* ==========================================
+   1. VARIABLES DE ENTORNO (SISTEMA DE DISEÑO)
+   ========================================== */
 :root {
   /* --- TEMA CLARO (Default) --- */
+  --primary: #007cf0;
+  --primary-hover: #0056b3;
   --bg-main: #f8f9fa;
   --bg-card: #ffffff;
   --bg-item: #ffffff;
   --text-main: #1a1a1a;
-  --text-muted: #6c757d;    
-  --border-color: #dee2e6;
+  --text-muted: #64748b;     
+  --border-color: #e2e8f0;
   --input-bg: #ffffff;
   
   /* Glassmorphism Claro */
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-blur: 16px;
 }
 
 [data-theme="dark"] {
-  /* --- TEMA OSCURO --- */
-  --bg-main: #0b1120;       /* Azul noche profundo */
-  --bg-card: #1e293b;       /* Gris pizarra para tarjetas */
-  --bg-item: #161e2c;       /* Fondo para los links en la lista */
-  --text-main: #f1f5f9;     /* Blanco suave */
+  /* --- TEMA OSCURO (Lince Nocturno) --- */
+  --primary: #38bdf8;
+  --primary-hover: #0ea5e9;
+  --bg-main: #0b1120;     
+  --bg-card: #1e293b;     
+  --bg-item: #161e2c;     
+  --text-main: #f1f5f9;   
   --text-muted: #94a3b8;    
   --border-color: #334155;
   --input-bg: #0f172a;
   
   /* Glassmorphism Oscuro */
-  --glass-bg: rgba(255, 255, 255, 0.05); 
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(15, 23, 42, 0.6); 
+  --glass-border: rgba(255, 255, 255, 0.08);
 }
 
-/* --- ESTILOS GLOBALES Y FIXES DE RENDERIZADO --- */
-
-/* 1. Aplicamos el fondo al nivel más alto (HTML) para matar el blanco inicial */
+/* ==========================================
+   2. RESET Y FIXES DE SCROLL (EL FIN DEL DOBLE SCROLL)
+   ========================================== */
 html, body {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-  /* 🪄 El secreto: El fondo siempre coincide con el tema */
+  width: 100%;
+  height: 100%; /* 🪄 Importante: altura fija al viewport */
   background-color: var(--bg-main) !important; 
   color: var(--text-main);
   font-family: 'Poppins', sans-serif;
-  /* Evita el "rebote" blanco al scrollear en dispositivos Apple/Móviles */
+  
+  /* 🪄 FIX DEFINITIVO: Solo el body gestiona el scroll vertical */
+  overflow-x: hidden; 
+  overflow-y: auto; 
   overscroll-behavior: none; 
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* 2. Aseguramos que el contenedor de React sea un "Sticky Container" */
 #root {
+  /* 🪄 Asegura que el contenido ocupe toda la pantalla para el sticky footer */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: visible; /* Evita crear un contexto de scroll interno */
 }
 
-/* 3. Transición suave para todos los elementos que usen variables */
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+/* ==========================================
+   3. PERFORMANCE Y OPTIMIZACIÓN
+   ========================================== */
+
+/* ⚠️ ADVERTENCIA: El selector universal '*' con transición es pesado.
+   Es mejor aplicarlo a elementos específicos para evitar lag al renderizar muchos links. */
+body, div, section, nav, footer, .card, .glassCard {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* 4. Reseteo de márgenes para evitar el "hueco" blanco en el footer */
+/* 🪄 SCROLLBAR PERSONALIZADO (Look & Feel Pro) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ==========================================
+   4. COMPONENTES GLOBALES
+   ========================================== */
 footer {
-  margin-top: auto; /* Empuja el footer abajo si hay poco contenido */
+  margin-top: auto;
 }
 
-/* 5. Estilo para los Spinners de carga para que no se vean raros */
 .spinner-border {
-  color: #0d6efd; /* Tu color insignia de LynxBio */
+  color: var(--primary) !important;
+}
+
+/* Helper para el Glassmorphism reusable */
+.glassEffect {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
 }

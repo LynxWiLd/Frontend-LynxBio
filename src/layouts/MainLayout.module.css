@@ -1,48 +1,72 @@
-/* MainLayout.module.css */
-
+/* ==========================================
+   1. ESTRUCTURA DEL LAYOUT (EL CONTENEDOR)
+   ========================================== */
 .layoutWrapper {
   display: flex;
   flex-direction: column;
-  /* 🪄 LA MAGIA: Asegura que el contenedor siempre mida al menos el alto de la pantalla */
-  min-height: 100vh;
+  /* 🪄 LA CLAVE: Cambiamos vh por 100% para que sea relativo al body
+     que ya configuramos en index.css */
+  min-height: 100%; 
   width: 100%;
   background-color: var(--bg-main);
-  /* Transición suave para cuando el lince cambia de tema (Sol/Luna) */
   transition: background-color 0.3s ease;
+  
+  /* 🪄 PROHIBIMOS EL SCROLL INTERNO: 
+     Forzamos que el scroll sea responsabilidad única del navegador (body/html) */
+  overflow: visible !important; 
 }
 
 .mainContent {
-  /* 🪄 EL SECRETO: Al ser flex: 1, este bloque se estira todo lo posible 
-     y "patotea" al footer hacia el fondo de la pantalla. */
+  /* Sticky Footer: se estira para empujar al footer al fondo */
   flex: 1;
   display: flex;
   flex-direction: column;
-  /* Espaciado para que el contenido respire respecto al Navbar */
-  padding-top: 20px;
+  
+  /* 🪄 AJUSTE DE ALTURA: 
+     El padding-top debe ser exacto al alto de tu Navbar (aprox 70px-80px)
+     para que el contenido no empiece "debajo" del Navbar fijo. */
+  padding-top: 75px; 
   width: 100%;
+  
+  /* 🪄 Higiene visual: No permitimos scroll aquí tampoco */
+  overflow: visible !important;
 }
 
-/* 🔄 CONTENEDOR DEL LOADER
-   Para que el "Sincronizando con la manada..." quede perfecto en el centro
-*/
+/* ==========================================
+   2. CONTENEDOR DEL LOADER (CENTRADITO)
+   ========================================== */
 .loaderContainer {
-  flex: 1; /* Ocupa todo el alto disponible del mainContent */
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centrado vertical */
-  align-items: center;     /* Centrado horizontal */
+  justify-content: center;
+  align-items: center;
   gap: 20px;
   padding: 40px;
+  /* El loader tampoco debe scrollear */
+  overflow: hidden; 
 }
 
-/* Animación opcional para el texto de carga */
+/* Animación del Lince cargando (Visual Arts Touch) */
 .loaderContainer p {
   font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-muted);
   letter-spacing: 0.5px;
   animation: pulseOpacity 2s infinite ease-in-out;
 }
 
 @keyframes pulseOpacity {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.5; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================
+   3. RESPONSIVE FIXES
+   ========================================== */
+@media (max-width: 768px) {
+  .mainContent {
+    /* En móviles el Navbar a veces es un poco más alto */
+    padding-top: 80px;
+  }
 }

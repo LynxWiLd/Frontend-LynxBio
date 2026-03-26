@@ -10,7 +10,7 @@ import styles from "./AuthModal.module.css"; // 👈 Usamos el mismo CSS del Log
 const RegisterModal = () => {
   const { showRegister, handleCloseModals, login } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
   const [apiError, setApiError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -19,9 +19,9 @@ const RegisterModal = () => {
     handleSubmit,
     watch,
     formState: { errors },
-    reset
+    reset,
   } = useForm({
-    defaultValues: { username: "", email: "", password: "" }
+    defaultValues: { username: "", email: "", password: "" },
   });
 
   const currentUsername = watch("username");
@@ -45,8 +45,8 @@ const RegisterModal = () => {
           text: "Tu cuenta de LynxBio está lista.",
           timer: 2500,
           showConfirmButton: false,
-          background: 'var(--bg-card)', // 👈 Adaptamos el Swal
-          color: 'var(--text-main)'
+          background: "var(--bg-card)", // 👈 Adaptamos el Swal
+          color: "var(--text-main)",
         });
       } catch (loginErr) {
         handleCloseModals();
@@ -54,12 +54,13 @@ const RegisterModal = () => {
           icon: "info",
           title: "Cuenta creada",
           text: "Cuenta creada con éxito, por favor iniciá sesión manualmente.",
-          background: 'var(--bg-card)',
-          color: 'var(--text-main)'
+          background: "var(--bg-card)",
+          color: "var(--text-main)",
         });
       }
     } catch (err) {
-      const msg = err.response?.data?.msg || "Hubo un problema al crear tu cuenta.";
+      const msg =
+        err.response?.data?.msg || "Hubo un problema al crear tu cuenta.";
       setApiError(msg);
     } finally {
       setIsSubmitting(false);
@@ -67,14 +68,16 @@ const RegisterModal = () => {
   };
 
   return (
-    <Modal 
-      show={showRegister} 
-      onHide={handleCloseModals} 
+    <Modal
+      show={showRegister}
+      onHide={handleCloseModals}
       centered
       contentClassName={styles.modalContent} // 👈 Mantiene el fondo oscuro/claro
     >
       <Modal.Header closeButton className="border-0 pb-0">
-        <Modal.Title className={`fw-bold w-100 text-center fs-2 ${styles.modalTitle}`}>
+        <Modal.Title
+          className={`fw-bold w-100 text-center fs-2 ${styles.modalTitle}`}
+        >
           Unite a LynxBio
         </Modal.Title>
       </Modal.Header>
@@ -91,22 +94,29 @@ const RegisterModal = () => {
         )}
 
         <Form onSubmit={handleSubmit(onSubmit)}>
-          
           {/* USERNAME */}
           <Form.Group className="mb-3">
-            <Form.Label className={`fw-semibold ${styles.label}`}>Nombre de usuario</Form.Label>
+            <Form.Label className={`fw-semibold ${styles.label}`}>
+              Nombre de usuario
+            </Form.Label>
             <Form.Control
               type="text"
               placeholder="ej: facu.dev"
               className={styles.inputControl}
               isInvalid={!!errors.username}
-              {...register("username", { 
+              {...register("username", {
                 required: "El nombre de usuario es obligatorio",
-                minLength: { value: 3, message: "Mínimo 3 caracteres" },
+                validate: (value) => {
+                  if (value.length < 3) return "Mínimo 3 caracteres";
+                  if (value.length > 20) return "Máximo 20 caracteres";
+                  if (!/^[a-zA-Z0-9._-]+$/.test(value))
+                    return "Solo letras, números, puntos y guiones";
+                  return true;
+                },
                 pattern: {
                   value: /^[a-zA-Z0-9._-]+$/,
-                  message: "Solo letras, números, puntos y guiones"
-                }
+                  message: "Solo letras, números, puntos y guiones",
+                },
               })}
             />
             <Form.Control.Feedback type="invalid">
@@ -122,18 +132,20 @@ const RegisterModal = () => {
 
           {/* EMAIL */}
           <Form.Group className="mb-3">
-            <Form.Label className={`fw-semibold ${styles.label}`}>Email</Form.Label>
+            <Form.Label className={`fw-semibold ${styles.label}`}>
+              Email
+            </Form.Label>
             <Form.Control
               type="email"
               placeholder="tu@email.com"
               className={styles.inputControl}
               isInvalid={!!errors.email}
-              {...register("email", { 
+              {...register("email", {
                 required: "El email es obligatorio",
                 pattern: {
                   value: /^\S+@\S+$/i,
-                  message: "Formato de email inválido"
-                }
+                  message: "Formato de email inválido",
+                },
               })}
             />
             <Form.Control.Feedback type="invalid">
@@ -143,15 +155,17 @@ const RegisterModal = () => {
 
           {/* PASSWORD */}
           <Form.Group className="mb-4">
-            <Form.Label className={`fw-semibold ${styles.label}`}>Contraseña</Form.Label>
+            <Form.Label className={`fw-semibold ${styles.label}`}>
+              Contraseña
+            </Form.Label>
             <Form.Control
               type="password"
               placeholder="Mínimo 6 caracteres"
               className={styles.inputControl}
               isInvalid={!!errors.password}
-              {...register("password", { 
+              {...register("password", {
                 required: "La contraseña es obligatoria",
-                minLength: { value: 6, message: "Mínimo 6 caracteres" }
+                minLength: { value: 6, message: "Mínimo 6 caracteres" },
               })}
             />
             <Form.Control.Feedback type="invalid">
