@@ -7,12 +7,13 @@
   margin-bottom: 12px !important;
   padding: 0.8rem 1rem !important;
   transition: all 0.2s ease-in-out !important;
+  /* 🪄 Aseguramos que el contenido respete los límites */
+  max-width: 100%;
 }
 
-/* 🪄 Efecto pro cuando el lince arrastra el link */
 .isDragging {
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3) !important;
-  background-color: var(--bg-config) !important;
+  background-color: var(--bg-card) !important;
   border-color: var(--primary) !important;
   transform: scale(1.02);
   z-index: 9999;
@@ -25,24 +26,38 @@
   display: flex;
   align-items: center;
   transition: color 0.2s;
+  flex-shrink: 0; /* Evita que el manubrio se achique */
 }
 
-.dragHandle:active {
-  cursor: grabbing;
+.dragHandle:active { cursor: grabbing; }
+.dragHandle:hover { color: var(--primary); }
+
+/* 🪄 CONTENEDOR MAESTRO DE TEXTO: La clave del fix */
+.textWrapper {
+  flex-grow: 1;
+  min-width: 0; /* 🪄 OBLIGATORIO para que el truncado funcione en flex */
+  display: flex;
+  flex-direction: column;
 }
 
-.dragHandle:hover {
-  color: var(--primary);
+.linkTitle {
+  font-weight: 700;
+  margin-bottom: 0;
+  color: var(--text-main);
+  /* Truncado pro */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .linkUrl {
   color: var(--text-muted);
   font-size: 0.75rem;
-  /* 🪄 Truncado de seguridad para URLs infinitas */
-  max-width: 100%;
+  /* Truncado pro */
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  display: block;
 }
 
 .statusIndicator {

@@ -4,7 +4,7 @@
 .phoneMockup {
   width: 310px;
   height: 620px;
-  background: #0f172a; /* Un azul muy oscuro casi negro */
+  background: #0f172a; /* Azul noche profundo */
   border-radius: 45px;
   padding: 12px;
   border: 8px solid #1e293b;
@@ -32,23 +32,28 @@
   background-repeat: no-repeat;
 }
 
-.phoneScreen::-webkit-scrollbar { display: none; }
+/* Ocultamos la scrollbar para que parezca una app real */
+.phoneScreen::-webkit-scrollbar {
+  display: none;
+}
 
 .phoneOverlay {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  /* Capa para asegurar contraste si el usuario sube un fondo muy chillón */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.4);
   z-index: 1;
 }
 
 /* ==========================================
-   3. LA TARJETA GLASSMORPISM
+   3. LA TARJETA GLASSMORPISM (CONTENIDO)
    ========================================== */
 .phoneGlassCard {
   position: relative;
   z-index: 2;
-  width: 88%;
+  width: 90%;
   margin: 40px 0;
   padding: 30px 15px;
   border-radius: 28px;
@@ -59,6 +64,9 @@
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  /* 🪄 FIX: Evitamos que la tarjeta se deforme */
+  max-width: 90%;
+  overflow: hidden;
 }
 
 .previewAvatar {
@@ -72,19 +80,43 @@
   transition: all 0.3s ease;
 }
 
+.previewUsername {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 10px;
+  display: block;
+  /* 🪄 FIX: Truncado para nombres de usuario infinitos */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
 .previewBio {
-  font-size: 0.85rem;
-  line-height: 1.5;
+  font-size: 0.8rem;
+  line-height: 1.4;
   margin-bottom: 20px;
   opacity: 0.9;
-  font-weight: 500;
+  font-weight: 400;
+
+  /* 🪄 LA TRIPLE ALIANZA DEL TRUNCADO: */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+
+  /* 1. Prefijo para compatibilidad con motores Chromium/Safari */
+  -webkit-line-clamp: 3;
+
+  /* 2. Propiedad estándar (esto calma al editor y al linter) */
+  line-clamp: 3;
+
+  overflow: hidden;
 }
 
 /* ==========================================
-   4. LOS BOTONES (ENLACES)
+   4. LOS BOTONES (ENLACES) - FIX "TIKTOKSSSSS"
    ========================================== */
-.previewLinks { 
-  width: 100%; 
+.previewLinks {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -92,31 +124,39 @@
 
 .previewLinkItem {
   width: 100%;
-  padding: 14px;
-  border-radius: 14px;
+  min-height: 48px;
+  padding: 10px 15px;
+  border-radius: 12px;
   font-weight: 700;
   font-size: 0.85rem;
   display: flex;
   align-items: center;
-  justify-content: center; /* Centra el texto */
-  position: relative; /* Para posicionar el icono a la izquierda */
+  justify-content: center;
+  position: relative;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   transition: transform 0.2s ease;
+  /* 🪄 CLAVE: Evita que el botón se escape del mockup */
+  overflow: hidden;
 }
 
-/* 🪄 LA MAGIA: El icono queda anclado a la izquierda */
 .linkIconWrapper {
   position: absolute;
-  left: 15px;
-  font-size: 1.2rem;
+  left: 12px;
+  font-size: 1.1rem;
   display: flex;
   align-items: center;
+  flex-shrink: 0; /* Impide que el icono se aplaste */
 }
 
 .linkTitleText {
   width: 100%;
   text-align: center;
-  padding: 0 20px; /* Evita que el texto pise al icono */
+  padding: 0 25px; /* Margen de seguridad para no pisar el icono */
+  /* 🪄 FIX DEFINITIVO: Truncado de texto con puntos suspensivos */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 /* ==========================================
@@ -136,4 +176,52 @@
   opacity: 0.5;
   font-style: italic;
   margin-top: 20px;
+}
+/* ==========================================
+   6. RESPONSIVE Y ADAPTACIÓN (EL FIX FINAL)
+   ========================================== */
+
+/* 🪄 Tablets y pantallas medianas */
+@media (max-width: 1024px) {
+  .phoneMockup {
+    /* Achicamos un pelín el mockup para que entre mejor en tablets */
+    transform: scale(0.9);
+    margin-top: -20px;
+  }
+}
+
+/* 🪄 Celulares (Mobile Modal) */
+@media (max-width: 480px) {
+  .phoneMockup {
+    /* En móviles muy chicos, usamos scale para que el mockup 
+       entre entero sin romper el diseño del modal.
+    */
+    width: 280px;
+    height: 560px;
+    padding: 10px;
+    transform: scale(1); /* Reset del scale de tablet */
+  }
+
+  .phoneGlassCard {
+    margin: 20px 0;
+    padding: 20px 10px;
+  }
+
+  .previewAvatar {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .previewLinkItem {
+    padding: 10px;
+    font-size: 0.8rem;
+  }
+}
+
+/* 🪄 Fix para el Modal de Previsualización en Mobile */
+:global(.modal-body) .phoneMockup {
+  /* Cuando el PhonePreview está dentro de un Modal, 
+     forzamos que se vea centrado y sin margen superior excesivo.
+  */
+  margin: 0 auto;
 }

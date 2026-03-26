@@ -3,17 +3,18 @@
    ========================================== */
 .dashboardWrapper {
   min-height: 100vh;
-  padding-top: 70px;
+  /* 🪄 Ajustamos el padding para que no se pegue al Navbar */
+  padding-top: 80px;
   font-family: "Poppins", sans-serif;
   background-color: var(--bg-main) !important;
   transition: background-color 0.3s ease;
+  overflow-x: hidden; /* 🛡️ Seguridad anti-blobs */
 
-  /* Higiene visual: Scrollbar sutil */
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
 }
 
-/* Scrollbar para Chrome/Safari */
+/* Scrollbar Premium */
 .dashboardWrapper::-webkit-scrollbar {
   width: 6px;
 }
@@ -23,22 +24,25 @@
 }
 
 .configColumn {
-  padding: 2rem;
-  background-color: var(--bg-config) !important;
+  padding: 2.5rem;
+  /* 🪄 FIX: Cambié --bg-config por --bg-main para consistencia con tu index.css */
+  background-color: var(--bg-main) !important;
   border-right: 1px solid var(--border-color) !important;
   transition: all 0.3s ease;
 }
 
-@media (max-width: 576px) {
+@media (max-width: 991px) {
   .configColumn {
-    padding: 1.2rem;
+    padding: 1.5rem;
+    border-right: none !important; /* En tablets/móviles no queremos borde derecho */
+    border-bottom: 1px solid var(--border-color);
   }
 }
 
 .headerSection {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center; /* Mejor alineado al centro */
   margin-bottom: 2.5rem;
   gap: 15px;
 }
@@ -46,26 +50,30 @@
 @media (max-width: 768px) {
   .headerSection {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch; /* Los botones ocupan el ancho total en móviles */
+    text-align: center;
   }
 }
 
 .dashboardTitle {
   font-weight: 800;
-  font-size: 1.8rem;
-  letter-spacing: -0.8px;
+  font-size: 2rem;
+  letter-spacing: -1px;
   color: var(--text-main) !important;
+  margin-bottom: 0.2rem;
 }
 
 /* ==========================================
-   2. VISTA PREVIA (DESKTOP Y MÓVIL)
+   2. VISTA PREVIA (EL STICKY DEL LINCE)
    ========================================== */
 .previewColumn {
   display: none;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 4rem;
+  padding-top: 2rem;
   background-color: var(--bg-main);
+  /* 🪄 Sutil degradado para separar la preview del panel */
+  background: linear-gradient(to right, var(--bg-main), rgba(0, 0, 0, 0.02));
 }
 
 @media (min-width: 992px) {
@@ -76,37 +84,72 @@
 
 .phoneSticky {
   position: sticky;
-  top: 100px;
+  top: 110px; /* Un poco más de aire desde el top */
   z-index: 5;
+  transition: transform 0.3s ease;
 }
 
-/* Botón flotante para móviles */
+/* Botón flotante para móviles (Carga de Facha) */
 .mobilePreviewBtn {
   position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 25px;
+  right: 25px; /* Mejor a la derecha para el pulgar */
   z-index: 1000;
   border-radius: 50px !important;
-  padding: 12px 25px !important;
+  padding: 14px 28px !important;
   font-weight: 700 !important;
-  box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4) !important;
-  background-color: #0d6efd !important;
+  letter-spacing: 0.5px;
+  box-shadow: 0 10px 30px rgba(13, 110, 253, 0.4) !important;
+  background: linear-gradient(45deg, #0d6efd, #0043a8) !important;
   border: none !important;
+  transition: all 0.3s ease !important;
 }
 
-/* Estilos para el Modal de Previsualización */
+.mobilePreviewBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 35px rgba(13, 110, 253, 0.5) !important;
+}
+
+/* Estilos para el Modal (Efecto Cristal) */
 .mobileModalContent {
-  background: transparent !important;
-  border: none !important;
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 40px !important;
 }
 
 .modalBody {
-  background: var(--bg-main) !important;
-  border-radius: 30px;
-  padding: 20px !important;
+  padding: 30px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+/* ==========================================
+   3. TABS Y NAVEGACIÓN INTERNA
+   ========================================== */
+.customTabs {
+  border: none !important;
+  gap: 10px;
+}
+
+:global(.nav-link) {
+  border-radius: 12px !important;
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+  border: 1px solid transparent !important;
+  transition: all 0.2s ease !important;
+}
+
+:global(.nav-link.active) {
+  background-color: var(--bg-card) !important;
+  color: var(--primary) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ... Loader y Utilidades se mantienen igual ... */
 /* ==========================================
    3. LOADER Y ESTADOS DE CARGA
    ========================================== */
