@@ -1,5 +1,5 @@
-import { createContext, useState, useEffect } from "react";
-import api from "../services/axiosConfig"; // Usamos tu instancia de axios configurada
+import { createContext, useState, useEffect, useCallback } from "react";
+import api from "../services/axiosConfig";
 
 export const AuthContext = createContext();
 
@@ -7,11 +7,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Estados para controlar la visibilidad de los modales
+  // Estados de Modales (Centralizados)
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
-  // Funciones de control de modales (centralizadas)
+  // --- 🪄 FUNCIONES DE CONTROL DE MODALES ---
   const handleOpenLogin = () => {
     setShowLogin(true);
     setShowRegister(false);
@@ -25,59 +25,89 @@ export const AuthProvider = ({ children }) => {
     setShowRegister(false);
   };
 
-  // Efecto inicial: Persistencia de sesión
-  useEffect(() => {
-    const checkUser = async () => {
-      const token = localStorage.getItem("token");
-      const storedUsername = localStorage.getItem("username");
+  /**
+   * --- 🔍 VALIDACIÓN DE RASTRO (Check User) ---
+   * No solo mira el localStorage, le pregunta al servidor: "¿Quién soy?"
+   */
+  const checkUser = useCallback(async () => {
+    const token = localStorage.getItem("token");
 
-      if (token && storedUsername) {
-        // Opcional: Podrías llamar a /auth/me aquí para validar el token real
-        setUser({ username: storedUsername, token });
-      }
+    if (!token) {
       setLoading(false);
-    };
-    checkUser();
+      return;
+    }
+
+    try {
+      // El interceptor de axios ya pega el token automáticamente 🪄
+      const res = await api.get("/auth/me");
+      setUser(res.data);
+    } catch (err) {
+      console.error("Rastro expirado o inválido:", err);
+      localStorage.removeItem("token");
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  // Función de Login: Se encarga de la API y el Estado
+  useEffect(() => {
+    checkUser();
+  }, [checkUser]);
+
+  /**
+   * --- 🚀 LOGIN ---
+   */
   const login = async (email, password) => {
     try {
       const res = await api.post("/auth/login", { email, password });
 
-      // Guardamos en persistencia
+      // Solo guardamos el token. El resto vive en el estado global.
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("username", res.data.username);
 
-      // Actualizamos estado global
-      setUser({
-        username: res.data.username,
-        token: res.data.token,
-        profile: res.data.profile,
-      });
-
+      setUser(res.data);
+      handleCloseModals();
       return res.data;
     } catch (err) {
-      // Lanzamos el error para que el Modal lo capture con el Catch
+      throw err; // El componente (Modal) captura esto para mostrar el error
+    }
+  };
+
+  /**
+   * --- 📝 REGISTER ---
+   */
+  const register = async (userData) => {
+    try {
+      const res = await api.post("/auth/register", userData);
+      localStorage.setItem("token", res.data.token);
+
+      // Seteamos el usuario y cerramos modales
+      setUser(res.data);
+      handleCloseModals();
+      return res.data;
+    } catch (err) {
       throw err;
     }
   };
 
-  // Función de Logout
+  /**
+   * --- 🚪 LOGOUT ---
+   */
   const logout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("username");
     setUser(null);
-    window.location.href = "/"; // Redirigimos al home al salir
+    // Redirección total para limpiar cualquier rastro en memoria
+    window.location.href = "/";
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        setUser, // Útil para actualizar perfil/avatar en tiempo real
         loading,
-        login, // <--- ¡AHORA SÍ ESTÁN EXPORTADAS!
-        logout, // <--- ¡AHORA SÍ ESTÁN EXPORTADAS!
+        login,
+        register,
+        logout,
         showLogin,
         showRegister,
         handleOpenLogin,

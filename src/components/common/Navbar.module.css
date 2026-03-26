@@ -1,19 +1,22 @@
 /* ==========================================
-   1. ESTRUCTURA GENERAL Y LAYOUT
+   1. ESTRUCTURA GLOBAL Y GLASSMORPHISM
    ========================================== */
 .navbarCustom {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border-bottom: 1px solid transparent;
   background-color: transparent;
+  z-index: 1050; /* Por encima de todo */
 }
 
-/* 🪄 Efecto Vidrio en el Scroll */
+/* 🪄 Efecto Vidrio Esmerilado en el Scroll */
 .navbarScrolled {
   background-color: var(--glass-bg) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--glass-border) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
 }
 
 /* ==========================================
@@ -22,47 +25,47 @@
 .brandContainer {
   display: flex;
   align-items: center;
-  text-decoration: none;
+  text-decoration: none !important;
   gap: 12px;
+  cursor: pointer;
 }
 
-/* Contenedor maestro para que las imágenes se superpongan */
 .logoWrapper {
   position: relative;
-  width: 42px; /* Ajustado para visibilidad pro */
+  width: 42px;
   height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .navbarLogo {
-  position: absolute; /* 🪄 Clave para que se pisen perfectamente */
+  position: absolute; /* 🪄 Superposición perfecta */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease-in-out,
+    transform 0.3s ease;
 }
 
-/* Estado: Boca Cerrada (Default) */
 .logoClosed {
   opacity: 1;
   z-index: 2;
 }
 
-/* Estado: Boca Abierta (Oculto) */
 .logoOpen {
   opacity: 0;
   z-index: 1;
-  transform: scale(0.95); /* Un pelín más chico para que al abrir 'crezca' */
+  transform: scale(0.9);
 }
 
-/* 🪄 LA MAGIA: Al pasar el mouse por el contenedor, el lince reacciona */
+/* 🪄 LA MAGIA: Interacción al Hover */
 .brandContainer:hover .logoWrapper {
-  transform: scale(1.1) rotate(-5deg); /* Rebote de artista */
+  transform: scale(1.15) rotate(-8deg);
 }
 
 .brandContainer:hover .logoClosed {
@@ -71,11 +74,11 @@
 
 .brandContainer:hover .logoOpen {
   opacity: 1;
-  transform: scale(1.1); /* Abre la boca y se agranda un toque */
+  transform: scale(1.1);
 }
 
-/* Filtro para que el logo se vea blanco en Dark Mode si es necesario */
-:global([data-theme='dark']) .navbarLogo {
+/* Filtro para Dark Mode automático en el SVG */
+:global([data-theme="dark"]) .navbarLogo {
   filter: brightness(0) invert(1);
 }
 
@@ -86,9 +89,7 @@
   font-weight: 800;
   font-size: 1.6rem;
   font-family: "Poppins", sans-serif;
-  letter-spacing: -0.8px;
-  
-  /* Gradiente insignia (Modo Claro) */
+  letter-spacing: -1px;
   background: linear-gradient(45deg, #007cf0, #00dfd8);
   background-clip: text;
   -webkit-background-clip: text;
@@ -96,74 +97,142 @@
   transition: all 0.3s ease;
 }
 
-/* Refuerzo para el degradado en Modo Oscuro */
-:global([data-theme='dark']) .brandText {
+:global([data-theme="dark"]) .brandText {
   background: linear-gradient(45deg, #38bdf8, #4ade80) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  background-color: transparent !important;
 }
 
 /* ==========================================
-   4. DROPDOWNS Y BOTONES DE USUARIO
+   4. USUARIO Y DROPDOWNS (HIGIENE VISUAL)
    ========================================== */
-.userDropdown :global(.dropdown-toggle) {
-  background-color: var(--bg-item) !important;
+.userToggle {
+  background-color: var(--bg-card) !important;
   color: var(--text-main) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 50px !important;
-  padding: 8px 18px !important;
-  font-weight: 600 !important;
-  transition: all 0.3s ease !important;
+  padding: 6px 16px 6px 6px !important; /* Espacio para el avatar */
+  display: flex;
+  align-items: center;
+  gap: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease !important;
 }
 
-.userDropdown :global(.dropdown-toggle::after) {
-  margin-left: 10px;
+.userToggle:hover {
+  border-color: var(--primary) !important;
+  transform: translateY(-2px);
+}
+
+/* Quita la flechita de Bootstrap si preferís un look más limpio */
+.userToggle::after {
+  display: none !important;
+}
+
+.navAvatar {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 10px rgba(0, 124, 240, 0.2);
+}
+
+.usernameText {
+  font-weight: 700;
+  font-size: 0.9rem;
+  max-width: 110px; /* 🪄 FIX: Evita desbordes de nombres largos */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dropdownMenu {
   background-color: var(--bg-card) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-color) !important;
   border-radius: 20px !important;
-  padding: 12px !important;
+  padding: 10px !important;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3) !important;
-  margin-top: 12px !important;
-  animation: dropdownFade 0.2s ease-out;
+  margin-top: 15px !important;
+  animation: dropdownFade 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes dropdownFade {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dropdownMenu :global(.dropdown-item) {
   color: var(--text-main) !important;
   border-radius: 12px !important;
   padding: 10px 15px !important;
-  font-weight: 500;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
   transition: all 0.2s ease;
 }
 
 .dropdownMenu :global(.dropdown-item:hover) {
-  background-color: var(--bg-main) !important;
-  transform: translateX(6px); /* 🪄 Efecto de desplazamiento pro */
+  background-color: rgba(0, 124, 240, 0.1) !important;
+  color: var(--primary) !important;
+  transform: translateX(5px);
+}
+
+.activeItem {
+  background-color: rgba(0, 124, 240, 0.08) !important;
   color: var(--primary) !important;
 }
 
+.logoutItem {
+  color: #ef4444 !important;
+}
+
 /* ==========================================
-   5. UTILIDADES
+   5. RESPONSIVE Y FIXES
    ========================================== */
 .navLinkItem {
   color: var(--text-muted) !important;
   font-weight: 600;
-  font-size: 0.95rem;
   transition: color 0.2s;
 }
 
 .navLinkItem:hover {
   color: var(--primary) !important;
+}
+
+@media (max-width: 991px) {
+  .navbarCustom {
+    background-color: var(
+      --bg-main
+    ) !important; /* Sólido en móvil para legibilidad */
+    padding: 1rem 0;
+  }
+
+  .usernameText {
+    max-width: 200px;
+  }
+
+  .userToggle {
+    width: 100%;
+    justify-content: center;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .brandText {
+    font-size: 1.3rem;
+  }
+  .logoWrapper {
+    width: 34px;
+    height: 34px;
+  }
 }
