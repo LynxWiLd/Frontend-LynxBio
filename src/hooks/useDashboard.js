@@ -1,4 +1,3 @@
-// src/hooks/useDashboard.js
 import { useState, useEffect, useCallback } from "react";
 import api from "../services/axiosConfig";
 import Swal from "sweetalert2";
@@ -16,19 +15,27 @@ export const useDashboard = () => {
     theme: { backgroundColor: "#ffffff", backgroundImage: "", buttonColor: "#000000", textColor: "#000000" },
   });
 
-  // 🪄 Sincronización con la manada (Fetch)
+  // 🪄 1. Sincronización Inicial (Fetch)
   const fetchUserData = useCallback(async () => {
     try {
       const res = await api.get("/auth/me");
       const { links: userLinks, profile, socials, theme, username } = res.data;
       setLinks(userLinks || []);
       setSettings({
-        profile: { bio: profile?.bio || "", avatarUrl: profile?.avatarUrl || DEFAULT_AVATAR, username: username || "" },
-        socials: { instagram: socials?.instagram || "", github: socials?.github || "", twitter: socials?.twitter || "" },
+        profile: { 
+          bio: profile?.bio || "", 
+          avatarUrl: profile?.avatarUrl || DEFAULT_AVATAR, 
+          username: username || "" 
+        },
+        socials: { 
+          instagram: socials?.instagram || "", 
+          github: socials?.github || "", 
+          twitter: socials?.twitter || "" 
+        },
         theme: { ...theme },
       });
     } catch (err) {
-      console.error(err);
+      console.error("Error al obtener rastro:", err);
     } finally {
       setLoading(false);
     }
@@ -36,7 +43,68 @@ export const useDashboard = () => {
 
   useEffect(() => { fetchUserData(); }, [fetchUserData]);
 
-  // 🪄 Lógica de Drag & Drop
+  /**
+   * 🖼️ 2. GESTIÓN DE IMÁGENES (Cloudinary)
+   * handleImageUpload: Envía el archivo al backend usando FormData.
+   */
+  const handleImageUpload = async (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Feedback visual inmediato para el lince
+    Swal.fire({
+      title: 'Subiendo rastro visual...',
+      didOpen: () => Swal.showLoading(),
+      allowOutsideClick: false,
+      background: "var(--bg-card)",
+      color: "var(--text-main)"
+    });
+
+    const formData = new FormData();
+    formData.append("image", file); // 'image' debe coincidir con upload.single('image')
+    formData.append("type", type);  // 'avatar' o 'background'
+
+    try {
+      const res = await api.post("/auth/upload-avatar", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      // Actualizamos el rastro localmente según el tipo
+      if (type === "avatar") {
+        setSettings(prev => ({ ...prev, profile: { ...prev.profile, avatarUrl: res.data.url } }));
+      } else {
+        setSettings(prev => ({ ...prev, theme: { ...prev.theme, backgroundImage: res.data.url } }));
+      }
+
+      Swal.fire({ icon: "success", title: "¡Imagen actualizada!", timer: 1500, showConfirmButton: false });
+    } catch (err) {
+      console.error("Error al subir imagen:", err);
+      Swal.fire({ icon: "error", title: "Error al subir imagen", text: err.response?.data?.msg || "Fallo en el servidor" });
+    }
+  };
+
+  /**
+   * 🗑️ 3. REMOVER IMAGEN
+   * Limpia el rastro de Cloudinary y resetea al default.
+   */
+  const handleRemoveImage = async (type) => {
+    try {
+      const res = await api.post("/auth/remove-image", { type });
+      
+      // Reseteamos el estado local con lo que nos devuelve el backend (ya limpio)
+      setSettings({
+        profile: { ...res.data.profile },
+        socials: { ...res.data.socials },
+        theme: { ...res.data.theme },
+      });
+
+      Swal.fire({ icon: "success", title: "Rastro limpiado", timer: 1500, showConfirmButton: false });
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "Error al remover" });
+    }
+  };
+
+  // 🪄 4. Handlers de Enlaces (Links)
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
     const oldLinks = [...links];
@@ -52,7 +120,6 @@ export const useDashboard = () => {
     }
   };
 
-  // 🪄 Handlers de Enlaces
   const handleAddLink = async (data) => {
     try {
       const res = await api.post("/links", data);
@@ -84,7 +151,7 @@ export const useDashboard = () => {
     }
   };
 
-  // 🪄 Gestión de Identidad (Settings)
+  // 🪄 5. Guardado Global (Settings)
   const handleSaveSettings = async () => {
     try {
       const res = await api.put("/auth/settings", settings);
@@ -106,6 +173,8 @@ export const useDashboard = () => {
   return {
     links, settings, setSettings, loading, copied, showMobilePreview,
     setShowMobilePreview, handleDragEnd, handleAddLink, handleDeleteLink,
-    handleSaveSettings, copyToClipboard
+    handleSaveSettings, copyToClipboard, 
+    handleImageUpload, // 🛡️ Ahora sí se exportan
+    handleRemoveImage  // 🛡️ Ahora sí se exportan
   };
 };
